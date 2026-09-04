@@ -8,7 +8,7 @@ const principles = [
   },
   {
     title: 'Small on purpose',
-    body: 'Two people, one release cadence. Every feature has to earn its place in the binary.',
+    body: 'One person, one release cadence. Every feature has to earn its place in the binary.',
   },
   {
     title: 'Ship in public',
@@ -23,7 +23,7 @@ export function StudioSection() {
         <SectionHeading
           eyebrow="Who we are"
           title="The studio"
-          description="Planet-X Development is an independent two-person shop making software and records under the same roof."
+          description="Planet-X Development is an independent one-man operation making software and records under the same roof. (Okay, sometimes my daughters help too.)"
           accent="accent"
         />
 

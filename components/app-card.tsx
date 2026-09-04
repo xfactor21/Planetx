@@ -16,7 +16,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
     <article className="relative flex flex-col gap-4 sm:gap-6 bg-background p-5 sm:p-8 md:p-10">
       <div
         className={
-          gated ? 'pointer-events-none select-none blur-xl' : undefined
+          gated ? 'flex h-full flex-col pointer-events-none select-none blur-xl' : 'flex h-full flex-col'
         }
         aria-hidden={gated}
       >
@@ -26,7 +26,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
             alt={`${app.name} app icon`}
             width={72}
             height={72}
-            className="size-16 shrink-0 rounded-2xl border border-border object-cover md:size-[72px]"
+            className="app-icon-preview size-16 shrink-0 rounded-2xl border border-border object-cover md:size-[72px]"
           />
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -60,7 +60,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
           ))}
         </ul>
 
-        <div className="mt-6 flex flex-col gap-4 border-t border-border pt-6">
+        <div className="mt-auto flex flex-col gap-4 border-t border-border pt-6">
           <p className="font-mono text-[0.65rem] tracking-[0.16em] text-muted-foreground uppercase">
             {app.platforms.join(' · ')}
           </p>

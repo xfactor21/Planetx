@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Loader2, X } from 'lucide-react'
+import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
+import { XLetter } from '@/components/x-glyph'
 
 type Step = 'announce' | 'email' | 'thanks'
 
@@ -14,12 +16,17 @@ export function MonsterXAnnouncement() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    // Keep policy and application pages free of unrelated promotional UI.
+    if (['/context/privacy', '/beta'].includes(window.location.pathname)) return
+
     // Show once per browser session, not on every page navigation.
     const alreadyShown = sessionStorage.getItem('monsterx-announcement-shown')
     if (alreadyShown) return
     sessionStorage.setItem('monsterx-announcement-shown', '1')
     setOpen(true)
   }, [])
+
+  useLockBodyScroll(open)
 
   if (!open) return null
 
@@ -143,7 +150,7 @@ export function MonsterXAnnouncement() {
             </h3>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
               MonsterX is coming. The second it&apos;s live, you hear it
-              first — no algorithm, no delay, straight from xFactor.
+              first — no algorithm, no delay, straight from <span className="inline-block whitespace-nowrap"><XLetter />Factor</span>.
             </p>
             <button
               type="button"

@@ -10,13 +10,13 @@ export function ReleasedApps() {
     <section id="new-releases" className="border-b border-border">
       <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-8 md:py-28">
         <SectionHeading
-          eyebrow="Shipped / live now"
-          title="New Releases (Beta)"
-          description="Click an app below to gain access to the BETA before everyone else."
+          eyebrow="Beta access / testing now"
+          title="Apps in Beta"
+          description="Four apps are open for testing. Pick one below to learn more or apply for access."
         />
 
         {hasApps ? (
-          <div className="mt-12 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-2">
 
             {releasedApps.map((app) => (
               <AppCard key={app.id} app={app} />

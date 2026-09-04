@@ -54,8 +54,20 @@ export async function POST(req: Request) {
     )
     .join('')
 
-  const app = releasedApps.find((a) => a.id === appId)
-  const appLink = app?.appUrl
+  // Beta configs can use variant ids (e.g. the three StudyHive roles) that
+  // don't match a releasedApps entry directly — normalize those back to the
+  // real app id so the approval email still includes the right link.
+  const STUDYHIVE_VARIANT_IDS = [
+    'studyhive-student',
+    'studyhive-teacher',
+    'studyhive-tester',
+  ]
+  const normalizedAppId = STUDYHIVE_VARIANT_IDS.includes(appId)
+    ? 'studyhive'
+    : appId
+
+  const app = releasedApps.find((a) => a.id === normalizedAppId)
+  const appLink = app?.appUrl || app?.downloads?.[0]?.href
 
   const approveHtml = appLink
     ? `

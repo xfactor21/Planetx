@@ -147,7 +147,7 @@ export function StudyHiveStory() {
             }
             eyebrow="The social shift"
             heading="Helpfulness is the new flex"
-            body="No likes, no follower counts, no popularity contest. StudyHive replaces the old social hierarchy with one where being useful to someone else is the only way up — status you can't buy, only earn."
+            body="StudyHive isn’t built around follower counts or a popularity contest. Its reputation system gives helpfulness real weight — sharing useful notes, answering questions, and showing up for classmates can become the kind of status you earn rather than buy."
           />
 
           <div className="lg:-mt-32">

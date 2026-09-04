@@ -5,7 +5,6 @@ export type BetaQuestion = {
   options?: string[]
   required?: boolean
 }
-
 export type BetaAppConfig = {
   id: string
   appName: string
@@ -322,8 +321,8 @@ export const STUDYHIVE_TESTER_BETA: BetaAppConfig = {
 }
 
 export const CORTEX_BETA: BetaAppConfig = {
-  id: 'cortex',
-  appName: 'CorteX',
+  id: 'xmemoirs',
+  appName: 'xMemoirs',
   questions: [
     {
       id: 'age-confirm',
@@ -354,7 +353,7 @@ export const CORTEX_BETA: BetaAppConfig = {
     },
     {
       id: 'usage-intent',
-      label: 'What draws you to CorteX specifically? What would you want to use it for?',
+      label: 'What draws you to xMemoirs specifically? What would you want to use it for?',
       type: 'textarea',
       required: true,
     },
@@ -367,7 +366,7 @@ export const CORTEX_BETA: BetaAppConfig = {
     },
     {
       id: 'feature-interest',
-      label: 'Which of these matters most to you in a tool like CorteX?',
+      label: 'Which of these matters most to you in a tool like xMemoirs?',
       type: 'select',
       options: [
         'Privacy / security of my notes',
@@ -396,6 +395,66 @@ export const CORTEX_BETA: BetaAppConfig = {
       id: 'privacy-ack',
       label:
         'I understand this is an early beta, features may be incomplete or unstable, and I will keep any private beta content/screens confidential.',
+      type: 'checkbox',
+      required: true,
+    },
+  ],
+}
+
+export const VOICE_STUDIO_X_BETA: BetaAppConfig = {
+  id: 'voice-studio-x',
+  appName: 'Voice Studio X',
+  questions: [
+    {
+      id: 'device',
+      label: 'What device will you primarily test on?',
+      type: 'select',
+      options: ['iPhone (iOS)', 'Android phone', 'iPad / tablet', 'Desktop browser'],
+      required: true,
+    },
+    {
+      id: 'voice-tools-experience',
+      label: 'Have you used AI voice tools before? If so, which ones?',
+      type: 'text',
+      required: false,
+    },
+    {
+      id: 'feature-interest',
+      label: 'What are you most interested in testing?',
+      type: 'select',
+      options: ['Text to speech', 'Voice changing', 'Voice cloning', 'Singing voices', 'A mix of everything'],
+      required: true,
+    },
+    {
+      id: 'clone-intent',
+      label: 'Would you be willing to test cloning your own voice with clean sample audio?',
+      type: 'select',
+      options: ['Yes', 'Maybe', 'No — I would rather test existing voices'],
+      required: true,
+    },
+    {
+      id: 'usage-intent',
+      label: 'What would you realistically use Voice Studio X for?',
+      type: 'textarea',
+      required: true,
+    },
+    {
+      id: 'availability',
+      label: 'How much time per week can you realistically spend testing and giving feedback?',
+      type: 'select',
+      options: ['Less than 1 hour', '1–3 hours', '3–5 hours', '5+ hours'],
+      required: true,
+    },
+    {
+      id: 'feedback-style',
+      label: 'Are you comfortable reporting bugs and giving direct feedback, including when something is confusing or does not work?',
+      type: 'select',
+      options: ['Yes, very comfortable', 'Somewhat comfortable', 'Not very comfortable'],
+      required: true,
+    },
+    {
+      id: 'privacy-ack',
+      label: 'I understand this is an early beta, features may be incomplete or unstable, and I will keep private beta content/screens confidential.',
       type: 'checkbox',
       required: true,
     },

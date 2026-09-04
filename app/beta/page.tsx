@@ -2,13 +2,15 @@ import { SiteHeader } from '@/components/site-header'
 import { SectionHeading } from '@/components/section-heading'
 import { BetaAppCard } from '@/components/beta-app-card'
 import { SiteFooter } from '@/components/site-footer'
+import { BDXMPresentation } from '@/components/bdxm-presentation'
 import { releasedApps } from '@/lib/data'
-import { BDXM_BETA, CORTEX_BETA } from '@/lib/beta-questions'
+import { BDXM_BETA, CORTEX_BETA, VOICE_STUDIO_X_BETA } from '@/lib/beta-questions'
 
 export default function BetaPage() {
   const bdxm = releasedApps.find((a) => a.id === 'bdxm')
-  const cortex = releasedApps.find((a) => a.id === 'cortex')
+  const xmemoirs = releasedApps.find((a) => a.id === 'xmemoirs')
   const studyhive = releasedApps.find((a) => a.id === 'studyhive')
+  const voiceStudioX = releasedApps.find((a) => a.id === 'voice-studio-x')
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -25,8 +27,8 @@ export default function BetaPage() {
         </section>
 
         <section>
-          <div className="mx-auto w-full max-w-7xl px-4 py-10 md:px-8 md:py-20">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto w-full max-w-6xl px-4 py-10 md:px-8 md:py-20">
+            <div className="relative grid grid-cols-1 gap-x-10 gap-y-10 md:grid-cols-2">
               {studyhive ? (
                 <BetaAppCard
                   id="studyhive"
@@ -39,6 +41,30 @@ export default function BetaPage() {
                   linkHref="/studyhive"
                 />
               ) : null}
+              {xmemoirs ? (
+                <BetaAppCard
+                  id="xmemoirs"
+                  name={xmemoirs.name}
+                  tagline={xmemoirs.tagline}
+                  description={xmemoirs.description}
+                  icon={xmemoirs.icon}
+                  tags={xmemoirs.tags}
+                  screenshots={xmemoirs.screenshots}
+                  config={CORTEX_BETA}
+                />
+              ) : null}
+              {voiceStudioX ? (
+                <BetaAppCard
+                  id="voice-studio-x"
+                  name={voiceStudioX.name}
+                  tagline={voiceStudioX.tagline}
+                  description={voiceStudioX.description}
+                  icon={voiceStudioX.icon}
+                  tags={voiceStudioX.tags}
+                  screenshots={voiceStudioX.screenshots}
+                  config={VOICE_STUDIO_X_BETA}
+                />
+              ) : null}
               {bdxm ? (
                 <BetaAppCard
                   id="bdxm"
@@ -49,23 +75,15 @@ export default function BetaPage() {
                   tags={bdxm.tags}
                   screenshots={bdxm.screenshots}
                   config={BDXM_BETA}
-                />
-              ) : null}
-              {cortex ? (
-                <BetaAppCard
-                  id="cortex"
-                  name={cortex.name}
-                  tagline={cortex.tagline}
-                  description={cortex.description}
-                  icon={cortex.icon}
-                  tags={cortex.tags}
-                  screenshots={cortex.screenshots}
-                  config={CORTEX_BETA}
+                  detailsHref="https://bdxm-beta.vercel.app/beta"
+                  detailsLabel="Tester brief"
                 />
               ) : null}
             </div>
           </div>
         </section>
+
+        <BDXMPresentation />
       </main>
       <SiteFooter />
     </div>

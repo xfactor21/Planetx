@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     'indie apps',
     'app downloads',
     'upcoming apps',
-    'electronic music',
+    'loud music',
     'developer studio',
   ],
   openGraph: {
@@ -44,7 +44,7 @@ export default function RootLayout({
       <body className="antialiased font-sans">
         <MonsterXAnnouncement />
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.VERCEL === '1' && <Analytics />}
       </body>
     </html>
   )

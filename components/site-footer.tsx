@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { XMark } from '@/components/x-mark'
 import { XLetter, withXGlyph } from '@/components/x-glyph'
 const columns = [
@@ -6,6 +7,7 @@ const columns = [
     title: 'Apps',
     links: [
       { label: 'Join Beta Test', href: '/beta' },
+      { label: 'Store', href: '/store' },
       { label: 'Coming Soon', href: '/coming-soon' },
       { label: 'StudyHive', href: '/studyhive' },
       { label: 'About', href: '/about' },
@@ -55,12 +57,21 @@ export function SiteFooter() {
                 <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                   {col.links.map((link) => (
                     <li key={link.label}>
-                      <a
-                        href={link.href}
-                        className="text-foreground/80 transition-colors hover:text-primary"
-                      >
-                        {withXGlyph(link.label, true)}
-                      </a>
+                      {link.href.startsWith('mailto:') ? (
+                        <a
+                          href={link.href}
+                          className="text-foreground/80 transition-colors hover:text-primary"
+                        >
+                          {withXGlyph(link.label, true)}
+                        </a>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className="text-foreground/80 transition-colors hover:text-primary"
+                        >
+                          {withXGlyph(link.label, true)}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -69,7 +80,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border pt-6 font-mono text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development</p>
+          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v10</p>
           <p className="flex items-center gap-2">
             <XMark className="size-4 text-primary" />
             Built in the dark

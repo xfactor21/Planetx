@@ -44,12 +44,11 @@ const PLATFORMS: Platform[] = [
     color: '#3668FF',
     href: 'https://www.pandora.com/artist/xfactor/experiments/ALk9nf69chl2gz6',
   },
-  // No dedicated YouTube Music link yet — points at the YouTube video for now.
   {
     name: 'YouTube Music',
     Icon: YouTubeMusicIcon,
     color: '#FF0000',
-    href: 'https://www.youtube.com/watch?v=qTb5iv7Z824',
+    href: 'https://music.youtube.com/playlist?list=OLAK5uy_nf4CT2njycLaS6bKfKMxVP1sKie9v9k9U&si=GZwc4M6rV-fvdmGr',
   },
   {
     name: 'SoundCloud',

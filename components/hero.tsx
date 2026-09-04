@@ -1,17 +1,20 @@
 import { ArrowDownRight, Play } from 'lucide-react'
 import Image from 'next/image'
-import { XField, XMark } from '@/components/x-mark'
+import { XMark } from '@/components/x-mark'
 import { XLetter } from '@/components/x-glyph'
 import { MusicPlayerEmbed } from '@/components/music-player-embed'
+import { FloatingBrandXs } from '@/components/floating-brand-xs'
+import { CountdownIntro } from '@/components/countdown-intro'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-border">
+      <CountdownIntro />
       <div className="absolute inset-0 x-grid opacity-60" aria-hidden="true" />
-      <XField />
+      <FloatingBrandXs />
       <div
         aria-hidden="true"
-        className="absolute -right-24 -top-24 hidden size-[26rem] opacity-30 md:block"
+        className="absolute right-6 top-6 hidden size-72 opacity-25 md:block lg:right-10 lg:top-10 lg:size-80"
       >
         <Image
           src="/brand/x-mark-grunge.png"
@@ -52,7 +55,7 @@ export function Hero() {
           <span className="inline-block whitespace-nowrap">
             <XLetter />Factor
           </span>{' '}
-          present TOOLS and TUNES for you!
+          are building what I wish already existed.
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:mt-10 sm:flex-row">
@@ -67,7 +70,7 @@ export function Hero() {
             />
           </a>
           <a
-            href="#xfactor-music"
+            href="/music#streaming"
             className="group inline-flex items-center justify-center gap-2 border border-accent px-6 py-4 font-mono text-xs font-bold tracking-[0.18em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <Play className="size-5" aria-hidden="true" />
@@ -75,7 +78,7 @@ export function Hero() {
           </a>
         </div>
 
-        <div className="mt-8 grid gap-10 sm:mt-14 lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-start lg:gap-12">
+        <div className="mt-8 grid gap-10 sm:mt-14 lg:grid-cols-[minmax(0,20rem)_1fr] lg:items-start lg:gap-16">
           <div>
             <div className="mb-3 flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.28em] text-muted-foreground uppercase">
               <XMark className="size-4 text-accent" />
@@ -85,32 +88,40 @@ export function Hero() {
           </div>
 
           <div>
-            <div className="mb-3 flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.28em] text-muted-foreground uppercase">
+            <div className="mb-4 flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.28em] text-muted-foreground uppercase">
               <XMark className="size-4 text-primary" />
               About <XLetter />Factor
             </div>
-            <p className="max-w-2xl leading-relaxed text-[#fff6fd]">
-              <span className="text-lg font-bold text-primary">
-                xFactor started with music.
-              </span>{' '}
-              For a long time, it was a persona, a name attached to songs,
-              sounds, ideas, and an ongoing attempt to put something new
-              into the world. Eventually the persona became an identity,
-              and somewhere along the way the line between the music, the
-              technology, and the person making both started disappearing
-              completely. These days, xFactor might be writing a song five
-              feet away from where he&apos;s writing code, and honestly,
-              there isn&apos;t much difference between the two.{' '}
-              <span className="text-lg font-bold text-accent">
+            <div className="flex max-w-2xl flex-col gap-5 text-lg leading-relaxed text-[#fff6fd] md:text-xl">
+              <p>
+                <span className="text-2xl font-bold text-primary md:text-3xl">
+                  <span className="inline-block whitespace-nowrap"><XLetter />Factor</span> started with music.
+                </span>{' '}
+                For a long time, it was a persona, a name attached to
+                songs, sounds, ideas, and an ongoing attempt to put
+                something new into the world.
+              </p>
+              <p>
+                Eventually the persona became an identity, and somewhere
+                along the way the line between the music, the technology,
+                and the person making both started disappearing
+                completely. These days, <span className="inline-block whitespace-nowrap"><XLetter />Factor</span> might be writing a song
+                five feet away from where he&apos;s writing code, and
+                honestly, there isn&apos;t much difference between the
+                two.
+              </p>
+              <p className="text-2xl font-bold text-accent md:text-3xl">
                 Music is waves. Technology is waves.
-              </span>{' '}
-              Both are about taking something that doesn&apos;t exist yet
-              and shaping it until it does. That&apos;s probably why the
-              same obsession keeps showing up everywhere: make something
-              new, make it yours, and put it into the world. xFactor just
-              happens to have an entirely unreasonable number of things to
-              build. 🎧⚡
-            </p>
+              </p>
+              <p>
+                Both are about taking something that doesn&apos;t exist
+                yet and shaping it until it does. That&apos;s probably why
+                the same obsession keeps showing up everywhere: make
+                something new, make it yours, and put it into the world.
+                <span className="inline-block whitespace-nowrap"><XLetter />Factor</span> just happens to have an entirely unreasonable
+                number of things to build. 🎧⚡
+              </p>
+            </div>
           </div>
         </div>
       </div>

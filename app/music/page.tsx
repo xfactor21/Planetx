@@ -53,7 +53,7 @@ export default function MusicPage() {
                   <XGlyph variant="grunge" />Factor Music
                 </h1>
                 <p className="mt-3 text-muted-foreground">
-                  Late-night electronic records written in the same room as
+                  Late-night loud music written in the same room as
                   the code.
                 </p>
               </div>
@@ -106,7 +106,7 @@ export default function MusicPage() {
           </div>
         </section>
 
-        <section>
+        <section id="streaming" className="scroll-mt-32">
           <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-8 md:py-16">
             <SectionHeading
               eyebrow={

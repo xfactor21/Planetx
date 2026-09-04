@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Check, Loader2, X } from 'lucide-react'
 import type { BetaAppConfig } from '@/lib/beta-questions'
 import { withXGlyph } from '@/components/x-glyph'
+import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
 
 export function BetaApplicationModal({
   config,
@@ -16,6 +17,8 @@ export function BetaApplicationModal({
   const [values, setValues] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+
+  useLockBodyScroll(true)
 
   function setValue(id: string, value: string) {
     setValues((prev) => ({ ...prev, [id]: value }))

@@ -17,9 +17,9 @@ export function SectionHeading({
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
       <div>
         <div
-          className={`flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.28em] uppercase ${accentText}`}
+          className={`flex items-center gap-1.5 font-mono text-[0.7rem] tracking-[0.28em] uppercase ${accentText}`}
         >
-          <XMark className="size-4" />
+          <XMark className="size-6" />
           {eyebrow}
         </div>
         <h2 className="mt-3 text-3xl leading-none font-bold tracking-tight text-balance uppercase sm:mt-4 sm:text-4xl md:text-6xl">

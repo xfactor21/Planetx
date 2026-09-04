@@ -54,9 +54,9 @@ export const releasedApps: ReleasedApp[] = [
   {
     id: 'studyhive',
     name: 'StudyHive',
-    tagline: 'Learn Together. Grow Together.',
+    tagline: 'Bee Yourself. Study With the Swarm.',
     description:
-      'A collaborative study space that brings people together to learn, share, and level up — built for the web, works everywhere.',
+      "The social study app for your actual school — ask for help, share notes, keep up with what’s due, and learn with Buzz, an AI study companion that guides instead of just giving answers.",
     platforms: ['Designed for Mobile — Works Everywhere'],
     icon: '/apps/studyhive.png',
     tags: ['Social Networking', 'Productivity', 'Self-Improvement'],
@@ -64,6 +64,47 @@ export const releasedApps: ReleasedApp[] = [
       { label: 'Launch App', href: 'https://studyhive-a-psi.vercel.app/' },
     ],
     detailHref: '/studyhive',
+    screenshots: [
+      '/screenshots/studyhive/studyhive-1.webp',
+      '/screenshots/studyhive/studyhive-2.webp',
+      '/screenshots/studyhive/studyhive-3.webp',
+    ],
+  },
+  {
+    id: 'xmemoirs',
+    name: 'xMemoirs',
+    tagline: 'Keep the moments that would otherwise disappear.',
+    description:
+      "xMemoirs is a lightweight memory space for capturing notes, photos, videos, audio, and moments as they happen. It keeps your life searchable, explorable, and easy to revisit without turning memory keeping into a chore.",
+    platforms: ['Designed for Mobile — Works Everywhere'],
+    icon: '/apps/xmemoirs-new.png',
+    tags: ['Personal', 'Journaling', 'AI'],
+    downloads: [],
+    betaHref: '/beta#xmemoirs',
+    appUrl: 'https://cortex-ecru-mu.vercel.app/',
+    screenshots: [
+      '/screenshots/xmemoirs/xmemoirs-1.webp',
+      '/screenshots/xmemoirs/xmemoirs-2.webp',
+      '/screenshots/xmemoirs/xmemoirs-3.webp',
+    ],
+  },
+  {
+    id: 'voice-studio-x',
+    name: 'Voice Studio X',
+    tagline: 'Give your words a voice.',
+    description:
+      'Voice Studio X is an AI voice studio for generating speech, changing voices, cloning your own voice, and experimenting with spoken and singing models.',
+    platforms: ['Designed for Mobile — Works Everywhere'],
+    icon: '/apps/voice-studio-x.png',
+    tags: ['Audio', 'Creative Tools', 'AI'],
+    downloads: [],
+    betaHref: '/beta#voice-studio-x',
+    appUrl: 'https://vsx-c6lez4c4v-xfactor21s-projects.vercel.app/',
+    screenshots: [
+      '/screenshots/voice-studio-x/voice-studio-x-1.webp',
+      '/screenshots/voice-studio-x/voice-studio-x-2.webp',
+      '/screenshots/voice-studio-x/voice-studio-x-3.webp',
+    ],
   },
   {
     id: 'bdxm',
@@ -78,46 +119,49 @@ export const releasedApps: ReleasedApp[] = [
     betaHref: '/beta#bdxm',
     appUrl: 'https://bdxm-beta.vercel.app/',
     mature: true,
-  },
-  {
-    id: 'cortex',
-    name: 'CorteX',
-    tagline: 'Your life, remembered intelligently.',
-    description:
-      'CorteX goes far beyond journaling. It captures the moments of your life, understands the context around them, connects the people, places, ideas, sounds, images, and experiences inside them, and turns all of that information into something you can actually explore. Relive your day. Turn memories into stories. Explore your personal neural map. Ask your history questions. Rediscover moments you didn\'t realize you had captured.',
-    platforms: ['Designed for Mobile — Works Everywhere'],
-    icon: '/apps/cortex.png',
-    tags: ['Productivity', 'AI'],
-    downloads: [],
-    betaHref: '/beta#cortex',
-    appUrl: 'https://cortex-ecru-mu.vercel.app/',
+    screenshots: [
+      '/screenshots/bdxm/bdxm-1.webp',
+      '/screenshots/bdxm/bdxm-2.webp',
+      '/screenshots/bdxm/bdxm-3.webp',
+    ],
   },
 ]
 
 // Extended detail content for StudyHive's dedicated page.
 export const studyHiveDetail = {
   name: 'StudyHive',
-  tagline: 'Learn Together. Grow Together.',
+  tagline: 'Bee Yourself. Study With the Swarm.',
   description:
-    'A collaborative study space that brings people together to learn, share, and level up — built for the web, works everywhere.',
+    "StudyHive is the social app built specifically for helping each other with school — verified to your real school, so it’s actually your classmates, not strangers. Ask questions and get real help, build a shared Library of notes and resources, keep track of what’s due with a class calendar, and learn with Buzz, an AI study companion that guides you toward understanding instead of simply handing over the answer. Every bit of help you give can build real, un-buyable reputation through Hunnies, badges, and the standing you earn by contributing.",
   icon: '/apps/studyhive.png',
   tags: ['Social Networking', 'Productivity', 'Self-Improvement'],
   downloads: [
     { label: 'Launch App', href: 'https://studyhive-a-psi.vercel.app/' },
   ],
-  // TODO: fill in with real feature copy
   features: [
     {
-      title: 'Study together',
-      body: 'Placeholder — describe the collaborative study tools here.',
+      title: 'Learn with your actual school',
+      body: "StudyHive is built around verified school identity, so the people answering questions, sharing resources, and showing up in your classes are your real school community — not a random global feed.",
     },
     {
-      title: 'Track progress',
-      body: 'Placeholder — describe progress tracking / rewards here.',
+      title: 'Ask Buzz, then actually learn it',
+      body: "Buzz is an AI study companion designed to teach Socratically: explain the concept, work through examples, and help you get unstuck without simply doing the assignment for you.",
     },
     {
-      title: 'Stay motivated',
-      body: 'Placeholder — describe the social/community hooks here.',
+      title: 'Build the Library together',
+      body: "Upload notes and study resources, find what classmates have shared, and upvote what helps. Teacher uploads can be marked official, turning scattered class material into something the whole school can build on.",
+    },
+    {
+      title: 'Know what’s due',
+      body: "Keep homework, quizzes, tests, study sessions, and class events in one calendar. Classmates can be tagged and RSVP, while teacher-posted dates can appear as official school events.",
+    },
+    {
+      title: 'Earn status by helping',
+      body: "StudyHive flips the usual social-media equation: useful contributions can earn Hunnies, badges, gifts, and profile flair. Hunnies are earned through participation and helping — they aren’t something you can simply buy.",
+    },
+    {
+      title: 'Show up without performing',
+      body: "Presence states let students signal things like heads-down, out sick, free period, or a rough day. The goal is a school network where being useful and being noticed can finally mean the same thing.",
     },
   ],
 }
@@ -128,7 +172,7 @@ export const upcomingApps: UpcomingApp[] = [
     name: 'xOS',
     tagline: 'Your digital world, built around you.',
     description:
-      "xOS is a different way of thinking about what an operating system can be. Instead of making you adapt to your computer, we're exploring a system that adapts to you, your projects, your tools, your ideas, and the way you actually work. It's part operating system, part intelligent workspace, and part digital universe. We're still figuring out exactly where the boundaries are, which is probably a good sign.",
+      "xOS explores what comes after the traditional desktop: a more connected system built around your projects, tools, ideas, and workflows instead of forcing you to adapt to the machine.",
     longDescription:
       "xOS started with a simple question: what if an operating system didn't have to feel like an operating system? Instead of building another collection of windows, folders, menus, and applications, xOS explores a more connected digital environment where your work, information, tools, AI, and creative projects can exist together as parts of one larger system.\n\nThe idea is to make the computer feel less like a machine you operate and more like an environment you inhabit. Your projects become places. Your information becomes connected. Your tools become part of a larger workflow. And the system itself becomes something that can understand context rather than simply waiting for you to tell it exactly what to do.\n\nxOS is ambitious by design. Some of its ideas are experimental, some are still being figured out, and some may completely change before we get there. But that's what makes building it interesting. We're not trying to make a slightly prettier version of something that already exists.\n\nWe're asking what comes after the desktop.",
     status: 'In development',
@@ -136,13 +180,18 @@ export const upcomingApps: UpcomingApp[] = [
     eta: 'TBA',
     tags: ['Systems', 'Platform'],
     icon: '/apps/xos.png',
+    screenshots: [
+      '/screenshots/xos/xos-1.webp',
+      '/screenshots/xos/xos-2.webp',
+      '/screenshots/xos/xos-3.webp',
+    ],
   },
   {
     id: 'xide',
     name: 'xIDE',
     tagline: 'A full development environment. In your pocket.',
     description:
-      "xIDE is a mobile development environment built for people who don't want to wait until they're sitting at a computer to build something. It gives you a real coding workspace, terminal, project tools, previews, and the power to actually develop on your phone. And we're trying something most people will tell you can't be done: one mobile IDE that can handle multiple modern app stacks instead of locking you into one ecosystem.",
+      "xIDE is a serious mobile development environment with a real code workspace, terminal, project tools, previews, and support for building modern apps directly from your phone.",
     longDescription:
       "xIDE is a mobile IDE built around a pretty straightforward idea: your phone is already a computer, so why shouldn't you be able to actually develop on it? We're bringing together a serious code editor, project management, terminal, build tools, previews, and development workflows into a workspace designed specifically for mobile.\n\nBut the really ambitious part is what happens underneath. xIDE isn't being built just to support one particular kind of project. We're pushing toward an environment capable of working across different modern development stacks, including Capacitor-based applications, Expo projects, Vite applications, and more, all from the same IDE. That's a deceptively difficult problem, which is precisely why we're interested in it.\n\nThe goal isn't to recreate a desktop IDE on a tiny screen with fourteen panels squeezed into oblivion. It's to take the power of a serious development environment and rethink the experience so it's lighter, cleaner, less confusing, and actually pleasant to use on a phone.\n\nBecause sometimes the best place to build something isn't your desk. It's wherever the idea happens.",
     status: 'In development',
@@ -150,6 +199,11 @@ export const upcomingApps: UpcomingApp[] = [
     eta: 'TBA',
     tags: ['Developer Tools', 'Productivity'],
     icon: '/apps/xide.png',
+    screenshots: [
+      '/screenshots/xide/xide-1.webp',
+      '/screenshots/xide/xide-2.webp',
+      '/screenshots/xide/xide-3.webp',
+    ],
   },
   {
     id: 'xforge',
@@ -170,7 +224,7 @@ export const upcomingApps: UpcomingApp[] = [
     name: 'xForge Jr',
     tagline: 'Learn how games work by making them.',
     description:
-      'xForge Jr. began with a very simple experiment: show a kid a game-making tool and see what happens. The answer was basically, "Wait... I can make this?" Built for younger creators, xForge Jr. turns game development into a hands-on learning experience with playable projects, guided lessons, visual tools, characters, and experiments that teach concepts like gravity, variables, logic, and game mechanics by letting kids actually mess with them.',
+      'xForge Jr. is a kid-friendly game-building experience with playable projects, guided lessons, and visual tools that teach things like gravity, logic, variables, and game mechanics by letting kids actually experiment.',
     longDescription:
       'xForge Jr. exists because of a nine-year-old who saw what we were building with xForge and immediately started getting involved. Instead of simply telling her how it worked, we wondered what would happen if we made something specifically for her. So we built a different experience.\n\nxForge Jr. keeps many of the underlying ideas that make xForge fun, including character creation and game systems, but wraps them in a much more approachable, colorful, kid-focused environment. Rather than dropping a giant empty editor in front of a child and saying "good luck," Jr. comes with games already inside it. Players can jump into experiences such as arcade-style games and then start changing things themselves.\n\nThat\'s where the learning happens.\n\nChange the gravity. See what happens. Adjust a variable. Break the game. Fix it. Change something else. Suddenly concepts like physics, logic, systems, variables, and cause-and-effect aren\'t abstract computer science vocabulary anymore. They\'re things you can touch.\n\nxForge Jr. isn\'t designed to turn kids into miniature software engineers. It\'s designed to let them discover that they can build things.',
     status: 'Planned',
@@ -180,69 +234,63 @@ export const upcomingApps: UpcomingApp[] = [
     icon: '/apps/xforge-jr.png',
   },
   {
-    id: 'voice-studio-x',
-    name: 'Voice Studio X',
-    tagline: 'Give your words a voice.',
-    description:
-      'Voice Studio X is a streamlined AI voice creation studio for generating, cloning, customizing, and working with synthetic voices without turning the experience into a maze of menus and subscriptions. Create voices, experiment with them, and put them to work in everything from narration and characters to music and creative projects. And yes, there will even be an xFactor voice in the studio for you to play with.',
-    longDescription:
-      "Voice Studio X is an AI voice studio built around a simple philosophy: the technology should get out of your way. We're focusing on voice creation, cloning, generation, manipulation, and practical creative workflows without loading the experience down with every feature imaginable just because we technically can.\n\nThat means familiar tools, but with a cleaner workflow. Create or clone a voice. Generate speech. Experiment with it. Use it in your projects. And when you want to do something more involved, we're looking at ways to collapse multi-step processes into something much simpler. Instead of taking several separate tools and workflows to accomplish one creative task, Voice Studio X is designed to bring those steps together.\n\nWe're also aiming to make the service substantially more approachable from a pricing standpoint. You'll be able to explore and use a meaningful portion of the experience before the paywall becomes the main character.\n\nAnd because apparently one human voice wasn't enough, xFactor himself is getting a voice. You'll be able to play with it, manipulate it, and make it say things that probably should have remained unsaid.",
-    status: 'In development',
-    progress: 95,
-    eta: 'TBA',
-    tags: ['Audio', 'Creative Tools'],
-    icon: '/apps/voice-studio-x.png',
-  },
-  {
-    id: 'xmemoirs',
-    name: 'xMemoirs',
-    tagline: 'Keep the moments that would otherwise disappear.',
-    description:
-      "xMemoirs is a lightweight personal memory space for capturing the little pieces of your life as they happen. Notes, photos, videos, audio, thoughts, moments, and memories can all become part of a personal archive that you can search, explore, and revisit. It's intentionally simple. No giant learning curve. No digital filing cabinet from hell. Just a fast, intelligent place to keep your life.",
-    longDescription:
-      "Most of life isn't made up of major events. It's made up of tiny moments you don't think you'll forget until, eventually, you do. A conversation. Something your kid said. A random Tuesday afternoon. A ten-second video. A thought you had while driving. A voice you haven't heard in years.\n\nxMemoirs is designed to give those moments somewhere to live. Capture them however feels natural, whether that's writing, audio, video, photos, or quick notes. The system can organize and categorize what you save so that later you can actually find it again. Instead of forcing you to maintain a complicated digital archive, the intelligence works quietly in the background.\n\nxMemoirs shares the same core philosophy as its bigger sibling, CorteX, but deliberately leaves out much of the machinery. It's faster, lighter, easier to understand, and designed for people who want the benefits of intelligent memory without needing to learn an entire system.\n\nCapture life. Keep it. Come back to it.",
-    status: 'In development',
-    progress: 85,
-    eta: 'TBA',
-    tags: ['Personal', 'Journaling'],
-    icon: '/apps/xmemoirs-new.png',
-  },
-  {
     id: 'xfactor-os',
     name: 'xFactor.OS',
     tagline: 'The operating layer for everything xFactor builds.',
     description:
-      'Placeholder description — details on xFactor.OS coming soon. Check back for updates as development progresses.',
+      'xFactor.OS is the connective operating layer behind the xFactor universe — a shared home for music, media, tools, ideas, and the systems that tie them together.',
+    longDescription:
+      "xFactor.OS is an experiment in turning the xFactor creative universe into something you can actually move through. Music, media, tools, releases, experiments, and future experiences do not have to live as disconnected pages and applications. The idea is to give them a shared operating layer and a common home.\n\nIt is still early, and the exact shape is intentionally evolving with the projects around it. What matters is the direction: less jumping between disconnected pieces, more context, continuity, and personality across the entire xFactor ecosystem.\n\nThink of it less as another app and more as the interface around a creative world that keeps expanding.",
     status: 'In development',
     progress: 20,
     eta: 'TBA',
     tags: ['Systems', 'Platform'],
     icon: '/apps/xfactor-os.png',
+    screenshots: [
+      '/screenshots/xfactor-os/xfactor-os-1.webp',
+      '/screenshots/xfactor-os/xfactor-os-2.webp',
+      '/screenshots/xfactor-os/xfactor-os-3.webp',
+    ],
   },
   {
     id: 'project-x',
     name: 'project.X',
-    tagline: 'Still under wraps.',
+    tagline: 'Your developer universe. One command center.',
     description:
-      'Placeholder description — details on project.X coming soon. Check back for updates as development progresses.',
+      'project.X is a visual developer command center that brings projects, repositories, deployments, notes, local files, and cloud state together so you can instantly see what you are building and what needs attention next.',
+    longDescription:
+      "GitHub knows about your code. Vercel knows about your deployments. Your computer knows about your local files. Your notes know why the project exists. But none of those tools understands the entire project. project.X is being built to become the layer that does.\n\nOpen it and your development universe is visible at once: what is actively building, what changed recently, what has gone untouched, which repositories and deployments are connected, and where you left off. Filter down to what you are shipping, favorite the projects that matter most, attach the context you normally lose between tools, and switch between practical and visual ways of seeing the same workspace.\n\nThe larger goal is not to replace GitHub, Vercel, your IDE, your filesystem, or your notes. It is to understand the project state spread across them and turn it into one coherent picture — eventually helping answer the question every developer with too many projects asks: what needs my attention next?",
     status: 'In development',
     progress: 15,
     eta: 'TBA',
-    tags: ['Unannounced'],
-    icon: '/placeholder.svg',
+    tags: ['Developer Tools', 'Productivity'],
+    icon: '/apps/project-x.png',
+    screenshots: [
+      '/screenshots/project-x/project-x-1.webp',
+      '/screenshots/project-x/project-x-2.webp',
+      '/screenshots/project-x/project-x-3.webp',
+    ],
   },
   {
-    id: 'x95',
-    name: 'x95',
-    tagline: 'Placeholder tagline — coming soon.',
+    id: 'hubx',
+    name: 'HubX',
+    tagline: 'Curated local AI tools. One honest guide.',
     description:
-      'Placeholder description — details on x95 coming soon. Check back for updates as development progresses.',
-    status: 'In development',
-    progress: 25,
+      'HubX is a practical catalog of open-source AI projects that helps you find the right tool, open its verified source or setup path, and register it locally once it is actually installed.',
+    longDescription:
+      "HubX is built for the part of local AI that usually gets messy: finding a useful project, figuring out what it really takes to run, and remembering where you installed it. It organizes open-source AI tools across assistants, image generation, video, agents, coding, research, audio, automation, and more while clearly distinguishing an official download from a framework, model repository, self-hosted app, or source-only project.\n\nThe point is not to pretend every project is one-click installable. HubX is deliberately honest about setup. When a tool has a proper installer, it points you there. When it needs Python, Docker, model weights, a GPU, or a local server, it tells you. Once the project is actually installed, HubX can register the local executable, script, or URL so your local AI toolbox becomes something you can actually navigate and launch.\n\nFind it. Set it up correctly. Register it. Stop hunting through bookmarks and old terminal history.",
+    status: 'Preview',
+    progress: 85,
     eta: 'TBA',
-    tags: ['Unannounced'],
-    icon: '/placeholder.svg',
+    tags: ['AI', 'Local Tools', 'Open Source'],
+    icon: '/apps/hubx.png',
+    screenshots: [
+      '/screenshots/hubx/hubx-1.webp',
+      '/screenshots/hubx/hubx-2.webp',
+      '/screenshots/hubx/hubx-3.webp',
+    ],
   },
+
   {
     id: 'xdash',
     name: 'xDash',
@@ -256,54 +304,72 @@ export const upcomingApps: UpcomingApp[] = [
     eta: 'TBA',
     tags: ['Productivity'],
     icon: '/apps/xdash.png',
+    screenshots: [
+      '/screenshots/xdash/xdash-1.webp',
+      '/screenshots/xdash/xdash-2.webp',
+      '/screenshots/xdash/xdash-3.webp',
+    ],
+  },
+  {
+    id: 'xconnect',
+    name: 'xConnect',
+    tagline: 'Apps are not the future. Capabilities are.',
+    description:
+      'xConnect is a universal integration and automation layer that lets apps and AI discover capabilities, choose the right provider, enforce permissions, and execute real actions without rebuilding integrations from scratch.',
+    longDescription:
+      'Most software integrations are built one app at a time: connect GitHub here, wire Vercel there, add another API somewhere else, then repeat the same work in the next product. xConnect takes a different approach. It treats those integrations as reusable capabilities that can be discovered, permissioned, combined, and executed.\n\nThat means a product like project.X can ask what actions are available for a project, let xConnect find the right provider, execute the action, and return the result. The same capability layer can eventually serve other applications and AI agents without forcing each one to become its own integration platform.\n\nxConnect is the nervous system: providers, permissions, workflows, execution, approvals, and history behind the experiences built on top of it.',
+    status: 'In development',
+    progress: 50,
+    eta: 'TBA',
+    tags: ['Developer Tools', 'Automation', 'Infrastructure'],
+    icon: '/apps/xconnect.png',
   },
   {
     id: 'xworld',
     name: 'xWorld',
-    tagline: 'A game. Still taking shape.',
+    tagline: 'Seven worlds. One truth. Remember who you are.',
     description:
-      'Placeholder description — xWorld is early and still being defined. Check back for updates as development progresses.',
+      'Built in Unreal Engine 5, xWorld is a story-driven game about xFactor traveling through seven worlds to escape a simulation, recover his memories, and fulfill his destiny.',
+    longDescription:
+      "xFactor knows his world is not real. What he does not know is why he is trapped there — or who he was before the simulation took hold.\n\nxWorld follows his journey across seven worlds, each pushing him closer to the memories, truths, and purpose that have been stripped away. The worlds are not just levels to clear; they are pieces of a larger mystery about identity, reality, and the destiny he is being pulled toward.\n\nBuilt with Unreal Engine 5, xWorld is intended to bring the xFactor universe into an interactive form: part adventure, part mystery, part digital mythology. The destination is escape. The real journey is remembering why he needs to escape in the first place.",
     status: 'Concept',
     progress: 5,
     eta: 'TBA',
     tags: ['Game'],
-    icon: '/placeholder.svg',
+    icon: '/apps/xworld.png',
   },
   {
-    id: 'commonx',
-    name: 'commonX',
-    tagline: 'Placeholder tagline — coming soon.',
+    id: 'one-x',
+    name: 'ONE.X',
+    tagline: 'Dating, one person at a time.',
     description:
-      'Placeholder description — details on commonX coming soon. Check back for updates as development progresses.',
+      'ONE.X is dating without the endless feed — fewer, more meaningful introductions powered by compatibility and deliberate limits so you actually focus on the person in front of you.',
+    longDescription:
+      "Most dating apps are designed around abundance: more profiles, more swipes, more matches, more reasons to keep looking. ONE.X starts with the opposite idea. What if better dating came from having less to browse and more reason to pay attention?\n\nCompatibility is built progressively through the things that reveal who you actually are — questions, preferences, challenges, writing, voice, and other signals that can say more than a few photos and a bio. Introductions are intentionally limited. Conversation bandwidth is intentionally limited. The point is not to collect matches; it is to give one promising connection enough room to become something real.\n\nONE.X is not trying to make dating slower for the sake of being difficult. It is trying to remove the casino: the endless feed, the constant comparison, and the feeling that somebody better might be one swipe away. Fewer people. Better context. One person at a time.",
     status: 'In development',
     progress: 15,
     eta: 'TBA',
-    tags: ['Unannounced'],
-    icon: '/placeholder.svg',
-  },
-  {
-    id: 'prixm',
-    name: 'priXm',
-    tagline: 'Placeholder tagline — coming soon.',
-    description:
-      'Placeholder description — details on priXm coming soon. Check back for updates as development progresses.',
-    status: 'In development',
-    progress: 10,
-    eta: 'TBA',
-    tags: ['Unannounced'],
-    icon: '/placeholder.svg',
+    tags: ['Dating', 'Compatibility'],
+    icon: '/apps/one-x.png',
+    screenshots: [
+      '/screenshots/one-x/one-x-1.webp',
+      '/screenshots/one-x/one-x-2.webp',
+      '/screenshots/one-x/one-x-3.webp',
+    ],
   },
   {
     id: 'context-key',
     name: 'conteXt Key',
-    tagline: 'Placeholder tagline — coming soon.',
+    tagline: 'Your secrets should not disappear after creation.',
     description:
-      'Placeholder description — details on conteXt Key coming soon. Check back for updates as development progresses.',
+      'conteXt Key is a secure developer vault for API keys, tokens, secrets, IDs, and environment values, keeping the sensitive pieces your projects depend on organized and easy to find when you need them.',
+    longDescription:
+      "Developers constantly create credentials that may only be shown once: API keys, access tokens, signing secrets, service IDs, environment values, and other pieces of configuration that become painful to recover after the fact. conteXt Key is being built as a dedicated, secure place to keep that information organized by the project and service it belongs to.\n\nInstead of scattering secrets across notes, screenshots, .env files, dashboards, and forgotten password-manager entries, conteXt Key gives development credentials a home designed around their actual context. The goal is simple: know what a key belongs to, where it is used, and how to find it when the project needs it again.\n\nLonger term, tools such as xConnect may be able to handle more of this connection and credential flow automatically. conteXt Key remains the deliberate vault: the place where the sensitive building blocks of your development ecosystem can be stored and understood.",
     status: 'In development',
     progress: 10,
     eta: 'TBA',
-    tags: ['Unannounced'],
-    icon: '/placeholder.svg',
+    tags: ['Developer Tools', 'Security', 'Credentials'],
+    icon: '/apps/context-key.png',
   },
 ]
 

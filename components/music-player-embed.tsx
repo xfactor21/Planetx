@@ -2,7 +2,13 @@ import { GlowPlayer } from '@/components/glow-player'
 import type { PlayerTrack } from '@/components/glow-player'
 
 const tracks: PlayerTrack[] = [
-  { id: 'glitch-god', title: 'Glitch God', artist: 'xFactor', src: '/music-tracks/glitch-god.mp3' },
+  {
+    id: 'glitch-god',
+    title: 'Glitch God',
+    artist: 'xFactor',
+    src: '/music-tracks/glitch-god.mp3',
+    cover: '/music-tracks/glitch-god-cover.png',
+  },
   {
     id: 'letters-to-myself',
     title: 'Letters to Myself',
@@ -24,12 +30,13 @@ const tracks: PlayerTrack[] = [
 ]
 
 /**
- * Small glow-styled player embedded in the Hero. No autoplay.
+ * Square glow-styled player, featured on the main page hero. Shows large
+ * cover art per track. No autoplay.
  */
 export function MusicPlayerEmbed() {
   return (
-    <div className="mx-auto w-full max-w-sm">
-      <GlowPlayer tracks={tracks} compact />
+    <div className="mx-auto w-full max-w-xs">
+      <GlowPlayer tracks={tracks} square />
     </div>
   )
 }

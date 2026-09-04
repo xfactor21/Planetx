@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import { Download, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
 import { withXGlyph } from '@/components/x-glyph'
 
@@ -9,6 +10,8 @@ export type PlayerTrack = {
   title: string
   artist: string
   src: string
+  /** Optional album/cover art shown in the square player variant. */
+  cover?: string
 }
 
 function formatTime(seconds: number) {
@@ -26,9 +29,12 @@ function formatTime(seconds: number) {
 export function GlowPlayer({
   tracks,
   compact = false,
+  square = false,
 }: {
   tracks: PlayerTrack[]
   compact?: boolean
+  /** Bigger, square layout with large cover art up top. For a featured spot on the main page. */
+  square?: boolean
 }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [trackIndex, setTrackIndex] = useState(0)
@@ -38,6 +44,33 @@ export function GlowPlayer({
   const [selected, setSelected] = useState<Set<string>>(new Set())
 
   const track = tracks[trackIndex]
+
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const armMusic = () => {
+      // Keep playback tied to the initial user gesture, but silent until the
+      // countdown completes. Rewinding on start means Glitch God still begins
+      // from 0:00 when the overlay disappears.
+      audio.currentTime = 0
+      audio.muted = true
+      void audio.play().then(() => setIsPlaying(true)).catch(() => {})
+    }
+
+    const startMusic = () => {
+      audio.currentTime = 0
+      audio.muted = false
+      void audio.play().then(() => setIsPlaying(true)).catch(() => {})
+    }
+
+    window.addEventListener('planetx:arm-music', armMusic)
+    window.addEventListener('planetx:start-music', startMusic)
+    return () => {
+      window.removeEventListener('planetx:arm-music', armMusic)
+      window.removeEventListener('planetx:start-music', startMusic)
+    }
+  }, [])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -143,6 +176,47 @@ export function GlowPlayer({
         }}
       />
       <audio ref={audioRef} src={track.src} preload="metadata" />
+
+      {square ? (
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={`${isPlaying ? 'Pause' : 'Play'} ${track.title}`}
+          className="group relative mb-4 block aspect-square w-full cursor-pointer overflow-hidden rounded-xl border text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          style={{ borderColor: 'rgba(255,46,159,.25)' }}
+        >
+          {track.cover ? (
+            <Image
+              src={track.cover}
+              alt={`${track.title} cover art`}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.015]"
+            />
+          ) : (
+            <div
+              className="flex size-full items-center justify-center"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(255,46,159,.25), rgba(0,245,255,.2))',
+              }}
+            >
+              <Play className="size-16 text-white/30" fill="currentColor" aria-hidden="true" />
+            </div>
+          )}
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/25 group-focus-visible:bg-black/25"
+          >
+            <span className="flex size-14 items-center justify-center rounded-full bg-black/55 text-white opacity-0 shadow-[0_0_24px_rgba(255,46,159,.45)] backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+              {isPlaying ? (
+                <Pause className="size-6" fill="currentColor" />
+              ) : (
+                <Play className="ml-0.5 size-6" fill="currentColor" />
+              )}
+            </span>
+          </span>
+        </button>
+      ) : null}
 
       <div className="relative flex items-center gap-3">
         <div className="min-w-0 flex-1">

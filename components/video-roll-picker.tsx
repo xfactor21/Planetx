@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { Play } from 'lucide-react'
 
 export type ChannelVideo = {
@@ -8,37 +7,35 @@ export type ChannelVideo = {
   thumbnail: string
 }
 
-// TODO: replace with real videos from the channel (same one the featured
-// video lives on). Each id is a YouTube video ID.
-const PLACEHOLDER_VIDEOS: ChannelVideo[] = [
+const CHANNEL_VIDEOS: ChannelVideo[] = [
   {
-    id: 'placeholder-1',
-    title: 'Track name here',
-    description: 'One-line description of the video.',
+    id: 'yMucMkai5r8',
+    title: 'Watch on YouTube',
+    description: 'xFactor video',
     thumbnail: '',
   },
   {
-    id: 'placeholder-2',
-    title: 'Track name here',
-    description: 'One-line description of the video.',
+    id: 'bfvcdi6TejI',
+    title: 'Watch on YouTube',
+    description: 'xFactor video',
     thumbnail: '',
   },
   {
-    id: 'placeholder-3',
-    title: 'Track name here',
-    description: 'One-line description of the video.',
+    id: '9OuzuzKyoLg',
+    title: 'Watch on YouTube',
+    description: 'xFactor video',
     thumbnail: '',
   },
   {
-    id: 'placeholder-4',
-    title: 'Track name here',
-    description: 'One-line description of the video.',
+    id: 'rIcOPyc4080',
+    title: 'Watch on YouTube',
+    description: 'xFactor video',
     thumbnail: '',
   },
 ]
 
 export function VideoRollPicker({
-  videos = PLACEHOLDER_VIDEOS,
+  videos = CHANNEL_VIDEOS,
 }: {
   videos?: ChannelVideo[]
 }) {
@@ -56,24 +53,21 @@ export function VideoRollPicker({
               href={`https://www.youtube.com/watch?v=${video.id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-white/5"
+              className="group flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-white/5"
             >
               <div className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-black/60">
-                {video.thumbnail ? (
-                  <Image
-                    src={video.thumbnail}
-                    alt={video.title}
-                    width={96}
-                    height={96}
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  <Play
-                    className="size-4 text-muted-foreground"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  />
-                )}
+                <img
+                  src={video.thumbnail || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+                  alt={video.title}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/15 opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  <Play className="size-4 text-white" fill="currentColor" />
+                </span>
               </div>
               <div className="min-w-0">
                 <p className="truncate text-xs font-bold uppercase tracking-tight text-foreground/90">

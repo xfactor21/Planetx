@@ -1,0 +1,19 @@
+{
+  "products": 12,
+  "titles": 12,
+  "checkouts": 6,
+  "pending": 6,
+  "galleries": 36,
+  "brokenImages": [],
+  "filters": {
+    "Software": 2,
+    "Audio & FX": 3,
+    "Creator Resources": 7,
+    "All": 12
+  },
+  "versionVisible": true,
+  "mobileOverflow": false,
+  "consoleErrors": [],
+  "failedRequests": [],
+  "failures": []
+}

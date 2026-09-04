@@ -14,6 +14,17 @@ export default function Page() {
       <SiteHeader />
       <main>
         <Hero />
+        <section aria-label="planet.X banner" className="border-b border-border bg-black">
+          <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
+            <div className="overflow-hidden border border-border bg-card shadow-[0_0_30px_-18px_rgba(0,245,255,.45)]">
+              <img
+                src="/brand/planet-x-blinking-banner.gif"
+                alt="planet.X — music and development"
+                className="block h-auto w-full"
+              />
+            </div>
+          </div>
+        </section>
         <XMarquee />
         <ReleasedApps />
         <UpcomingApps />

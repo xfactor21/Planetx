@@ -21,10 +21,10 @@ export function XMarquee() {
         {loop.map((item, i) => (
           <span
             key={`${item}-${i}`}
-            className="flex items-center gap-6 font-mono text-xs font-bold tracking-[0.24em] whitespace-nowrap uppercase"
+            className="flex items-center gap-1.5 font-mono text-xs font-bold tracking-[0.24em] whitespace-nowrap uppercase"
           >
             {item}
-            <XMark className="size-4" />
+            <XMark className="size-6" />
           </span>
         ))}
       </div>

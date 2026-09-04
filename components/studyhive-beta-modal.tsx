@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { BetaApplicationModal } from '@/components/beta-application-modal'
+import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
 import {
   STUDYHIVE_STUDENT_BETA,
   STUDYHIVE_TEACHER_BETA,
@@ -19,6 +20,8 @@ const ROLE_CONFIG = {
 
 export function StudyHiveBetaModal({ onClose }: { onClose: () => void }) {
   const [role, setRole] = useState<Role | null>(null)
+
+  useLockBodyScroll(true)
 
   if (role) {
     return (

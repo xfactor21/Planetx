@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageIcon } from 'lucide-react'
+import { ImageIcon, X } from 'lucide-react'
 import { BetaApplicationModal } from '@/components/beta-application-modal'
 import { withXGlyph } from '@/components/x-glyph'
 import type { BetaAppConfig } from '@/lib/beta-questions'
@@ -18,6 +18,8 @@ export function BetaAppCard({
   screenshots,
   config,
   linkHref,
+  detailsHref,
+  detailsLabel = 'Learn more',
   buttonLabel = 'Join Beta',
 }: {
   id?: string
@@ -31,14 +33,27 @@ export function BetaAppCard({
   config?: BetaAppConfig
   /** When set instead of config, the button becomes a plain link to this URL. */
   linkHref?: string
+  /** Optional supporting page shown alongside the application action. */
+  detailsHref?: string
+  detailsLabel?: string
   buttonLabel?: string
 }) {
   const [open, setOpen] = useState(false)
+  const [zoomed, setZoomed] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!id || !config) return
+
+    const requestedApp = new URLSearchParams(window.location.search).get('apply')
+    if (requestedApp === id) {
+      setOpen(true)
+    }
+  }, [config, id])
 
   return (
     <div
       id={id}
-      className="flex scroll-mt-24 flex-col gap-4 border border-border bg-card p-5 sm:gap-6 sm:p-8 md:p-10"
+      className="flex h-full scroll-mt-24 flex-col gap-4 border border-border bg-card p-5 sm:gap-6 sm:p-8 md:p-10"
     >
       <div className="flex items-start gap-4">
         <Image
@@ -46,7 +61,7 @@ export function BetaAppCard({
           alt={`${name} icon`}
           width={64}
           height={64}
-          className="size-16 shrink-0 rounded-2xl border border-border object-cover"
+          className="size-16 shrink-0 rounded-2xl border border-border object-contain bg-background/70"
         />
         <div>
           <h3 className="text-2xl font-bold tracking-tight uppercase">{withXGlyph(name)}</h3>
@@ -68,14 +83,21 @@ export function BetaAppCard({
             .slice(0, 3)
             .map((src, i) =>
               src ? (
-                <Image
+                <button
                   key={src}
-                  src={src}
-                  alt={`${name} screenshot ${i + 1}`}
-                  width={200}
-                  height={360}
-                  className="aspect-[9/16] w-full rounded-md border border-border object-cover"
-                />
+                  type="button"
+                  onClick={() => setZoomed(src)}
+                  className="beta-screenshot-preview relative aspect-[9/16] w-full overflow-hidden rounded-md border border-border bg-background/70"
+                  aria-label={`Open ${name} screenshot ${i + 1}`}
+                >
+                  <Image
+                    src={src}
+                    alt={`${name} screenshot ${i + 1}`}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 30vw, 14vw"
+                  />
+                </button>
               ) : (
                 <div
                   key={i}
@@ -102,22 +124,52 @@ export function BetaAppCard({
         ))}
       </ul>
 
-      {linkHref ? (
-        <Link
-          href={linkHref}
-          className="mt-auto w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
+      <div className="mt-auto flex flex-wrap items-center gap-4">
+        {linkHref ? (
+          <Link
+            href={linkHref}
+            className="w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            {buttonLabel}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            {buttonLabel}
+          </button>
+        )}
+        {detailsHref ? (
+          <Link
+            href={detailsHref}
+            className="font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+          >
+            {detailsLabel}
+          </Link>
+        ) : null}
+      </div>
+
+
+      {zoomed ? (
+        <div
+          className="fixed inset-0 z-[100] grid place-items-center bg-black/90 p-4 backdrop-blur-md"
+          onClick={() => setZoomed(null)}
         >
-          {buttonLabel}
-        </Link>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="mt-auto w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
-        >
-          {buttonLabel}
-        </button>
-      )}
+          <button
+            type="button"
+            aria-label="Close screenshot"
+            className="absolute right-5 top-5 rounded-full border border-white/20 bg-black/60 p-3 text-white hover:border-primary hover:text-primary"
+            onClick={() => setZoomed(null)}
+          >
+            <X className="size-6" />
+          </button>
+          <div className="relative h-[88vh] w-full max-w-[42rem]" onClick={(e) => e.stopPropagation()}>
+            <Image src={zoomed} alt={`${name} expanded screenshot`} fill className="object-contain" sizes="100vw" />
+          </div>
+        </div>
+      ) : null}
 
       {open && config ? (
         <BetaApplicationModal config={config} onClose={() => setOpen(false)} />

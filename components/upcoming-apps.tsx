@@ -60,7 +60,7 @@ export function UpcomingApps({
                         alt={`${app.name} icon`}
                         width={64}
                         height={64}
-                        className="size-14 shrink-0 rounded-xl border border-border object-cover"
+                        className="app-icon-preview size-14 shrink-0 rounded-xl border border-border object-contain bg-background/70"
                       />
                       <div>
                         <h3 className="text-2xl font-bold tracking-tight uppercase">
@@ -72,11 +72,9 @@ export function UpcomingApps({
                       </div>
                     </div>
 
-                    {isFull ? (
-                      <p className="leading-relaxed text-muted-foreground whitespace-pre-line">
-                        {app.longDescription || app.description}
-                      </p>
-                    ) : null}
+                    <p className={`leading-relaxed ${isFull ? 'text-muted-foreground whitespace-pre-line' : 'text-foreground/85'}`}>
+                      {isFull ? app.longDescription || app.description : app.description}
+                    </p>
 
                     {isFull ? (
                       <div>
@@ -97,7 +95,7 @@ export function UpcomingApps({
                                   alt={`${app.name} screenshot ${i + 1}`}
                                   width={200}
                                   height={360}
-                                  className="aspect-[9/16] w-full rounded-md border border-border object-cover"
+                                  className="aspect-[9/16] w-full rounded-md border border-border object-contain bg-background/70"
                                 />
                               ) : (
                                 <div
