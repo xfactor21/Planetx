@@ -1,5 +1,3 @@
-import { XFACTOR_SPRITE_DATA_URI } from '@/lib/xfactor-sprite'
-
 export const XFACTOR_STATES = {
   idle: { row: 0, frames: 6, durations: [280, 110, 110, 140, 140, 320] },
   'running-right': { row: 1, frames: 8, durations: [120, 120, 120, 120, 120, 120, 120, 220] },
@@ -24,10 +22,10 @@ export interface XFactorPetOptions {
   reducedMotion?: boolean
 }
 
-const CELL_WIDTH = 96
-const CELL_HEIGHT = 104
-const SHEET_WIDTH = 768
-const SHEET_HEIGHT = 1144
+const CELL_WIDTH = 48
+const CELL_HEIGHT = 52
+const SHEET_WIDTH = 384
+const SHEET_HEIGHT = 572
 
 export class XFactorPetEngine {
   private target: Element
@@ -44,7 +42,7 @@ export class XFactorPetEngine {
   constructor(target: Element, options: XFactorPetOptions = {}) {
     this.target = target
     this.options = {
-      spriteUrl: XFACTOR_SPRITE_DATA_URI,
+      spriteUrl: '/xfactor/xfactor-spritesheet.png',
       size: 192,
       state: 'idle',
       trackPointer: true,

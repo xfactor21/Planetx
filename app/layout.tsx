@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, JetBrains_Mono, Poppins } from 'next/font/google'
 import { MonsterXAnnouncement } from '@/components/monsterx-announcement'
+import { XFactorSitePet } from '@/components/xfactor-site-pet'
 import './globals.css'
 
 const _spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
@@ -107,6 +108,7 @@ export default function RootLayout({
         />
         <MonsterXAnnouncement />
         {children}
+        <XFactorSitePet />
         {process.env.VERCEL === '1' && <Analytics />}
       </body>
     </html>
