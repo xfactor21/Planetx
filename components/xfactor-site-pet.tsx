@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { XFactorPetEngine, type XFactorState } from '@/lib/xfactor-pet'
 
 type XFactorAction =
   | 'idle'
@@ -25,6 +26,8 @@ type XFactorAction =
   | 'look_right'
 
 type PetLine = { message: string; action: XFactorAction }
+
+type RenderMode = 'sprite' | '3d'
 
 export type XFactorTriggerDetail = {
   message?: string
@@ -79,8 +82,14 @@ const ACTION_TO_CLIP: Record<string, string> = {
   complete: 'Review', review: 'Review', look_up: 'LookUp', look_down: 'LookDown', look_left: 'LookLeft', look_right: 'LookRight',
 }
 
+const ACTION_TO_SPRITE: Record<string, XFactorState> = {
+  idle: 'idle', greet: 'waving', wave: 'waving', success: 'jumping', jump: 'jumping', navigate: 'running-right', run: 'running',
+  error: 'failed', fail: 'failed', input_required: 'waiting', wait: 'waiting', processing: 'running', work: 'running',
+  complete: 'review', review: 'review', look_up: 'idle', look_down: 'idle', look_left: 'idle', look_right: 'idle',
+}
+
 const LOOPING = new Set(['Idle', 'Run', 'Wait', 'Work'])
-const MODEL_B64_URL = '/models/xfactor/model.glb.gz.b64'
+const MODEL_URL = '/api/xfactor-model'
 
 function pageLine(pathname: string): PetLine {
   return PAGE_LINES.find(({ match }) => match(pathname))?.line ?? {
@@ -95,18 +104,9 @@ function nextDifferentIndex(length: number, previous: number) {
   return next
 }
 
-function decodeBase64(text: string) {
-  const clean = text.replace(/\s+/g, '')
-  const binary = atob(clean)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
-  return bytes
-}
-
-async function gunzip(bytes: Uint8Array) {
-  if (!('DecompressionStream' in window)) throw new Error('This browser does not support DecompressionStream')
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))
-  return new Uint8Array(await new Response(stream).arrayBuffer())
+function petSize() {
+  const desktop = window.matchMedia('(min-width: 768px)').matches
+  return desktop ? { width: 180, height: 224 } : { width: 138, height: 172 }
 }
 
 export function XFactorSitePet() {
@@ -118,7 +118,7 @@ export function XFactorSitePet() {
   const clickIndexRef = useRef(-1)
   const [message, setMessage] = useState('')
   const [bubbleVisible, setBubbleVisible] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  const [renderMode, setRenderMode] = useState<RenderMode>('sprite')
 
   const hideBubbleLater = useCallback((duration = 4600) => {
     if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current)
@@ -135,8 +135,9 @@ export function XFactorSitePet() {
   useEffect(() => {
     const host = hostRef.current
     if (!host) return
+
     let disposed = false
-    let isReady = false
+    let is3DReady = false
     let raf = 0
     let renderer: any
     let mixer: any
@@ -146,96 +147,112 @@ export function XFactorSitePet() {
     let currentAction: any
     let clips = new Map<string, any>()
     let transientTimer: ReturnType<typeof setTimeout> | null = null
-    let objectUrl = ''
     let lastLook = ''
+    let sprite: XFactorPetEngine | null = null
+
+    const initialSize = petSize()
+    host.style.width = `${initialSize.width}px`
+    host.style.height = `${initialSize.height}px`
+
+    sprite = new XFactorPetEngine(host, {
+      size: initialSize.width,
+      state: 'idle',
+      trackPointer: true,
+    })
+    setRenderMode('sprite')
+
+    const playSprite = (action: string) => {
+      if (!sprite) return
+      const state = ACTION_TO_SPRITE[action] ?? 'jumping'
+      if (state === 'idle') sprite.setState('idle')
+      else sprite.play(state)
+    }
+    playRef.current = playSprite
 
     const dynamicImport = new Function('u', 'return import(u)') as (url: string) => Promise<any>
 
-    const play = (action: string, transient = false) => {
-      if (!mixer) return
-      const clipName = ACTION_TO_CLIP[action] ?? action
-      const clip = clips.get(clipName)
-      if (!clip) return
-      const next = mixer.clipAction(clip)
-      const shouldLoop = LOOPING.has(clipName)
-      next.reset().setEffectiveTimeScale(1).setEffectiveWeight(1)
-      if (shouldLoop) next.setLoop(2201, Infinity)
-      else {
-        next.setLoop(2200, 1)
-        next.clampWhenFinished = true
+    const resize3D = () => {
+      const size = petSize()
+      host.style.width = `${size.width}px`
+      host.style.height = `${size.height}px`
+      if (renderer && camera) {
+        renderer.setSize(size.width, size.height, false)
+        camera.aspect = size.width / size.height
+        camera.updateProjectionMatrix()
+      } else if (sprite) {
+        sprite.setSize(size.width)
       }
-      if (currentAction && currentAction !== next) currentAction.fadeOut(0.18)
-      next.fadeIn(0.18).play()
-      currentAction = next
-      if (transientTimer) clearTimeout(transientTimer)
-      if (transient && shouldLoop && clipName !== 'Idle') transientTimer = setTimeout(() => play('idle', false), 2200)
-    }
-    playRef.current = play
-
-    const resize = () => {
-      if (!renderer || !camera) return
-      const desktop = window.matchMedia('(min-width: 768px)').matches
-      const width = desktop ? 180 : 138
-      const height = desktop ? 224 : 172
-      host.style.width = `${width}px`
-      host.style.height = `${height}px`
-      renderer.setSize(width, height, false)
-      camera.aspect = width / height
-      camera.updateProjectionMatrix()
     }
 
-    const init = async () => {
+    const init3D = async () => {
       try {
-        const [THREE, loaderModule, text] = await Promise.all([
+        const [THREE, loaderModule] = await Promise.all([
           dynamicImport('https://esm.sh/three@0.180.0'),
           dynamicImport('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js'),
-          fetch(MODEL_B64_URL, { cache: 'force-cache' }).then((r) => {
-            if (!r.ok) throw new Error(`xFactor model asset returned ${r.status}`)
-            return r.text()
-          }),
         ])
         if (disposed) return
-        const glbBytes = await gunzip(decodeBase64(text))
-        if (disposed) return
-        objectUrl = URL.createObjectURL(new Blob([glbBytes], { type: 'model/gltf-binary' }))
 
         scene = new THREE.Scene()
-        camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100)
-        camera.position.set(0, 0.08, 4.75)
+        camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100)
+        camera.position.set(3.1, 2.05, 4.8)
+        camera.lookAt(0, 1.15, 0)
+
         renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' })
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
         renderer.setClearColor(0x000000, 0)
         renderer.outputColorSpace = THREE.SRGBColorSpace
-        host.replaceChildren(renderer.domElement)
-        resize()
+        renderer.toneMapping = THREE.ACESFilmicToneMapping
+        renderer.toneMappingExposure = 1.25
+        renderer.domElement.style.display = 'block'
 
-        scene.add(new THREE.HemisphereLight(0xc9f8ff, 0x24111d, 2.2))
-        const key = new THREE.DirectionalLight(0xffffff, 2.4)
-        key.position.set(2.5, 4, 4)
+        scene.add(new THREE.HemisphereLight(0xbfdcff, 0x160518, 2.6))
+        const key = new THREE.DirectionalLight(0xffffff, 3.2)
+        key.position.set(3, 5, 4)
         scene.add(key)
-        const rim = new THREE.DirectionalLight(0xff2f92, 2.2)
-        rim.position.set(-3, 2, -2)
+        const rim = new THREE.PointLight(0xff168f, 20, 8)
+        rim.position.set(-2.2, 2.4, 1.4)
         scene.add(rim)
-        const cyan = new THREE.PointLight(0x00e5ff, 12, 5)
-        cyan.position.set(2, 1, 2)
-        scene.add(cyan)
 
         const loader = new loaderModule.GLTFLoader()
-        const gltf = await loader.loadAsync(objectUrl)
+        const gltf = await loader.loadAsync(MODEL_URL)
         if (disposed) return
+
         model = gltf.scene
-        const box = new THREE.Box3().setFromObject(model)
-        const center = box.getCenter(new THREE.Vector3())
-        model.position.sub(center)
-        model.rotation.y = 0.08
+        model.name = 'xFactor'
         scene.add(model)
 
         mixer = new THREE.AnimationMixer(model)
         clips = new Map(gltf.animations.map((clip: any) => [clip.name, clip]))
-        mixer.addEventListener('finished', () => play('idle', false))
-        play('idle', false)
-        isReady = true
-        setLoaded(true)
+
+        const play3D = (action: string, transient = false) => {
+          if (!mixer) return
+          const clipName = ACTION_TO_CLIP[action] ?? action
+          const clip = clips.get(clipName)
+          if (!clip) return
+          const next = mixer.clipAction(clip)
+          const shouldLoop = LOOPING.has(clipName)
+          next.reset().setEffectiveTimeScale(1).setEffectiveWeight(1)
+          if (shouldLoop) next.setLoop(THREE.LoopRepeat, Infinity)
+          else {
+            next.setLoop(THREE.LoopOnce, 1)
+            next.clampWhenFinished = true
+          }
+          if (currentAction && currentAction !== next) currentAction.fadeOut(0.18)
+          next.fadeIn(0.18).play()
+          currentAction = next
+          if (transientTimer) clearTimeout(transientTimer)
+          if (transient && shouldLoop && clipName !== 'Idle') transientTimer = setTimeout(() => play3D('idle', false), 2200)
+        }
+
+        mixer.addEventListener('finished', () => play3D('idle', false))
+        sprite?.destroy()
+        sprite = null
+        host.replaceChildren(renderer.domElement)
+        resize3D()
+        playRef.current = play3D
+        play3D('idle', false)
+        is3DReady = true
+        setRenderMode('3d')
 
         const clock = new THREE.Clock()
         const render = () => {
@@ -246,14 +263,18 @@ export function XFactorSitePet() {
         }
         render()
       } catch (error) {
-        console.error('[xFactor 3D]', error)
-        if (!disposed) setLoaded(false)
+        console.warn('[xFactor 3D] Falling back to the local sprite mascot.', error)
+        if (!disposed) {
+          is3DReady = false
+          setRenderMode('sprite')
+          resize3D()
+        }
       }
     }
 
-    const onResize = () => resize()
+    const onResize = () => resize3D()
     const onPointerMove = (event: PointerEvent) => {
-      if (!isReady || !host) return
+      if (!is3DReady || !host) return
       const rect = host.getBoundingClientRect()
       const dx = event.clientX - (rect.left + rect.width / 2)
       const dy = event.clientY - (rect.top + rect.height * 0.42)
@@ -263,24 +284,29 @@ export function XFactorSitePet() {
       else action = dy < 0 ? 'look_up' : 'look_down'
       if (action !== lastLook) {
         lastLook = action
-        play(action, true)
+        playRef.current(action, true)
       }
     }
-    const onPointerLeave = () => { lastLook = ''; play('idle', false) }
+    const onPointerLeave = () => {
+      if (!is3DReady) return
+      lastLook = ''
+      playRef.current('idle', false)
+    }
 
-    init()
+    init3D()
     window.addEventListener('resize', onResize)
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     document.documentElement.addEventListener('pointerleave', onPointerLeave)
 
     return () => {
       disposed = true
-      isReady = false
+      is3DReady = false
       cancelAnimationFrame(raf)
       if (transientTimer) clearTimeout(transientTimer)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('pointermove', onPointerMove)
       document.documentElement.removeEventListener('pointerleave', onPointerLeave)
+      sprite?.destroy()
       mixer?.stopAllAction?.()
       model?.traverse?.((object: any) => {
         object.geometry?.dispose?.()
@@ -292,7 +318,6 @@ export function XFactorSitePet() {
         }
       })
       renderer?.dispose?.()
-      if (objectUrl) URL.revokeObjectURL(objectUrl)
       playRef.current = () => {}
     }
   }, [])
@@ -336,7 +361,9 @@ export function XFactorSitePet() {
     return () => document.removeEventListener('click', onDocumentClick, true)
   }, [speak])
 
-  useEffect(() => () => { if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current) }, [])
+  useEffect(() => () => {
+    if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current)
+  }, [])
 
   const handlePetClick = () => {
     const index = nextDifferentIndex(CLICK_LINES.length, clickIndexRef.current)
@@ -345,13 +372,28 @@ export function XFactorSitePet() {
   }
 
   return (
-    <aside data-xfactor-pet-root className="fixed bottom-[max(.55rem,env(safe-area-inset-bottom))] right-2 z-[80] flex w-[158px] flex-col items-end md:bottom-3 md:right-5 md:w-[250px]" aria-live="polite">
-      <div className={`mb-[-6px] mr-1 w-[150px] border border-cyan-300/35 bg-black/90 px-3 py-2 font-mono text-[10px] leading-[1.35] text-white shadow-[0_0_24px_rgba(0,229,255,.16),0_0_18px_rgba(255,32,122,.12)] backdrop-blur-md transition duration-200 md:mr-5 md:w-[230px] md:px-4 md:py-3 md:text-xs ${bubbleVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}`} role="status" style={{ clipPath: 'polygon(0 0,100% 0,100% 86%,88% 86%,82% 100%,78% 86%,0 86%)' }}>
+    <aside
+      data-xfactor-pet-root
+      data-xfactor-renderer={renderMode}
+      className="fixed bottom-[max(.55rem,env(safe-area-inset-bottom))] right-2 z-[80] flex w-[158px] flex-col items-end md:bottom-3 md:right-5 md:w-[250px]"
+      aria-live="polite"
+    >
+      <div
+        className={`mb-[-6px] mr-1 w-[150px] border border-cyan-300/35 bg-black/90 px-3 py-2 font-mono text-[10px] leading-[1.35] text-white shadow-[0_0_24px_rgba(0,229,255,.16),0_0_18px_rgba(255,32,122,.12)] backdrop-blur-md transition duration-200 md:mr-5 md:w-[230px] md:px-4 md:py-3 md:text-xs ${bubbleVisible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}`}
+        role="status"
+        style={{ clipPath: 'polygon(0 0,100% 0,100% 86%,88% 86%,82% 100%,78% 86%,0 86%)' }}
+      >
         <span className="mr-1 font-bold text-pink-400">xFactor:</span>{message}
       </div>
-      <button type="button" onClick={handlePetClick} className="group relative cursor-pointer border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black" aria-label="Talk to xFactor" title="Talk to xFactor">
+      <button
+        type="button"
+        onClick={handlePetClick}
+        className="group relative cursor-pointer border-0 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        aria-label="Talk to xFactor"
+        title="Talk to xFactor"
+      >
         <span className="pointer-events-none absolute bottom-5 right-4 h-12 w-24 rounded-full bg-cyan-400/10 blur-xl transition group-hover:bg-pink-400/15" />
-        <div ref={hostRef} className={`relative overflow-visible transition-all duration-300 group-hover:scale-[1.035] group-active:scale-95 ${loaded ? 'opacity-100' : 'opacity-0'}`} />
+        <div ref={hostRef} className="relative overflow-visible transition-transform duration-300 group-hover:scale-[1.035] group-active:scale-95" />
       </button>
     </aside>
   )
