@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { releasedApps } from '@/lib/data'
 
 // Where completed beta applications are sent.
-const NOTIFY_EMAIL = 'xfactorxai@gmail.com'
+const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
 
 type BetaApplicationPayload = {
   appId: string
@@ -34,9 +34,6 @@ export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY
 
   if (!apiKey) {
-    // No email service configured yet — fail loudly in logs so this is easy
-    // to spot during setup, but don't error out the user's submission if
-    // you'd rather silently no-op during development.
     console.error(
       'RESEND_API_KEY is not set — beta application was not emailed:',
       { appId, appName, email },
@@ -54,9 +51,6 @@ export async function POST(req: Request) {
     )
     .join('')
 
-  // Beta configs can use variant ids (e.g. the three StudyHive roles) that
-  // don't match a releasedApps entry directly — normalize those back to the
-  // real app id so the approval email still includes the right link.
   const STUDYHIVE_VARIANT_IDS = [
     'studyhive-student',
     'studyhive-teacher',
