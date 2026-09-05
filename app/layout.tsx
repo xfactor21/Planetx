@@ -13,6 +13,10 @@ const siteUrl = 'https://www.planet-x.co'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  applicationName: 'planet.X',
+  category: 'technology',
+  creator: 'planet.X',
+  publisher: 'planet.X',
   title: {
     default: 'planet.X — Apps, Software, Music & Beta Projects',
     template: '%s | planet.X',
@@ -40,6 +44,7 @@ export const metadata: Metadata = {
       'Independent software, apps, creator tools, experiments, and loud music from planet.X.',
     url: siteUrl,
     siteName: 'planet.X',
+    locale: 'en_US',
     type: 'website',
     images: [
       {
@@ -78,6 +83,7 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'planet.X',
   url: siteUrl,
+  logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png`,
   email: 'xFactor@planet-x.co',
 }
 
@@ -86,6 +92,12 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'planet.X',
   url: siteUrl,
+  inLanguage: 'en-US',
+  publisher: {
+    '@type': 'Organization',
+    name: 'planet.X',
+    url: siteUrl,
+  },
   description:
     'Independent software, mobile apps, creator tools, experiments, and music from planet.X.',
 }
