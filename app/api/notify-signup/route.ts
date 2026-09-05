@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 // Where notify-me signups are sent (in addition to going on the Notion list).
-const NOTIFY_EMAIL = 'xfactorxai@gmail.com'
+const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
 
 // Notion database that stores every "get notified" signup. See:
 // Website / Beta / Interested Users
@@ -43,8 +43,6 @@ export async function POST(req: Request) {
     )
   }
 
-  // Send the notification email — this is the part that actually has to
-  // succeed for the person to get a response back.
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -71,9 +69,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to submit signup' }, { status: 502 })
   }
 
-  // Best-effort: also log the signup to Notion so it can be reused for
-  // future release notifications. If this fails, the signup still counts —
-  // the email above already went out — so we don't fail the request over it.
   if (notionToken) {
     try {
       await fetch('https://api.notion.com/v1/pages', {
