@@ -2,11 +2,28 @@ import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { StoreCatalog } from '@/components/store-catalog'
-import { STORE_VERSION } from '@/lib/store-data'
 
 export const metadata: Metadata = {
-  title: 'Xupply Store - planet.X',
-  description: 'Original software, audio, effects, and creator resources from planet.X.',
+  title: 'Xupply Store — Software, Audio, FX & Creator Assets',
+  description:
+    'Shop original planet.X software, audio packs, transition effects, creator resources, and development tools from the Xupply catalog.',
+  alternates: {
+    canonical: '/store',
+  },
+  openGraph: {
+    title: 'Xupply Store — Software, Audio, FX & Creator Assets',
+    description:
+      'Original software, audio packs, effects, and creator resources from planet.X.',
+    url: '/store',
+    images: ['/store/project-x.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Xupply Store — Software, Audio, FX & Creator Assets',
+    description:
+      'Original software, audio packs, effects, and creator resources from planet.X.',
+    images: ['/store/project-x.png'],
+  },
 }
 
 export default function StorePage() {
@@ -23,7 +40,7 @@ export default function StorePage() {
               </p>
             </div>
             <span className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
-              {STORE_VERSION} preview
+              Xupply catalog
             </span>
           </div>
         </section>
