@@ -23,7 +23,8 @@ export function MonsterXAnnouncement() {
     const alreadyShown = sessionStorage.getItem('monsterx-announcement-shown')
     if (alreadyShown) return
     sessionStorage.setItem('monsterx-announcement-shown', '1')
-    setOpen(true)
+    const timeout = window.setTimeout(() => setOpen(true), 0)
+    return () => window.clearTimeout(timeout)
   }, [])
 
   useLockBodyScroll(open)

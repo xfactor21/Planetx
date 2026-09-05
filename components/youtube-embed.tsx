@@ -9,7 +9,7 @@ export function YouTubeEmbed() {
       <div className="flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 text-center">
         <Video className="size-8 text-muted-foreground" aria-hidden="true" />
         <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-          Music video goes here — send the YouTube link and it'll drop
+          Music video goes here — send the YouTube link and it&apos;ll drop
           right in.
         </p>
       </div>

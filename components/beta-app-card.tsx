@@ -46,7 +46,8 @@ export function BetaAppCard({
 
     const requestedApp = new URLSearchParams(window.location.search).get('apply')
     if (requestedApp === id) {
-      setOpen(true)
+      const timeout = window.setTimeout(() => setOpen(true), 0)
+      return () => window.clearTimeout(timeout)
     }
   }, [config, id])
 
