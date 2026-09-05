@@ -2,7 +2,7 @@ import { XMark } from '@/components/x-mark'
 
 const items = [
   'Ships fast',
-  'No trackers',
+  'No ad trackers',
   'Offline first',
   'Made by hand',
   'Sound on',
@@ -29,7 +29,7 @@ export function XMarquee() {
         ))}
       </div>
       <p className="sr-only">
-        Planet-X Development ships fast, tracker-free, offline-first software.
+        Planet-X Development ships fast, avoids advertising trackers, and builds offline-first software.
         Beta access is open.
       </p>
     </div>
