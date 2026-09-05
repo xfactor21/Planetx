@@ -66,6 +66,16 @@ function ProductGallery({ product }: { product: StoreProduct }) {
 
 function ProductSection({ product }: { product: StoreProduct }) {
   const productNumber = String(storeProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
+  const isAvailable = Boolean(product.checkoutUrl)
+  const priceNote = isAvailable
+    ? product.priceNote === 'Test-mode pricing' ? 'Current pricing' : product.priceNote
+    : 'Planned price'
+  const status = isAvailable ? product.status : 'Coming soon'
+  const license = isAvailable
+    ? /draft|planned|not active yet/i.test(product.license)
+      ? 'Current license terms are provided with the product checkout.'
+      : product.license
+    : 'Final license terms will be published before checkout opens.'
 
   return (
     <article id={product.id} className="scroll-mt-36 border-t-2 border-primary/80 bg-[linear-gradient(180deg,rgba(255,46,159,.035),transparent_12rem)]">
@@ -121,15 +131,15 @@ function ProductSection({ product }: { product: StoreProduct }) {
             </div>
             <div className="text-sm leading-6 text-foreground/72">
               <p><span className="font-medium text-white">Format:</span> {product.format}</p>
-              <p className="mt-2"><span className="font-medium text-white">License:</span> {product.license}</p>
+              <p className="mt-2"><span className="font-medium text-white">License:</span> {license}</p>
             </div>
           </div>
 
           <div className="mt-9 flex flex-col gap-5 border-l-2 border-primary bg-white/[0.025] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-mono text-[0.58rem] tracking-[0.14em] text-muted-foreground uppercase">{product.priceNote}</p>
+              <p className="font-mono text-[0.58rem] tracking-[0.14em] text-muted-foreground uppercase">{priceNote}</p>
               <p className="mt-1 text-xl font-medium text-primary">{product.price}</p>
-              <p className="mt-1 font-mono text-[0.58rem] tracking-[0.1em] text-accent uppercase">{product.status}</p>
+              <p className="mt-1 font-mono text-[0.58rem] tracking-[0.1em] text-accent uppercase">{status}</p>
             </div>
             {product.checkoutUrl ? (
               <a
@@ -138,12 +148,12 @@ function ProductSection({ product }: { product: StoreProduct }) {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                Preview checkout
+                View checkout
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             ) : (
-              <span className="inline-flex min-h-12 items-center justify-center border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase" aria-label="Checkout is not configured yet">
-                Checkout pending
+              <span className="inline-flex min-h-12 items-center justify-center border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase" aria-label="Checkout will open when this product is ready">
+                Coming soon
               </span>
             )}
           </div>
@@ -187,10 +197,10 @@ export function StoreCatalog() {
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-10 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
             <p className="font-mono text-[0.65rem] tracking-[0.16em] text-primary uppercase">Xupply bundles</p>
-            <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Collections are being assembled.</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Audio Starter, Creator Launch, and First Four bundles will appear after their final files, licenses, and pricing are verified.</p>
+            <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Bundles are coming soon.</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Curated Xupply collections are being packaged now. Individual products remain available wherever a checkout link is shown.</p>
           </div>
-          <span className="shrink-0 border border-accent/50 px-3 py-2 font-mono text-[0.64rem] tracking-[0.14em] text-accent uppercase">Coming after QA</span>
+          <span className="shrink-0 border border-accent/50 px-3 py-2 font-mono text-[0.64rem] tracking-[0.14em] text-accent uppercase">In preparation</span>
         </div>
       </section>
     </>
