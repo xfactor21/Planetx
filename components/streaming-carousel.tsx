@@ -15,7 +15,6 @@ type Platform = {
   name: string
   Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>
   color: string
-  // TODO: replace '#' with the real profile/artist link for each platform.
   href: string
 }
 
@@ -88,9 +87,7 @@ export function StreamingCarousel() {
             />
             <platform.Icon className="relative size-10" style={{ color: platform.color }} />
             <div className="relative mt-8">
-              <p className="text-lg font-bold tracking-tight uppercase">
-                {platform.name}
-              </p>
+              <p className="text-lg font-bold tracking-tight uppercase">{platform.name}</p>
               <span className="mt-2 inline-flex items-center gap-1.5 font-mono text-[0.65rem] tracking-[0.14em] text-muted-foreground uppercase transition-colors group-hover:text-primary">
                 Listen now
                 <ArrowUpRight
