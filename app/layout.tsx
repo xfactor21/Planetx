@@ -72,6 +72,23 @@ export const viewport: Viewport = {
   themeColor: '#000000',
 }
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'planet.X',
+  url: siteUrl,
+  email: 'xFactor@planet-x.co',
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'planet.X',
+  url: siteUrl,
+  description:
+    'Independent software, mobile apps, creator tools, experiments, and music from planet.X.',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -80,6 +97,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-background">
       <body className="antialiased font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         <MonsterXAnnouncement />
         {children}
         {process.env.VERCEL === '1' && <Analytics />}
