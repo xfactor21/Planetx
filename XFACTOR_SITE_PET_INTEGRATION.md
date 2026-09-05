@@ -24,3 +24,5 @@ window.dispatchEvent(
 )
 ```
 All detail fields are optional.
+
+Production integration committed on the canonical `main` branch.
