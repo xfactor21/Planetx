@@ -13,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/coming-soon',
   ]
 
-  return routes.map((route) => ({
+  return routes.map((route): MetadataRoute.Sitemap[number] => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: route === '' ? 'weekly' : 'monthly',
