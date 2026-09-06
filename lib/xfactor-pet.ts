@@ -1,5 +1,5 @@
 export const XFACTOR_STATES = {
-  idle: { row: 0, frames: 6, durations: [280, 110, 110, 140, 140, 320] },
+  idle: { row: 3, frames: 4, durations: [240, 180, 180, 360] },
   'running-right': { row: 1, frames: 8, durations: [120, 120, 120, 120, 120, 120, 120, 220] },
   'running-left': { row: 2, frames: 8, durations: [120, 120, 120, 120, 120, 120, 120, 220] },
   waving: { row: 3, frames: 4, durations: [140, 140, 140, 280] },
@@ -59,6 +59,12 @@ export class XFactorPetEngine {
     this.element.style.imageRendering = 'auto'
     this.element.style.userSelect = 'none'
     this.element.style.pointerEvents = 'none'
+    this.element.style.position = 'relative'
+    this.element.style.display = 'block'
+    this.element.style.opacity = '1'
+    this.element.style.visibility = 'visible'
+    this.element.style.zIndex = '2'
+    this.element.style.filter = 'drop-shadow(0 0 10px rgba(0,245,255,.2)) drop-shadow(0 0 10px rgba(255,46,159,.18))'
     this.target.appendChild(this.element)
 
     this.onPointerMove = this.onPointerMove.bind(this)
@@ -163,7 +169,7 @@ export class XFactorPetEngine {
     if (!this.tracking || this.destroyed) return
     this.tracking = false
     this.frame = 0
-    this.showCell(0, 0)
+    this.showCell(XFACTOR_STATES.idle.row, 0)
     this.scheduleFrame()
   }
 }
