@@ -80,7 +80,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border pt-6 font-mono text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v10</p>
+          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v11</p>
           <p className="flex items-center gap-2">
             <XMark className="size-4 text-primary" />
             Built in the dark

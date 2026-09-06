@@ -29,6 +29,71 @@ type PetLine = { message: string; action: XFactorAction }
 
 type RenderMode = 'sprite' | '3d'
 
+type ThreeAction = {
+  reset: () => ThreeAction
+  setEffectiveTimeScale: (scale: number) => ThreeAction
+  setEffectiveWeight: (weight: number) => ThreeAction
+  setLoop: (mode: number, repetitions: number) => ThreeAction
+  fadeOut: (duration: number) => ThreeAction
+  fadeIn: (duration: number) => ThreeAction
+  play: () => ThreeAction
+  clampWhenFinished: boolean
+}
+
+type ThreeClip = { name: string }
+type ThreeObject = {
+  name?: string
+  geometry?: { dispose?: () => void }
+  material?: DisposableMaterial | DisposableMaterial[]
+  traverse?: (callback: (object: ThreeObject) => void) => void
+}
+type DisposableMaterial = {
+  dispose?: () => void
+  [key: string]: unknown
+}
+type DisposableTexture = { isTexture?: boolean; dispose?: () => void }
+type ThreeMixer = {
+  clipAction: (clip: ThreeClip) => ThreeAction
+  addEventListener: (type: 'finished', listener: () => void) => void
+  update: (delta: number) => void
+  stopAllAction?: () => void
+}
+type ThreeScene = { add: (object: unknown) => void }
+type ThreeCamera = {
+  aspect: number
+  position: { set: (x: number, y: number, z: number) => void }
+  lookAt: (x: number, y: number, z: number) => void
+  updateProjectionMatrix: () => void
+}
+type ThreeRenderer = {
+  domElement: HTMLCanvasElement
+  setPixelRatio: (ratio: number) => void
+  setClearColor: (color: number, alpha: number) => void
+  setSize: (width: number, height: number, updateStyle: boolean) => void
+  render: (scene: ThreeScene, camera: ThreeCamera) => void
+  dispose?: () => void
+  outputColorSpace?: unknown
+  toneMapping?: unknown
+  toneMappingExposure?: number
+}
+type ThreeRuntime = {
+  Scene: new () => ThreeScene
+  PerspectiveCamera: new (fov: number, aspect: number, near: number, far: number) => ThreeCamera
+  WebGLRenderer: new (options: { alpha: boolean; antialias: boolean; powerPreference: string }) => ThreeRenderer
+  HemisphereLight: new (skyColor: number, groundColor: number, intensity: number) => unknown
+  DirectionalLight: new (color: number, intensity: number) => { position: { set: (x: number, y: number, z: number) => void } }
+  PointLight: new (color: number, intensity: number, distance: number) => { position: { set: (x: number, y: number, z: number) => void } }
+  AnimationMixer: new (object: ThreeObject) => ThreeMixer
+  Clock: new () => { getDelta: () => number }
+  SRGBColorSpace: unknown
+  ACESFilmicToneMapping: unknown
+  LoopRepeat: number
+  LoopOnce: number
+}
+type GltfLoaderModule = {
+  GLTFLoader: new () => { loadAsync: (url: string) => Promise<{ scene: ThreeObject; animations: ThreeClip[] }> }
+}
+
 export type XFactorTriggerDetail = {
   message?: string
   action?: XFactorAction | string
@@ -139,13 +204,13 @@ export function XFactorSitePet() {
     let disposed = false
     let is3DReady = false
     let raf = 0
-    let renderer: any
-    let mixer: any
-    let scene: any
-    let camera: any
-    let model: any
-    let currentAction: any
-    let clips = new Map<string, any>()
+    let renderer: ThreeRenderer | undefined
+    let mixer: ThreeMixer | undefined
+    let scene: ThreeScene | undefined
+    let camera: ThreeCamera | undefined
+    let model: ThreeObject | undefined
+    let currentAction: ThreeAction | undefined
+    let clips = new Map<string, ThreeClip>()
     let transientTimer: ReturnType<typeof setTimeout> | null = null
     let lastLook = ''
     let sprite: XFactorPetEngine | null = null
@@ -169,7 +234,7 @@ export function XFactorSitePet() {
     }
     playRef.current = playSprite
 
-    const dynamicImport = new Function('u', 'return import(u)') as (url: string) => Promise<any>
+    const dynamicImport = new Function('u', 'return import(u)') as (url: string) => Promise<unknown>
 
     const resize3D = () => {
       const size = petSize()
@@ -186,12 +251,14 @@ export function XFactorSitePet() {
 
     const init3D = async () => {
       try {
-        const [THREE, loaderModule] = await Promise.all([
+        const [threeModule, rawLoaderModule] = await Promise.all([
           dynamicImport('https://esm.sh/three@0.180.0'),
           dynamicImport('https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js'),
         ])
         if (disposed) return
 
+        const THREE = threeModule as ThreeRuntime
+        const loaderModule = rawLoaderModule as GltfLoaderModule
         scene = new THREE.Scene()
         camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100)
         camera.position.set(3.1, 2.05, 4.8)
@@ -204,6 +271,8 @@ export function XFactorSitePet() {
         renderer.toneMapping = THREE.ACESFilmicToneMapping
         renderer.toneMappingExposure = 1.25
         renderer.domElement.style.display = 'block'
+        renderer.domElement.style.width = '100%'
+        renderer.domElement.style.height = '100%'
 
         scene.add(new THREE.HemisphereLight(0xbfdcff, 0x160518, 2.6))
         const key = new THREE.DirectionalLight(0xffffff, 3.2)
@@ -222,7 +291,7 @@ export function XFactorSitePet() {
         scene.add(model)
 
         mixer = new THREE.AnimationMixer(model)
-        clips = new Map(gltf.animations.map((clip: any) => [clip.name, clip]))
+        clips = new Map(gltf.animations.map((clip) => [clip.name, clip]))
 
         const play3D = (action: string, transient = false) => {
           if (!mixer) return
@@ -256,7 +325,7 @@ export function XFactorSitePet() {
 
         const clock = new THREE.Clock()
         const render = () => {
-          if (disposed) return
+          if (disposed || !renderer || !scene || !camera) return
           raf = requestAnimationFrame(render)
           mixer?.update(clock.getDelta())
           renderer.render(scene, camera)
@@ -308,12 +377,15 @@ export function XFactorSitePet() {
       document.documentElement.removeEventListener('pointerleave', onPointerLeave)
       sprite?.destroy()
       mixer?.stopAllAction?.()
-      model?.traverse?.((object: any) => {
+      model?.traverse?.((object) => {
         object.geometry?.dispose?.()
         const materials = Array.isArray(object.material) ? object.material : [object.material]
         for (const material of materials) {
           if (!material) continue
-          for (const value of Object.values(material)) if ((value as any)?.isTexture) (value as any).dispose?.()
+          for (const value of Object.values(material)) {
+            const texture = value as DisposableTexture
+            if (texture.isTexture) texture.dispose?.()
+          }
           material.dispose?.()
         }
       })

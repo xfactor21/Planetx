@@ -1,4 +1,4 @@
-export const STORE_VERSION = 'v10'
+export const STORE_VERSION = 'v11'
 export const STORE_FAMILY = 'Xupply'
 
 export type StoreCategory = 'Software' | 'Audio & FX' | 'Creator Resources'
