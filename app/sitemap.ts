@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next'
+import { releasedApps, upcomingApps } from '@/lib/data'
 
 const siteUrl = 'https://www.planet-x.co'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = [
+  const coreRoutes = [
     '',
     '/store',
     '/beta',
@@ -13,9 +14,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/coming-soon',
   ]
 
-  return routes.map((route): MetadataRoute.Sitemap[number] => ({
+  const productRoutes = [
+    ...releasedApps
+      .filter((app) => !app.mature && app.id !== 'studyhive')
+      .map((app) => `/apps/${app.id}`),
+    ...upcomingApps
+      .filter((app) => !app.companionSlot)
+      .map((app) => `/apps/${app.id}`),
+  ]
+
+  return [...coreRoutes, ...productRoutes].map((route): MetadataRoute.Sitemap[number] => ({
     url: `${siteUrl}${route}`,
     changeFrequency: route === '' ? 'weekly' : 'monthly',
-    priority: route === '' ? 1 : route === '/store' || route === '/beta' ? 0.9 : 0.7,
+    priority:
+      route === ''
+        ? 1
+        : route === '/store' || route === '/beta'
+          ? 0.9
+          : route.startsWith('/apps/')
+            ? 0.8
+            : 0.7,
   }))
 }
