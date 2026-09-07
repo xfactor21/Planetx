@@ -1,18 +1,37 @@
 import { NextResponse } from 'next/server'
+import {
+  consumeRateLimit,
+  looksAutomated,
+  rejectOversizedBody,
+} from '@/lib/request-guard'
 
-// Where notify-me signups are sent (in addition to going on the Notion list).
+// Notify-me signups are emailed here. Notion is an optional secondary lead log.
 const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
-
-// Notion database that stores every "get notified" signup. See:
-// Website / Beta / Interested Users
 const NOTION_DATABASE_ID = '5a59ea1b-475b-4000-bffb-1aa29be695ab'
 
 type NotifySignupPayload = {
   email: string
   interestedIn?: string
+  website?: string
+  startedAt?: number
 }
 
 export async function POST(req: Request) {
+  if (rejectOversizedBody(req, 8_192)) {
+    return NextResponse.json({ error: 'Request too large' }, { status: 413 })
+  }
+
+  const rate = consumeRateLimit(req, 'notify-signup', 5, 10 * 60 * 1000)
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: 'Too many signup attempts. Please try again shortly.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(rate.retryAfterSeconds) },
+      },
+    )
+  }
+
   let body: NotifySignupPayload
 
   try {
@@ -21,10 +40,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { email, interestedIn = 'MonsterX Release' } = body
+  const {
+    email,
+    interestedIn = 'planet.X Beta',
+    website = '',
+    startedAt,
+  } = body
 
-  if (!email) {
-    return NextResponse.json({ error: 'Missing email' }, { status: 400 })
+  if (looksAutomated(startedAt, website)) {
+    // Return a neutral success response so simple bots do not learn the trap.
+    return NextResponse.json({ ok: true })
+  }
+
+  if (!email || email.length > 254) {
+    return NextResponse.json({ error: 'Missing or invalid email' }, { status: 400 })
+  }
+
+  if (interestedIn.length > 120) {
+    return NextResponse.json({ error: 'Invalid signup category' }, { status: 400 })
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -69,9 +102,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to submit signup' }, { status: 502 })
   }
 
+  let notionLogged = false
   if (notionToken) {
     try {
-      await fetch('https://api.notion.com/v1/pages', {
+      const notionRes = await fetch('https://api.notion.com/v1/pages', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${notionToken}`,
@@ -87,17 +121,19 @@ export async function POST(req: Request) {
           },
         }),
       })
+
+      if (notionRes.ok) {
+        notionLogged = true
+      } else {
+        const errText = await notionRes.text()
+        console.error('Notion API error:', notionRes.status, errText)
+      }
     } catch (err) {
       console.error('Failed to log signup to Notion (non-fatal):', err)
     }
-  } else {
-    console.warn(
-      'NOTION_API_KEY is not set — signup was emailed but not logged to Notion:',
-      email,
-    )
   }
 
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, notionLogged })
 }
 
 function escapeHtml(str: string) {
