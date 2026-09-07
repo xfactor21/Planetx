@@ -4,6 +4,7 @@ import { Hero } from '@/components/hero'
 import { XMarquee } from '@/components/x-marquee'
 import { ReleasedApps } from '@/components/released-apps'
 import { UpcomingApps } from '@/components/upcoming-apps'
+import { VisualXLabCard } from '@/components/visual-x-lab-card'
 import { JoinBeta } from '@/components/join-beta'
 import { StudioSection } from '@/components/studio-section'
 import { SiteFooter } from '@/components/site-footer'
@@ -36,6 +37,7 @@ export default function Page() {
             See all in development →
           </Link>
         </div>
+        <VisualXLabCard />
         <JoinBeta />
         <StudioSection />
       </main>
