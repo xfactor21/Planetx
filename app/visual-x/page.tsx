@@ -46,12 +46,6 @@ const visualXSchema = {
     name: 'planet.X',
     url: siteUrl,
   },
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/PreOrder',
-  },
 }
 
 const features = [
