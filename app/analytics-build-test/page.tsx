@@ -10,6 +10,7 @@ export default async function AnalyticsBuildTestPage() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Origin': 'https://www.planet-x.co',
       'X-PlanetX-Analytics-Key': key,
     },
     body: JSON.stringify({
