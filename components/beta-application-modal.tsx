@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Check, Loader2, X } from 'lucide-react'
+import { track } from '@vercel/analytics'
 import type { BetaAppConfig } from '@/lib/beta-questions'
 import { withXGlyph } from '@/components/x-glyph'
 import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
@@ -14,9 +15,11 @@ export function BetaApplicationModal({
   onClose: () => void
 }) {
   const [email, setEmail] = useState('')
+  const [website, setWebsite] = useState('')
   const [values, setValues] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  const startedAt = useRef(Date.now())
 
   useLockBodyScroll(true)
 
@@ -37,6 +40,7 @@ export function BetaApplicationModal({
 
     setErrorMessage('')
     setStatus('submitting')
+    track('beta_application_submit_attempt', { appId: config.id })
 
     const answers = config.questions.map((q) => ({
       question: q.label,
@@ -57,6 +61,8 @@ export function BetaApplicationModal({
           appName: config.appName,
           email,
           answers,
+          website,
+          startedAt: startedAt.current,
         }),
       })
 
@@ -64,13 +70,19 @@ export function BetaApplicationModal({
         const data = await res.json().catch(() => ({}))
         setErrorMessage(data.error || 'Something went wrong. Please try again.')
         setStatus('error')
+        track('beta_application_submit_error', {
+          appId: config.id,
+          status: res.status,
+        })
         return
       }
 
       setStatus('done')
+      track('beta_application_submit_success', { appId: config.id })
     } catch {
       setErrorMessage('Something went wrong. Please try again.')
       setStatus('error')
+      track('beta_application_submit_error', { appId: config.id, status: 0 })
     }
   }
 
@@ -140,7 +152,20 @@ export function BetaApplicationModal({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@domain.com"
+                autoComplete="email"
                 className="w-full border border-border bg-card px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-accent focus:outline-none"
+              />
+            </div>
+
+            <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="beta-website">Website</label>
+              <input
+                id="beta-website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
               />
             </div>
 
@@ -212,7 +237,9 @@ export function BetaApplicationModal({
             ))}
 
             {errorMessage ? (
-              <p className="text-sm text-destructive">{errorMessage}</p>
+              <p className="text-sm text-destructive" role="alert">
+                {errorMessage}
+              </p>
             ) : null}
 
             <button
