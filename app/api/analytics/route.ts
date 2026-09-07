@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const DEFAULT_INGEST_URL = 'https://planet-x-command-center-y9yp7m.v2.appdeploy.ai/api/events'
+const DEFAULT_INGEST_URL = 'https://dashboard.planet-x.co/api/events'
 
 const ALLOWED_EVENTS = new Set([
   'page_view',
