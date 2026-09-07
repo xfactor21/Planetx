@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/about',
     '/studyhive',
     '/coming-soon',
+    '/visual-x',
   ]
 
   const productRoutes = [
@@ -31,7 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         ? 1
         : route === '/store' || route === '/beta'
           ? 0.9
-          : route.startsWith('/apps/')
+          : route === '/visual-x' || route.startsWith('/apps/')
             ? 0.8
             : 0.7,
   }))
