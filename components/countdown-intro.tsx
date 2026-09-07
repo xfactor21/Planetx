@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { track } from '@vercel/analytics'
 
 const STEPS = [
   { count: 3, line: 'Looking for permission...', sub: 'Probably not gonna find it.' },
@@ -8,14 +9,42 @@ const STEPS = [
   { count: 1, line: 'Forget it.', sub: 'Launching planet.X anyway.' },
 ]
 
+const INTRO_KEY = 'planetx:intro-seen-at'
+const INTRO_TTL_MS = 7 * 24 * 60 * 60 * 1000
+
 function signalMusic(eventName: 'planetx:arm-music' | 'planetx:start-music') {
   window.dispatchEvent(new Event(eventName))
+}
+
+function rememberIntro() {
+  try {
+    window.localStorage.setItem(INTRO_KEY, String(Date.now()))
+  } catch {
+    // Storage can be unavailable in strict/private modes; the intro still works.
+  }
 }
 
 export function CountdownIntro() {
   const [started, setStarted] = useState(false)
   const [step, setStep] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    let seenAt = 0
+    try {
+      seenAt = Number(window.localStorage.getItem(INTRO_KEY) || 0)
+    } catch {
+      seenAt = 0
+    }
+
+    if (seenAt && Date.now() - seenAt < INTRO_TTL_MS) {
+      track('Intro Returning Visitor Bypass')
+      return
+    }
+
+    setVisible(true)
+    track('Intro Viewed')
+  }, [])
 
   useEffect(() => {
     if (!started) return
@@ -33,6 +62,8 @@ export function CountdownIntro() {
     timers.push(
       setTimeout(() => {
         signalMusic('planetx:start-music')
+        rememberIntro()
+        track('Intro Completed')
         setVisible(false)
       }, STEPS.length * 1100 + 600),
     )
@@ -43,10 +74,8 @@ export function CountdownIntro() {
   const current = useMemo(() => STEPS[Math.min(step, STEPS.length - 1)], [step])
 
   function beginIntro() {
-    // Start the first track silently inside the user's click gesture. At the end
-    // of the countdown the player rewinds and unmutes it, which is much more
-    // reliable across Chrome/Safari/mobile autoplay policies.
     signalMusic('planetx:arm-music')
+    track('Intro Enter Clicked')
     setStep(0)
     setStarted(true)
   }
@@ -54,6 +83,8 @@ export function CountdownIntro() {
   function skipIntro() {
     signalMusic('planetx:arm-music')
     signalMusic('planetx:start-music')
+    rememberIntro()
+    track('Intro Skipped')
     setVisible(false)
   }
 
@@ -83,6 +114,13 @@ export function CountdownIntro() {
               className="mt-8 border border-primary bg-primary px-7 py-3 font-mono text-xs font-bold tracking-[0.2em] text-primary-foreground uppercase transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               Enter planet.X
+            </button>
+            <button
+              type="button"
+              onClick={skipIntro}
+              className="mt-3 px-4 py-2 font-mono text-[0.65rem] tracking-[0.16em] text-muted-foreground uppercase transition-colors hover:text-primary"
+            >
+              Skip this time
             </button>
           </>
         ) : (
