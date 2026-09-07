@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { Check, Loader2 } from 'lucide-react'
-import { track } from '@vercel/analytics'
+import { planetXTrack } from '@/lib/client-analytics'
 import { XMark } from '@/components/x-mark'
 
 export function WaitlistForm() {
@@ -18,7 +18,7 @@ export function WaitlistForm() {
 
     setStatus('submitting')
     setErrorMessage('')
-    track('waitlist_submit_attempt', { source: 'homepage' })
+    planetXTrack('waitlist_submit_attempt', { source: 'homepage' })
 
     try {
       const res = await fetch('/api/notify-signup', {
@@ -36,16 +36,16 @@ export function WaitlistForm() {
         const data = await res.json().catch(() => ({}))
         setErrorMessage(data.error || 'Something went wrong. Please try again.')
         setStatus('error')
-        track('waitlist_submit_error', { source: 'homepage', status: res.status })
+        planetXTrack('waitlist_submit_error', { source: 'homepage', status: res.status })
         return
       }
 
       setStatus('done')
-      track('waitlist_submit_success', { source: 'homepage' })
+      planetXTrack('waitlist_submit_success', { source: 'homepage' })
     } catch {
       setErrorMessage('Something went wrong. Please try again.')
       setStatus('error')
-      track('waitlist_submit_error', { source: 'homepage', status: 0 })
+      planetXTrack('waitlist_submit_error', { source: 'homepage', status: 0 })
     }
   }
 
