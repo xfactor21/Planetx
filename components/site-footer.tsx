@@ -20,6 +20,7 @@ const columns = [
   {
     title: 'Studio',
     links: [
+      { label: 'Visual.X Labs', href: '/visual-x' },
       { label: 'The Studio', href: '/#studio' },
       { label: 'Contact', href: 'mailto:xFactor@planet-x.co' },
     ],
