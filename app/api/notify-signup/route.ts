@@ -5,9 +5,8 @@ import {
   rejectOversizedBody,
 } from '@/lib/request-guard'
 
-// Notify-me signups are emailed here. Notion is an optional secondary lead log.
+// Notify-me signups are emailed here. This is the single system of record for now.
 const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
-const NOTION_DATABASE_ID = '5a59ea1b-475b-4000-bffb-1aa29be695ab'
 
 type NotifySignupPayload = {
   email: string
@@ -48,7 +47,6 @@ export async function POST(req: Request) {
   } = body
 
   if (looksAutomated(startedAt, website)) {
-    // Return a neutral success response so simple bots do not learn the trap.
     return NextResponse.json({ ok: true })
   }
 
@@ -66,7 +64,6 @@ export async function POST(req: Request) {
   }
 
   const resendKey = process.env.RESEND_API_KEY
-  const notionToken = process.env.NOTION_API_KEY
 
   if (!resendKey) {
     console.error('RESEND_API_KEY is not set — notify signup was not emailed:', email)
@@ -102,38 +99,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to submit signup' }, { status: 502 })
   }
 
-  let notionLogged = false
-  if (notionToken) {
-    try {
-      const notionRes = await fetch('https://api.notion.com/v1/pages', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${notionToken}`,
-          'Content-Type': 'application/json',
-          'Notion-Version': '2022-06-28',
-        },
-        body: JSON.stringify({
-          parent: { database_id: NOTION_DATABASE_ID },
-          properties: {
-            Email: { title: [{ text: { content: email } }] },
-            'Interested In': { select: { name: interestedIn } },
-            Submitted: { date: { start: new Date().toISOString() } },
-          },
-        }),
-      })
-
-      if (notionRes.ok) {
-        notionLogged = true
-      } else {
-        const errText = await notionRes.text()
-        console.error('Notion API error:', notionRes.status, errText)
-      }
-    } catch (err) {
-      console.error('Failed to log signup to Notion (non-fatal):', err)
-    }
-  }
-
-  return NextResponse.json({ ok: true, notionLogged })
+  return NextResponse.json({ ok: true })
 }
 
 function escapeHtml(str: string) {
@@ -141,6 +107,6 @@ function escapeHtml(str: string) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
+    .replace(/\"/g, '&quot;')
     .replace(/'/g, '&#39;')
 }
