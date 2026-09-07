@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+const DEFAULT_INGEST_URL = 'https://planet-x-command-center-y9yp7m.v2.appdeploy.ai/api/events'
+
 const ALLOWED_EVENTS = new Set([
   'page_view',
   'waitlist_submit_attempt',
@@ -45,10 +47,10 @@ type AnalyticsEvent = {
 }
 
 export async function POST(req: Request) {
-  const ingestUrl = process.env.PLANETX_ANALYTICS_INGEST_URL
+  const ingestUrl = process.env.PLANETX_ANALYTICS_INGEST_URL || DEFAULT_INGEST_URL
   const key = process.env.PLANETX_ANALYTICS_KEY
 
-  if (!ingestUrl || !key) {
+  if (!key) {
     return NextResponse.json({ ok: true, forwarded: false }, { status: 202 })
   }
 
