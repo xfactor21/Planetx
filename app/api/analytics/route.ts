@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const DEFAULT_INGEST_URL = 'https://dashboard.planet-x.co/api/events'
+const DEFAULT_INGEST_URL = 'https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-analytics-ingest'
 
 const ALLOWED_EVENTS = new Set([
   'page_view',
