@@ -7,9 +7,9 @@ export const sessionGridProduct: StoreProduct = {
   productType: 'Chrome tab & workspace manager',
   description:
     'Save complete Chrome workspaces, restore windows and native tab groups, recover session snapshots, search saved context, and keep duplicate tabs under control without uploading browsing data to a cloud service.',
-  price: '$9.99 lifetime',
-  priceNote: 'Launch price',
-  status: 'Release candidate',
+  price: 'Free',
+  priceNote: 'Chrome extension',
+  status: 'Available free',
   platforms: ['Chrome extension'],
   metrics: [
     { value: '7 days', label: 'Full Pro trial' },
@@ -26,7 +26,7 @@ export const sessionGridProduct: StoreProduct = {
   ],
   bestFor: ['Heavy-tab workflows', 'Research sessions', 'Multi-project browser work'],
   format: 'Chrome extension / Manifest V3',
-  license: '7-day Pro trial, then a permanent Free tier. Lifetime Pro unlock is $9.99 once.',
+  license: 'Install free from the Chrome Web Store. New installs receive a 7-day Pro trial, then continue on the permanent Free tier. Pro licensing is purchased from the private upgrade flow inside the extension.',
   gallery: [
     {
       src: '/store/listings/sessiongrid-x-logo.svg',
@@ -47,5 +47,5 @@ export const sessionGridProduct: StoreProduct = {
       fit: 'cover',
     },
   ],
-  checkoutUrl: 'https://payhip.com/planetX',
+  checkoutUrl: 'https://chromewebstore.google.com/search/SessionGrid%20X',
 }
