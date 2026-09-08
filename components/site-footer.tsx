@@ -2,13 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { XMark } from '@/components/x-mark'
 import { XLetter, withXGlyph } from '@/components/x-glyph'
+
 const columns = [
   {
     title: 'Apps',
     links: [
-      { label: 'Join Beta Test', href: '/beta' },
+      { label: 'Visual.X', href: '/visual-x' },
       { label: 'Store', href: '/store' },
       { label: 'Coming Soon', href: '/coming-soon' },
+      { label: 'Beta Testing', href: '/beta' },
       { label: 'StudyHive', href: '/studyhive' },
       { label: 'About', href: '/about' },
     ],
@@ -20,12 +22,12 @@ const columns = [
   {
     title: 'Studio',
     links: [
-      { label: 'Visual.X Labs', href: '/visual-x' },
       { label: 'The Studio', href: '/#studio' },
       { label: 'Contact', href: 'mailto:xFactor@planet-x.co' },
     ],
   },
 ]
+
 export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden">
