@@ -10,6 +10,7 @@ import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
 import { GradientMenuIcon } from '@/components/gradient-menu-icon'
 
 const links = [
+  { label: 'Visual.X', href: '/visual-x' },
   { label: 'Join Beta Test', href: '/beta' },
   { label: 'Store', href: '/store' },
   { label: 'Coming Soon', href: '/coming-soon' },
@@ -26,7 +27,6 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-7xl items-stretch">
-        {/* Left zone: just the mark, no bottom border — reads as part of the page, not the nav bar. */}
         <Link
           href="/"
           className="flex shrink-0 items-center px-4 py-3 md:px-8"
@@ -42,7 +42,6 @@ export function SiteHeader() {
           />
         </Link>
 
-        {/* Right zone: the actual nav bar, boxed off with its own left divider and bottom border. */}
         <div className="flex flex-1 items-center justify-between gap-4 border-b border-l border-border px-4 py-2 md:px-8">
           <nav aria-label="Main" className="hidden md:block">
             <ul className="flex items-center gap-1 font-mono text-sm tracking-[0.18em] uppercase">
@@ -69,7 +68,6 @@ export function SiteHeader() {
             </Link>
           </div>
 
-          {/* Mobile: prompt + trigger fill the space that used to sit empty. */}
           <div className="flex flex-1 items-center justify-end gap-2 md:hidden">
             <NavPrompt open={open} />
             <button
