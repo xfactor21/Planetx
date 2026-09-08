@@ -21,41 +21,28 @@ const demoUrl = 'https://visual-x-g9w4nz.v2.appdeploy.ai/'
 export default function VisualXPage() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <section className="border-b border-white/10 bg-black">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-6 md:flex-row md:items-end md:justify-between md:px-8 md:py-8">
-          <div>
-            <Link
-              href="/"
-              className="mb-4 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-cyan-300 hover:text-white"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" />
-              planet.X
-            </Link>
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-fuchsia-300">
-              Free web experience
-            </p>
-            <h1 className="mt-2 text-4xl font-black uppercase tracking-[-0.04em] sm:text-5xl md:text-6xl">
-              Visual<span className="bg-gradient-to-r from-pink-500 via-violet-400 to-cyan-300 bg-clip-text text-transparent">.X</span>
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
-              A deterministic 360° music engine. Choose a song and Visual.X builds a reactive world from its rhythm, structure, texture, and dynamics.
-            </p>
-          </div>
-          <a
-            href={demoUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex w-fit items-center gap-2 border border-cyan-300/50 px-4 py-2 font-mono text-[0.7rem] font-bold uppercase tracking-[0.16em] text-cyan-200 transition hover:border-cyan-200 hover:bg-cyan-300/10"
-          >
-            Open standalone
-            <ExternalLink className="size-4" aria-hidden="true" />
-          </a>
-        </div>
-      </section>
+      <div className="flex min-h-12 items-center justify-between gap-3 border-b border-white/10 bg-black px-3 py-2 sm:px-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-cyan-300 transition hover:text-white"
+        >
+          <ArrowLeft className="size-4" aria-hidden="true" />
+          planet.X
+        </Link>
+        <a
+          href={demoUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 font-mono text-[0.66rem] font-bold uppercase tracking-[0.14em] text-white/70 transition hover:text-cyan-200"
+        >
+          Open standalone
+          <ExternalLink className="size-3.5" aria-hidden="true" />
+        </a>
+      </div>
 
       <section aria-label="Visual.X interactive demo" className="relative bg-black">
-        <div className="mx-auto w-full max-w-[1800px] p-0 md:p-3">
-          <div className="relative h-[calc(100svh-210px)] min-h-[560px] overflow-hidden border-y border-white/10 bg-black md:h-[calc(100svh-190px)] md:rounded-xl md:border">
+        <div className="w-full p-0">
+          <div className="relative h-[calc(100svh-49px)] min-h-[560px] overflow-hidden bg-black">
             <iframe
               src={demoUrl}
               title="Visual.X interactive music visualizer demo"
