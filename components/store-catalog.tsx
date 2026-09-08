@@ -14,10 +14,12 @@ import {
   type StoreCategory,
   type StoreProduct,
 } from '@/lib/store-data'
+import { sessionGridProduct } from '@/lib/sessiongrid-product'
 
 type CategoryFilter = 'All' | StoreCategory
 
 const PAYHIP_STORE_URL = 'https://payhip.com/planetX'
+const allStoreProducts = [sessionGridProduct, ...storeProducts]
 
 const categoryStyles: Record<StoreCategory, string> = {
   Software: 'border-accent/60 bg-accent/10 text-accent',
@@ -67,8 +69,9 @@ function ProductGallery({ product }: { product: StoreProduct }) {
 }
 
 function ProductSection({ product }: { product: StoreProduct }) {
-  const productNumber = String(storeProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
+  const productNumber = String(allStoreProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
   const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
+  const isPayhipStorefront = product.checkoutUrl === PAYHIP_STORE_URL
   const checkoutHref = isLegacyCheckout ? PAYHIP_STORE_URL : product.checkoutUrl
   const isAvailable = Boolean(checkoutHref)
   const priceNote = isAvailable
@@ -152,7 +155,7 @@ function ProductSection({ product }: { product: StoreProduct }) {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                {isLegacyCheckout ? 'Shop on Payhip' : 'View checkout'}
+                {isLegacyCheckout || isPayhipStorefront ? 'Shop on Payhip' : 'View checkout'}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             ) : (
@@ -170,7 +173,7 @@ function ProductSection({ product }: { product: StoreProduct }) {
 export function StoreCatalog() {
   const [category, setCategory] = useState<CategoryFilter>('All')
   const products = useMemo(
-    () => category === 'All' ? storeProducts : storeProducts.filter((product) => product.category === category),
+    () => category === 'All' ? allStoreProducts : allStoreProducts.filter((product) => product.category === category),
     [category],
   )
 
