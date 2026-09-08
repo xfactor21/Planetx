@@ -4,12 +4,10 @@ import { XMark } from '@/components/x-mark'
 import { XLetter } from '@/components/x-glyph'
 import { MusicPlayerEmbed } from '@/components/music-player-embed'
 import { FloatingBrandXs } from '@/components/floating-brand-xs'
-import { CountdownIntro } from '@/components/countdown-intro'
 
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-border">
-      <CountdownIntro />
       <div className="absolute inset-0 x-grid opacity-60" aria-hidden="true" />
       <FloatingBrandXs />
       <div
