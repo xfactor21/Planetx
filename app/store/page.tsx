@@ -48,6 +48,27 @@ const breadcrumbSchema = {
   ],
 }
 
+const startHere = [
+  {
+    eyebrow: 'Browser workflow',
+    name: 'SessionGrid X',
+    description: 'Save and recover Chrome workspaces. Starts with a 7-day Pro trial and keeps a permanent Free tier.',
+    href: '#sessiongrid-x',
+  },
+  {
+    eyebrow: 'Creator utility',
+    name: 'Creator Asset Forge',
+    description: 'Turn one source image into correctly sized social, app, channel, and web assets locally.',
+    href: '#creator-asset-forge',
+  },
+  {
+    eyebrow: 'Sound design',
+    name: 'Essential UI Sounds Vol. 1',
+    description: 'A 144-sound original interface library for apps, games, dashboards, and prototypes.',
+    href: '#essential-ui-sounds',
+  },
+]
+
 export default function StorePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -77,6 +98,31 @@ export default function StorePage() {
               >
                 Shop on Payhip
               </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-b border-border bg-[linear-gradient(90deg,rgba(255,46,159,.045),transparent_45%,rgba(0,245,255,.04))]">
+          <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="font-mono text-[0.62rem] tracking-[0.16em] text-primary uppercase">Start here</p>
+                <h2 className="mt-1 text-2xl font-medium sm:text-3xl">Three useful ways into Xupply.</h2>
+              </div>
+              <p className="max-w-md text-sm leading-6 text-muted-foreground">Not sure what to open first? Pick the problem you want to solve.</p>
+            </div>
+            <div className="mt-6 grid gap-3 md:grid-cols-3">
+              {startHere.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  className="group border border-border bg-black/30 p-5 transition-colors hover:border-primary/80"
+                >
+                  <p className="font-mono text-[0.58rem] tracking-[0.14em] text-accent uppercase">{item.eyebrow}</p>
+                  <h3 className="mt-2 text-lg font-medium text-white group-hover:text-primary">{item.name}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                </a>
+              ))}
             </div>
           </div>
         </section>
