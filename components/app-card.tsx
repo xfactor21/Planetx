@@ -8,9 +8,9 @@ import type { ReleasedApp } from '@/lib/data'
 import { withXGlyph } from '@/components/x-glyph'
 
 export function AppCard({ app }: { app: ReleasedApp }) {
-  // Mature cards start gated on every load — acceptance is not persisted across sessions.
   const [revealed, setRevealed] = useState(!app.mature)
   const gated = Boolean(app.mature) && !revealed
+  const productHref = !app.mature && app.id !== 'studyhive' ? `/apps/${app.id}` : null
 
   return (
     <article className="relative flex flex-col gap-4 sm:gap-6 bg-background p-5 sm:p-8 md:p-10">
@@ -107,6 +107,20 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                 </a>
               ))
             )}
+
+            {productHref ? (
+              <Link
+                href={productHref}
+                tabIndex={gated ? -1 : undefined}
+                className="group inline-flex items-center gap-2 border border-accent px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                Product page
+                <ArrowUpRight
+                  className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  aria-hidden="true"
+                />
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>

@@ -161,18 +161,16 @@ export function UpcomingApps({
                           </li>
                         ))}
                       </ul>
-                      {!isFull ? (
-                        <Link
-                          href="/coming-soon"
-                          className="group mt-2 inline-flex w-fit items-center gap-2 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase hover:underline"
-                        >
-                          Learn more
-                          <ArrowUpRight
-                            className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                            aria-hidden="true"
-                          />
-                        </Link>
-                      ) : null}
+                      <Link
+                        href={`/apps/${app.id}`}
+                        className="group mt-2 inline-flex w-fit items-center gap-2 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase hover:underline"
+                      >
+                        View project
+                        <ArrowUpRight
+                          className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                          aria-hidden="true"
+                        />
+                      </Link>
                     </div>
                   </article>
                 )
