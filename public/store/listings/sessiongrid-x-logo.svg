@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" role="img" aria-label="SessionGrid X planet.X logo">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#ff2e9f"/><stop offset="1" stop-color="#00f5ff"/></linearGradient></defs>
+<rect width="640" height="180" rx="18" fill="#060709"/>
+<path d="M16 164 164 16M164 164 16 16" stroke="#8a63ff" stroke-opacity=".20" stroke-width="18"/>
+<g transform="translate(10 10)" fill="none" stroke="url(#g)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><rect x="38" y="42" width="72" height="42" rx="6"/><rect x="52" y="58" width="72" height="42" rx="6" class="pink"/><path d="M68 76h30"/></g>
+<text x="190" y="82" fill="#f7f7fb" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="39" font-weight="800">SessionGrid X</text>
+<text x="192" y="122" fill="#00f5ff" font-family="Consolas, ui-monospace, monospace" font-size="18" font-weight="700">planet.X browser software v11</text>
+<style>.pink{stroke:#ff2e9f}</style>
+</svg>
