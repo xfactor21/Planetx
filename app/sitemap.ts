@@ -10,13 +10,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/music',
     '/about',
     '/studyhive',
+    '/visual-x',
     '/coming-soon',
   ]
 
   return routes.map((route): MetadataRoute.Sitemap[number] => ({
     url: `${siteUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '' ? 'weekly' : 'monthly',
-    priority: route === '' ? 1 : route === '/store' || route === '/beta' ? 0.9 : 0.7,
+    changeFrequency: route === '' || route === '/visual-x' ? 'weekly' : 'monthly',
+    priority: route === '' ? 1 : route === '/store' || route === '/beta' || route === '/visual-x' ? 0.9 : 0.7,
   }))
 }
