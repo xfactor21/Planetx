@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { XGlyph, XMark } from '@/components/x-mark'
+import { XMark } from '@/components/x-mark'
 import { withXGlyph } from '@/components/x-glyph'
 import { NavPrompt } from '@/components/nav-prompt'
 import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
