@@ -19,7 +19,26 @@ import { sessionGridProduct } from '@/lib/sessiongrid-product'
 type CategoryFilter = 'All' | StoreCategory
 
 const PAYHIP_STORE_URL = 'https://payhip.com/planetX'
-const allStoreProducts = [sessionGridProduct, ...storeProducts]
+const CONTEXT_CHROME_URL = 'https://chromewebstore.google.com/detail/context-encrypted-credent/ikedbigbancjamohakblaclcoljlhdbn'
+
+function normalizeProduct(product: StoreProduct): StoreProduct {
+  if (product.id === 'context-pro') {
+    return {
+      ...product,
+      name: 'conteXt',
+      price: 'Free',
+      priceNote: 'Chrome extension',
+      status: 'Available free',
+      platforms: ['Chrome extension', 'Full-page Chrome workspace'],
+      license:
+        'Install free from the Chrome Web Store. Existing local vault data remains on-device. Pro licensing will be offered through the private in-app upgrade flow rather than the public store catalog.',
+      checkoutUrl: CONTEXT_CHROME_URL,
+    }
+  }
+  return product
+}
+
+const allStoreProducts = [sessionGridProduct, ...storeProducts].map(normalizeProduct)
 
 const categoryStyles: Record<StoreCategory, string> = {
   Software: 'border-accent/60 bg-accent/10 text-accent',
@@ -72,6 +91,7 @@ function ProductSection({ product }: { product: StoreProduct }) {
   const productNumber = String(allStoreProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
   const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
   const isPayhipStorefront = product.checkoutUrl === PAYHIP_STORE_URL
+  const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
   const checkoutHref = isLegacyCheckout ? PAYHIP_STORE_URL : product.checkoutUrl
   const isAvailable = Boolean(checkoutHref)
   const priceNote = isAvailable
@@ -83,6 +103,12 @@ function ProductSection({ product }: { product: StoreProduct }) {
       ? 'Current license terms are provided with the product checkout.'
       : product.license
     : 'Final license terms will be published before checkout opens.'
+
+  const ctaLabel = isChromeStore
+    ? product.id === 'sessiongrid-x' ? 'Find in Chrome Web Store' : 'Get Free Extension'
+    : isLegacyCheckout || isPayhipStorefront
+      ? 'Shop on Payhip'
+      : 'View checkout'
 
   return (
     <article id={product.id} className="scroll-mt-36 border-t-2 border-primary/80 bg-[linear-gradient(180deg,rgba(255,46,159,.035),transparent_12rem)]">
@@ -155,7 +181,7 @@ function ProductSection({ product }: { product: StoreProduct }) {
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                {isLegacyCheckout || isPayhipStorefront ? 'Shop on Payhip' : 'View checkout'}
+                {ctaLabel}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             ) : (
