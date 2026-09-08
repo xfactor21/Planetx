@@ -17,6 +17,8 @@ import {
 
 type CategoryFilter = 'All' | StoreCategory
 
+const PAYHIP_STORE_URL = 'https://payhip.com/planetX'
+
 const categoryStyles: Record<StoreCategory, string> = {
   Software: 'border-accent/60 bg-accent/10 text-accent',
   'Audio & FX': 'border-primary/60 bg-primary/10 text-primary',
@@ -66,7 +68,9 @@ function ProductGallery({ product }: { product: StoreProduct }) {
 
 function ProductSection({ product }: { product: StoreProduct }) {
   const productNumber = String(storeProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
-  const isAvailable = Boolean(product.checkoutUrl)
+  const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
+  const checkoutHref = isLegacyCheckout ? PAYHIP_STORE_URL : product.checkoutUrl
+  const isAvailable = Boolean(checkoutHref)
   const priceNote = isAvailable
     ? product.priceNote === 'Test-mode pricing' ? 'Current pricing' : product.priceNote
     : 'Planned price'
@@ -141,14 +145,14 @@ function ProductSection({ product }: { product: StoreProduct }) {
               <p className="mt-1 text-xl font-medium text-primary">{product.price}</p>
               <p className="mt-1 font-mono text-[0.58rem] tracking-[0.1em] text-accent uppercase">{status}</p>
             </div>
-            {product.checkoutUrl ? (
+            {checkoutHref ? (
               <a
-                href={product.checkoutUrl}
+                href={checkoutHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                View checkout
+                {isLegacyCheckout ? 'Shop on Payhip' : 'View checkout'}
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
             ) : (
@@ -200,7 +204,14 @@ export function StoreCatalog() {
             <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Bundles are coming soon.</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Curated Xupply collections are being packaged now. Individual products remain available wherever a checkout link is shown.</p>
           </div>
-          <span className="shrink-0 border border-accent/50 px-3 py-2 font-mono text-[0.64rem] tracking-[0.14em] text-accent uppercase">In preparation</span>
+          <a
+            href={PAYHIP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 border border-accent/50 px-4 py-3 font-mono text-[0.64rem] font-bold tracking-[0.14em] text-accent uppercase transition-colors hover:border-primary hover:text-primary"
+          >
+            Visit Payhip store
+          </a>
         </div>
       </section>
     </>
