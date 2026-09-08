@@ -1,17 +1,47 @@
 import { NextResponse } from 'next/server'
 import { releasedApps } from '@/lib/data'
+import {
+  consumeRateLimit,
+  looksAutomated,
+  rejectOversizedBody,
+} from '@/lib/request-guard'
 
-// Where completed beta applications are sent.
 const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
+
+const ALLOWED_APPLICATIONS: Record<string, string> = {
+  bdxm: 'bdXm',
+  'studyhive-student': 'StudyHive (Student)',
+  'studyhive-teacher': 'StudyHive (Teacher)',
+  'studyhive-tester': 'StudyHive (General Tester)',
+  xmemoirs: 'xMemoirs',
+  'voice-studio-x': 'Voice Studio X',
+}
 
 type BetaApplicationPayload = {
   appId: string
   appName: string
   email: string
   answers: { question: string; answer: string }[]
+  website?: string
+  startedAt?: number
 }
 
 export async function POST(req: Request) {
+  if (rejectOversizedBody(req, 48_000)) {
+    return NextResponse.json({ error: 'Request too large' }, { status: 413 })
+  }
+
+  const rate = consumeRateLimit(req, 'beta-application', 4, 15 * 60 * 1000)
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: 'Too many application attempts. Please try again shortly.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(rate.retryAfterSeconds) },
+      },
+    )
+  }
+
   let body: BetaApplicationPayload
 
   try {
@@ -20,15 +50,39 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { appId, appName, email, answers } = body
+  const { appId, appName, email, answers, website = '', startedAt } = body
+
+  if (looksAutomated(startedAt, website)) {
+    return NextResponse.json({ ok: true })
+  }
 
   if (!appId || !appName || !email || !Array.isArray(answers)) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
+  const expectedAppName = ALLOWED_APPLICATIONS[appId]
+  if (!expectedAppName || expectedAppName !== appName) {
+    return NextResponse.json({ error: 'Unknown beta application' }, { status: 400 })
+  }
+
+  if (email.length > 254 || answers.length > 20) {
+    return NextResponse.json({ error: 'Invalid application data' }, { status: 400 })
+  }
+
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailPattern.test(email)) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+  }
+
+  const invalidAnswer = answers.some(
+    (answer) =>
+      typeof answer?.question !== 'string' ||
+      typeof answer?.answer !== 'string' ||
+      answer.question.length > 500 ||
+      answer.answer.length > 4_000,
+  )
+  if (invalidAnswer) {
+    return NextResponse.json({ error: 'Invalid application answers' }, { status: 400 })
   }
 
   const apiKey = process.env.RESEND_API_KEY
@@ -51,15 +105,7 @@ export async function POST(req: Request) {
     )
     .join('')
 
-  const STUDYHIVE_VARIANT_IDS = [
-    'studyhive-student',
-    'studyhive-teacher',
-    'studyhive-tester',
-  ]
-  const normalizedAppId = STUDYHIVE_VARIANT_IDS.includes(appId)
-    ? 'studyhive'
-    : appId
-
+  const normalizedAppId = appId.startsWith('studyhive-') ? 'studyhive' : appId
   const app = releasedApps.find((a) => a.id === normalizedAppId)
   const appLink = app?.appUrl || app?.downloads?.[0]?.href
 

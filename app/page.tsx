@@ -21,6 +21,9 @@ export default function Page() {
               <img
                 src="/brand/planet-x-blinking-banner.gif"
                 alt="planet.X — music and development"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
                 className="block h-auto w-full"
               />
             </div>

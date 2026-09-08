@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next'
 import { Space_Grotesk, JetBrains_Mono, Poppins } from 'next/font/google'
 import { MonsterXAnnouncement } from '@/components/monsterx-announcement'
 import { XFactorSitePet } from '@/components/xfactor-site-pet'
+import { SiteAnalytics } from '@/components/site-analytics'
 import './globals.css'
 
 const _spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
@@ -119,6 +120,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <MonsterXAnnouncement />
+        <SiteAnalytics />
         {children}
         <XFactorSitePet />
         {process.env.VERCEL === '1' && <Analytics />}
