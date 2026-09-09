@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
 }
 
-const demoUrl = 'https://visual-x-g9w4nz.v2.appdeploy.ai/'
+const demoUrl = '/visual-x-app/index.html'
 
 export default function VisualXPage() {
   return (
