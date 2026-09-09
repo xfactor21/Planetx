@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 
 export const metadata: Metadata = {
-  title: 'Visual.X — 360 Music Engine | planet.X',
+  title: 'Visual.X — 360 Music Engine',
   description:
     'Turn a song into a deterministic, audio-reactive 360° visual world. Try the current Visual.X web demo free on planet.X.',
   alternates: { canonical: '/visual-x' },
