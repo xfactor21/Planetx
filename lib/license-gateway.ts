@@ -31,7 +31,7 @@ function productEnvKey(product: string) {
 }
 
 function allowedProduct(product: string) {
-  const allowed = (process.env.LICENSE_ALLOWED_PRODUCTS || 'sessiongrid-x')
+  const allowed = (process.env.LICENSE_ALLOWED_PRODUCTS || 'sessiongrid-x,context-pro')
     .split(',')
     .map((v) => v.trim().toLowerCase())
     .filter(Boolean)
