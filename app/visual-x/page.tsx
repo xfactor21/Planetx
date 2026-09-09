@@ -20,6 +20,7 @@ const demoUrl = 'https://visual-x-g9w4nz.v2.appdeploy.ai/'
 export default function VisualXPage() {
   return (
     <div className="min-h-screen bg-black text-white">
+      <style>{'[data-xfactor-pet-root]{display:none!important}'}</style>
       <SiteHeader />
       <main>
         <section aria-label="Visual.X interactive demo" className="relative bg-black">
