@@ -12,7 +12,7 @@ const tracks: PlayerTrack[] = [
     id: 'coming-down-that-hill',
     title: 'Coming Down That Hill',
     artist: 'xFactor',
-    src: 'https://visual-x-g9w4nz.v2.appdeploy.ai/resources/coming-down-that-hill.mp3',
+    src: '/music-tracks/coming-down-that-hill.mp3',
   },
   {
     id: 'glitch-god',
@@ -31,7 +31,7 @@ const tracks: PlayerTrack[] = [
     id: 'xs-in-my-head',
     title: 'Xs in My Head',
     artist: 'xFactor',
-    src: 'https://visual-x-g9w4nz.v2.appdeploy.ai/resources/xs-in-my-head.mp3',
+    src: '/music-tracks/xs-in-my-head.mp3',
   },
   {
     id: 'letters-to-myself',
