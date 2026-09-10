@@ -47,5 +47,5 @@ export const sessionGridProduct: StoreProduct = {
       fit: 'cover',
     },
   ],
-  checkoutUrl: 'https://chromewebstore.google.com/search/SessionGrid%20X',
+  checkoutUrl: 'https://chromewebstore.google.com/detail/sessiongrid-x-tab-workspa/gghgjnmclndonogigpahmgopldpomcel',
 }
