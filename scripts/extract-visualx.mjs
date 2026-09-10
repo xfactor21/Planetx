@@ -19,6 +19,7 @@ execFileSync('node', [join(root, 'scripts', 'patch-visualx-v42.mjs'), appDir], {
 execFileSync('node', [join(root, 'scripts', 'patch-visualx-v42-cache-runtime.mjs'), appDir], { stdio: 'inherit' })
 execFileSync('node', [join(root, 'scripts', 'patch-visualx-regions.mjs'), appDir], { stdio: 'inherit' })
 execFileSync('node', [join(root, 'scripts', 'patch-visualx-dynamic-regions-waveform.mjs'), appDir], { stdio: 'inherit' })
+execFileSync('node', [join(root, 'scripts', 'patch-visualx-motion-waveform-polish.mjs'), appDir], { stdio: 'inherit' })
 execFileSync('npm', ['ci', '--include=dev', '--no-audit', '--no-fund'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'development' } })
 execFileSync('npm', ['run', 'build'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'production' } })
 
@@ -32,4 +33,4 @@ cpSync(join(appDir, 'public', 'featured', 'coming-down-that-hill.mp3'), join(sit
 cpSync(join(appDir, 'public', 'featured', 'xs-in-my-head.mp3'), join(siteMusicDir, 'xs-in-my-head.mp3'))
 
 rmSync(workDir, { recursive: true, force: true })
-console.log('Visual.X v4.2 rebuilt with playback repair, region rotation, intra-region variation, and real 360 waveform envelope')
+console.log('Visual.X v4.2 rebuilt with smoother layered motion and high-readability 360 waveform')
