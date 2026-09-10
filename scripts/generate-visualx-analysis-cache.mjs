@@ -15,7 +15,7 @@ mkdirSync(workDir, { recursive: true })
 mkdirSync(outDir, { recursive: true })
 execFileSync('unzip', ['-q', zipPath, '-d', workDir], { stdio: 'inherit' })
 if (!existsSync(join(appDir, 'src', 'audioAnalysisCore.ts'))) throw new Error('Visual.X analyzer source missing')
-
+execFileSync('npm', ['ci', '--include=dev', '--no-audit', '--no-fund'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'development' } })
 execFileSync('npx', ['tsc', 'src/audioAnalysis.ts', 'src/audioAnalysisCore.ts', '--target', 'ES2022', '--module', 'ES2022', '--moduleResolution', 'bundler', '--lib', 'ES2022,DOM', '--skipLibCheck', '--outDir', jsDir, '--noEmitOnError', 'false'], { cwd: appDir, stdio: 'inherit' })
 const { analyzePCM } = await import(pathToFileURL(join(jsDir, 'audioAnalysisCore.js')).href)
 
