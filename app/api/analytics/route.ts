@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const DEFAULT_INGEST_URL = 'https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-analytics-ingest'
+const INTERNAL_TEST_COOKIE = 'planetx_internal_test'
 
 const VISUAL_X_EVENTS = new Set([
   'visual_x_page_view',
@@ -62,7 +63,11 @@ type AnalyticsEvent = {
   properties?: Record<string, string | number | boolean | null>
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  if (req.cookies.get(INTERNAL_TEST_COOKIE)?.value === '1') {
+    return NextResponse.json({ ok: true, forwarded: false, internal: true }, { status: 202 })
+  }
+
   const ingestUrl = process.env.PLANETX_ANALYTICS_INGEST_URL || DEFAULT_INGEST_URL
   const key = process.env.PLANETX_ANALYTICS_KEY
 
