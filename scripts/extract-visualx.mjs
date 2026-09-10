@@ -16,6 +16,7 @@ execFileSync('unzip', ['-q', zipPath, '-d', workDir], { stdio: 'inherit' })
 if (!existsSync(join(appDir, 'package.json'))) throw new Error('Visual.X v4.2 package root not found')
 
 execFileSync('node', [join(root, 'scripts', 'patch-visualx-v42.mjs'), appDir], { stdio: 'inherit' })
+execFileSync('node', [join(root, 'scripts', 'patch-visualx-v42-cache.mjs'), appDir], { stdio: 'inherit' })
 execFileSync('npm', ['ci', '--include=dev', '--no-audit', '--no-fund'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'development' } })
 execFileSync('npm', ['run', 'build'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'production' } })
 
