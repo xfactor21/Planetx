@@ -31,7 +31,7 @@ function normalizeProduct(product: StoreProduct): StoreProduct {
       status: 'Available free',
       platforms: ['Chrome extension', 'Full-page Chrome workspace'],
       license:
-        'Install free from the Chrome Web Store. Existing local vault data remains on-device. Pro licensing will be offered through the private in-app upgrade flow rather than the public store catalog.',
+        'Install free from the Chrome Web Store. Existing local vault data remains on-device. Pro licensing is offered through the private in-app upgrade flow rather than the public store catalog.',
       checkoutUrl: CONTEXT_CHROME_URL,
     }
   }
@@ -46,13 +46,30 @@ const categoryStyles: Record<StoreCategory, string> = {
   'Creator Resources': 'border-primary/40 bg-[linear-gradient(90deg,rgba(255,46,159,.12),rgba(0,245,255,.1))] text-white',
 }
 
+const categoryXStyles: Record<StoreCategory, string> = {
+  Software: 'from-cyan-300 via-cyan-400 to-violet-500',
+  'Audio & FX': 'from-pink-400 via-fuchsia-500 to-violet-500',
+  'Creator Resources': 'from-violet-400 via-fuchsia-400 to-cyan-300',
+}
+
+function XupplyMark({ category, compact = false }: { category: StoreCategory; compact?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`pointer-events-none absolute select-none bg-gradient-to-br ${categoryXStyles[category]} bg-clip-text font-black italic leading-none text-transparent opacity-85 drop-shadow-[0_0_18px_rgba(255,255,255,.08)] ${compact ? 'right-2 top-1 text-4xl' : 'right-4 top-2 text-[clamp(5rem,10vw,9rem)]'}`}
+    >
+      X
+    </span>
+  )
+}
+
 function ProductGallery({ product }: { product: StoreProduct }) {
   const [selected, setSelected] = useState(0)
   const image = product.gallery[selected]
 
   return (
     <div className="min-w-0 lg:sticky lg:top-40 lg:self-start">
-      <div className="relative aspect-[16/10] overflow-hidden border border-border bg-black">
+      <div className="relative aspect-[16/10] overflow-hidden border border-border bg-[radial-gradient(circle_at_88%_12%,rgba(255,46,159,.11),transparent_30%),radial-gradient(circle_at_8%_90%,rgba(0,245,255,.08),transparent_32%),#030307]">
         <Image
           src={image.src}
           alt={image.alt}
@@ -60,6 +77,9 @@ function ProductGallery({ product }: { product: StoreProduct }) {
           sizes="(min-width: 1024px) 52vw, 100vw"
           className={image.fit === 'contain' ? 'object-contain p-5 sm:p-8' : 'object-cover'}
         />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_55%,rgba(3,3,8,.48))]" aria-hidden="true" />
+        <XupplyMark category={product.category} />
+        <div className="absolute left-4 top-4 border border-white/10 bg-black/55 px-2.5 py-1 font-mono text-[0.55rem] font-bold tracking-[0.16em] text-white/75 uppercase backdrop-blur">Xupply / {product.category}</div>
         <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 border-t border-white/10 bg-black/85 px-4 py-3 backdrop-blur">
           <span className="font-mono text-[0.64rem] tracking-[0.14em] text-white uppercase">{image.label}</span>
           <span className="font-mono text-[0.6rem] tracking-[0.12em] text-muted-foreground">{selected + 1} / {product.gallery.length}</span>
@@ -76,8 +96,10 @@ function ProductGallery({ product }: { product: StoreProduct }) {
             aria-pressed={selected === index}
             className={`group min-w-0 border bg-black text-left transition-colors ${selected === index ? 'border-primary' : 'border-border hover:border-accent/70'}`}
           >
-            <span className="relative block aspect-[16/10] overflow-hidden">
+            <span className="relative block aspect-[16/10] overflow-hidden bg-[#030307]">
               <Image src={item.src} alt="" fill sizes="16vw" className={item.fit === 'contain' ? 'object-contain p-2' : 'object-cover'} />
+              <span className="absolute inset-0 bg-[linear-gradient(135deg,transparent_58%,rgba(3,3,8,.42))]" aria-hidden="true" />
+              <XupplyMark category={product.category} compact />
             </span>
             <span className="block truncate border-t border-border px-2 py-2 font-mono text-[0.56rem] tracking-[0.08em] text-muted-foreground uppercase group-hover:text-white">{item.label}</span>
           </button>
@@ -92,12 +114,12 @@ function ProductSection({ product }: { product: StoreProduct }) {
   const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
   const isPayhipStorefront = product.checkoutUrl === PAYHIP_STORE_URL
   const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
-  const checkoutHref = isLegacyCheckout ? PAYHIP_STORE_URL : product.checkoutUrl
+  const checkoutHref = isLegacyCheckout ? undefined : product.checkoutUrl
   const isAvailable = Boolean(checkoutHref)
   const priceNote = isAvailable
     ? product.priceNote === 'Test-mode pricing' ? 'Current pricing' : product.priceNote
     : 'Planned price'
-  const status = isAvailable ? product.status : 'Coming soon'
+  const status = isAvailable ? product.status : isLegacyCheckout ? 'Checkout migration pending' : 'Coming soon'
   const license = isAvailable
     ? /draft|planned|not active yet/i.test(product.license)
       ? 'Current license terms are provided with the product checkout.'
@@ -105,8 +127,8 @@ function ProductSection({ product }: { product: StoreProduct }) {
     : 'Final license terms will be published before checkout opens.'
 
   const ctaLabel = isChromeStore
-    ? product.id === 'sessiongrid-x' ? 'Find in Chrome Web Store' : 'Get Free Extension'
-    : isLegacyCheckout || isPayhipStorefront
+    ? product.id === 'sessiongrid-x' ? 'Get SessionGrid X' : 'Get Free Extension'
+    : isPayhipStorefront
       ? 'Shop on Payhip'
       : 'View checkout'
 
@@ -231,7 +253,7 @@ export function StoreCatalog() {
           <div>
             <p className="font-mono text-[0.65rem] tracking-[0.16em] text-primary uppercase">Xupply bundles</p>
             <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Bundles are coming soon.</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Curated Xupply collections are being packaged now. Individual products remain available wherever a checkout link is shown.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Curated Xupply collections are being packaged now. Individual products remain available wherever a verified checkout link is shown.</p>
           </div>
           <a
             href={PAYHIP_STORE_URL}
