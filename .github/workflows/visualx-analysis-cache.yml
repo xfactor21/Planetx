@@ -1,0 +1,49 @@
+name: Visual.X Featured Analysis Cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - PlanetX-09.09-v18.9-xupply-store-license-finish
+    paths:
+      - 'scripts/generate-visualx-analysis-cache.mjs'
+      - 'Visual.X-09.09-v4.2-site-ready.zip'
+      - 'public/music-tracks/digital-decay.mp3'
+      - 'public/music-tracks/glitch-god.mp3'
+      - 'public/music-tracks/ghost-in-the-machine.mp3'
+      - '.github/workflows/visualx-analysis-cache.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Ensure ffmpeg
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Generate featured SongDNA
+        run: node scripts/generate-visualx-analysis-cache.mjs "$GITHUB_WORKSPACE"
+      - name: Commit generated caches
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add visualx-analysis-cache/*.json
+          if git diff --cached --quiet; then
+            echo "No cache changes"
+          else
+            git commit -m "Generate Visual.X featured SongDNA cache"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
