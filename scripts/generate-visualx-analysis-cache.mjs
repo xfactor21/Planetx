@@ -3,19 +3,16 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-const root = process.argv[2] || process.cwd()
-const zipPath = join(root, 'Visual.X-09.09-v4.2-site-ready.zip')
+const root = process.argv[2]
+const appDir = process.argv[3]
+const outDir = process.argv[4]
+if (!root || !appDir || !outDir) throw new Error('Usage: node generate-visualx-analysis-cache.mjs <root> <appDir> <outDir>')
 const workDir = join(root, '.visualx-analysis-work')
-const appDir = join(workDir, 'v42_site_ready')
-const outDir = join(root, 'visualx-analysis-cache')
 const jsDir = join(workDir, 'compiled')
-
 rmSync(workDir, { recursive: true, force: true })
-mkdirSync(workDir, { recursive: true })
+mkdirSync(jsDir, { recursive: true })
 mkdirSync(outDir, { recursive: true })
-execFileSync('unzip', ['-q', zipPath, '-d', workDir], { stdio: 'inherit' })
-if (!existsSync(join(appDir, 'src', 'audioAnalysisCore.ts'))) throw new Error('Visual.X analyzer source missing')
-execFileSync('npm', ['ci', '--include=dev', '--no-audit', '--no-fund'], { cwd: appDir, stdio: 'inherit', env: { ...process.env, NODE_ENV: 'development' } })
+
 execFileSync('npx', ['tsc', 'src/audioAnalysis.ts', 'src/audioAnalysisCore.ts', '--target', 'ES2022', '--module', 'ES2022', '--moduleResolution', 'bundler', '--lib', 'ES2022,DOM', '--skipLibCheck', '--outDir', jsDir, '--noEmitOnError', 'false'], { cwd: appDir, stdio: 'inherit' })
 const { analyzePCM } = await import(pathToFileURL(join(jsDir, 'audioAnalysisCore.js')).href)
 
@@ -39,6 +36,5 @@ for (const [id, input] of tracks) {
   writeFileSync(join(outDir, `${id}.json`), JSON.stringify(dna))
   rmSync(raw, { force: true })
 }
-
 rmSync(workDir, { recursive: true, force: true })
-console.log(`Generated ${tracks.length} Visual.X featured SongDNA caches in ${outDir}`)
+console.log(`Generated ${tracks.length} Visual.X featured SongDNA caches`)
