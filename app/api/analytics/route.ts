@@ -2,6 +2,34 @@ import { NextResponse } from 'next/server'
 
 const DEFAULT_INGEST_URL = 'https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-analytics-ingest'
 
+const VISUAL_X_EVENTS = new Set([
+  'visual_x_page_view',
+  'visual_x_interest_click',
+  'song_upload',
+  'song_search',
+  'generation_start',
+  'generation_complete',
+  'fullscreen_enter',
+  'remix',
+  'record_start',
+  'record_complete',
+  'export_complete',
+  'share',
+  'expert_mode_open',
+  'song_selected',
+  'song_uploaded',
+  'generation_started',
+  'generation_completed',
+  'fullscreen_entered',
+  'remix_clicked',
+  'simple_to_expert_switched',
+  'record_started',
+  'record_completed',
+  'export_completed',
+  'share_invoked',
+  'planetx_conversion',
+])
+
 const ALLOWED_EVENTS = new Set([
   'page_view',
   'waitlist_submit_attempt',
@@ -19,19 +47,7 @@ const ALLOWED_EVENTS = new Set([
   'product_cta_click',
   'beta_cta_click',
   'external_app_launch',
-  'visual_x_page_view',
-  'visual_x_interest_click',
-  'song_upload',
-  'song_search',
-  'generation_start',
-  'generation_complete',
-  'fullscreen_enter',
-  'remix',
-  'record_start',
-  'record_complete',
-  'export_complete',
-  'share',
-  'expert_mode_open',
+  ...VISUAL_X_EVENTS,
 ])
 
 type AnalyticsEvent = {
@@ -65,11 +81,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unsupported event' }, { status: 400 })
   }
 
+  const isVisualX = body.source_surface === 'visual-x-app' || VISUAL_X_EVENTS.has(body.event)
+  const sourceProduct = body.source_product || (isVisualX ? 'visual-x' : 'planet-x.co')
+
   const payload = {
     ...body,
     timestamp: body.timestamp || new Date().toISOString(),
-    source_product: body.source_product || 'planet-x.co',
-    source_surface: body.source_surface || 'website',
+    source_product: sourceProduct,
+    source_surface: body.source_surface || (isVisualX ? 'visual-x-app' : 'website'),
     path: body.path || null,
     properties: body.properties || {},
   }
