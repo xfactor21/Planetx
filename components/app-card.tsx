@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Lock } from 'lucide-react'
 import type { ReleasedApp } from '@/lib/data'
 import { withXGlyph } from '@/components/x-glyph'
+import { planetXTrack } from '@/lib/client-analytics'
 
 export function AppCard({ app }: { app: ReleasedApp }) {
   const [revealed, setRevealed] = useState(!app.mature)
@@ -68,6 +69,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
             {app.betaHref ? (
               <Link
                 href={app.betaHref}
+                onClick={() => planetXTrack('beta_cta_click', { product_id: app.id, product_name: app.name })}
                 tabIndex={gated ? -1 : undefined}
                 className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
@@ -80,6 +82,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
             ) : app.detailHref ? (
               <Link
                 href={app.detailHref}
+                onClick={() => planetXTrack('product_cta_click', { product_id: app.id, product_name: app.name, cta_label: 'learn_more' })}
                 tabIndex={gated ? -1 : undefined}
                 className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
@@ -96,6 +99,10 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                   href={dl.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    planetXTrack('product_cta_click', { product_id: app.id, product_name: app.name, cta_label: dl.label })
+                    planetXTrack('external_app_launch', { product_id: app.id, product_name: app.name, destination: dl.href })
+                  }}
                   tabIndex={gated ? -1 : undefined}
                   className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
@@ -111,6 +118,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
             {productHref ? (
               <Link
                 href={productHref}
+                onClick={() => planetXTrack('product_cta_click', { product_id: app.id, product_name: app.name, cta_label: 'product_page' })}
                 tabIndex={gated ? -1 : undefined}
                 className="group inline-flex items-center gap-2 border border-accent px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
