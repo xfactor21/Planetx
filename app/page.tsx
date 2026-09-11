@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
@@ -19,8 +20,11 @@ export default function Page() {
         <section aria-label="planet.X banner" className="border-b border-border bg-black">
           <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
             <div className="overflow-hidden border border-border bg-card shadow-[0_0_30px_-18px_rgba(0,245,255,.45)]">
-              <img
+              <Image
                 src="/brand/planet-x-blinking-banner.gif"
+                width={1600}
+                height={400}
+                unoptimized
                 alt="planet.X — music and development"
                 loading="lazy"
                 decoding="async"
