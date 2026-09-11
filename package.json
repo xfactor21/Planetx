@@ -1,7 +1,7 @@
 {
   "name": "my-project",
-  "version": "0.12.0",
-  "planetXVersion": "v12",
+  "version": "0.13.0",
+  "planetXVersion": "v13",
   "private": true,
   "scripts": {
     "dev": "next dev",

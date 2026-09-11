@@ -26,6 +26,18 @@ const PAYHIP_USAGE_URL = 'https://payhip.com/api/v2/license/usage'
 const PAYHIP_DECREASE_URL = 'https://payhip.com/api/v2/license/decrease'
 const LEMON_BASE = 'https://api.lemonsqueezy.com/v1/licenses'
 
+type PayhipData = { enabled?: boolean; product_link?: string; uses?: number }
+type PayhipResponse = { data?: PayhipData }
+type LemonResponse = {
+  activated?: boolean
+  deactivated?: boolean
+  valid?: boolean
+  error?: string
+  instance?: { id?: string }
+  meta?: { product_id?: string | number; variant_id?: string | number }
+  license_key?: { status?: string; activation_limit?: number | null; activation_usage?: number }
+}
+
 function productEnvKey(product: string) {
   return product.trim().toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '')
 }
@@ -89,7 +101,7 @@ async function payhipVerify(product: string, licenseKey: string) {
   const url = new URL(PAYHIP_VERIFY_URL)
   url.searchParams.set('license_key', licenseKey)
   const response = await fetch(url, { headers: { 'product-secret-key': productSecret }, cache: 'no-store' })
-  const json = await response.json().catch(() => null) as any
+  const json = await response.json().catch(() => null) as PayhipResponse | null
   const data = json?.data
   if (!response.ok || !data) return { valid: false, data: null }
   const expectedLink = process.env[`PAYHIP_${key}_PRODUCT_LINK`]
@@ -108,7 +120,7 @@ async function payhipUsage(product: string, licenseKey: string, decrease = false
     body,
     cache: 'no-store',
   })
-  const json = await response.json().catch(() => null) as any
+  const json = await response.json().catch(() => null) as PayhipResponse | null
   return { ok: response.ok && Boolean(json?.data), data: json?.data ?? null }
 }
 
@@ -119,11 +131,11 @@ async function lemonCall(action: 'activate' | 'validate' | 'deactivate', fields:
     body: new URLSearchParams(fields),
     cache: 'no-store',
   })
-  const json = await response.json().catch(() => null) as any
+  const json = await response.json().catch(() => null) as LemonResponse | null
   return { response, json }
 }
 
-function lemonMatchesProduct(product: string, json: any) {
+function lemonMatchesProduct(product: string, json: LemonResponse | null) {
   const key = productEnvKey(product)
   const expectedProduct = process.env[`LEMON_${key}_PRODUCT_ID`]
   const expectedVariant = process.env[`LEMON_${key}_VARIANT_ID`]
@@ -204,7 +216,7 @@ export async function activateLicense(input: LicenseRequest): Promise<LicenseRes
     const { response, json } = await lemonCall('activate', { license_key: licenseKey, instance_name: deviceId.slice(0, 120) })
     const valid = Boolean(response.ok && json?.activated && json?.instance?.id && lemonMatchesProduct(product, json))
     if (!valid) return { ok: true, valid: false, provider, status: json?.license_key?.status ?? 'invalid', error: json?.error ?? undefined }
-    const instanceId = String(json.instance.id)
+    const instanceId = String(json?.instance?.id || '')
     const token = signToken({ product, licenseHash: licenseHash(licenseKey), deviceId, provider, instanceId, issuedAt: Date.now() })
     return { ok: true, valid: true, provider, status: 'active', token, instanceId, uses: Number(json?.license_key?.activation_usage ?? 0), activationLimit: json?.license_key?.activation_limit ?? null }
   } catch {

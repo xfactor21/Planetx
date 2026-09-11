@@ -58,21 +58,29 @@ type AnalyticsEvent = {
   source_surface?: string
   session_id?: string
   anonymous_user_id?: string
+  client_id?: string
   path?: string
   platform?: string
-  properties?: Record<string, string | number | boolean | null>
+  properties?: Record<string, unknown>
+  [key: string]: unknown
 }
+
+const ENVELOPE_FIELDS = new Set([
+  'event',
+  'timestamp',
+  'source_product',
+  'source_surface',
+  'session_id',
+  'anonymous_user_id',
+  'client_id',
+  'path',
+  'platform',
+  'properties',
+])
 
 export async function POST(req: NextRequest) {
   if (req.cookies.get(INTERNAL_TEST_COOKIE)?.value === '1') {
     return NextResponse.json({ ok: true, forwarded: false, internal: true }, { status: 202 })
-  }
-
-  const ingestUrl = process.env.PLANETX_ANALYTICS_INGEST_URL || DEFAULT_INGEST_URL
-  const key = process.env.PLANETX_ANALYTICS_KEY
-
-  if (!key) {
-    return NextResponse.json({ ok: true, forwarded: false }, { status: 202 })
   }
 
   let body: AnalyticsEvent
@@ -86,16 +94,40 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unsupported event' }, { status: 400 })
   }
 
+  const ingestUrl = process.env.PLANETX_ANALYTICS_INGEST_URL || DEFAULT_INGEST_URL
+  const key = process.env.PLANETX_ANALYTICS_KEY
+
+  if (!key) {
+    console.error('planet.X analytics is not configured: PLANETX_ANALYTICS_KEY is missing')
+    return NextResponse.json(
+      { ok: false, forwarded: false, error: 'Analytics service unavailable' },
+      { status: 503 },
+    )
+  }
+
   const isVisualX = body.source_surface === 'visual-x-app' || VISUAL_X_EVENTS.has(body.event)
-  const sourceProduct = body.source_product || (isVisualX ? 'visual-x' : 'planet-x.co')
+  const legacyProperties = Object.fromEntries(
+    Object.entries(body).filter(([key, value]) => !ENVELOPE_FIELDS.has(key) && value !== undefined),
+  )
+  const properties = {
+    ...legacyProperties,
+    ...(body.properties && typeof body.properties === 'object' ? body.properties : {}),
+  }
+  const timestamp =
+    typeof body.timestamp === 'string' && Number.isFinite(Date.parse(body.timestamp))
+      ? new Date(body.timestamp).toISOString()
+      : new Date().toISOString()
 
   const payload = {
-    ...body,
-    timestamp: body.timestamp || new Date().toISOString(),
-    source_product: sourceProduct,
+    event: body.event,
+    timestamp,
+    source_product: isVisualX ? 'visual-x' : 'planet-x.co',
     source_surface: body.source_surface || (isVisualX ? 'visual-x-app' : 'website'),
-    path: body.path || null,
-    properties: body.properties || {},
+    session_id: body.session_id || null,
+    anonymous_user_id: body.anonymous_user_id || body.client_id || null,
+    path: typeof body.path === 'string' ? body.path : '/',
+    platform: typeof body.platform === 'string' ? body.platform : 'web',
+    properties,
   }
 
   try {

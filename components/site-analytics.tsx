@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { planetXTrack } from '@/lib/client-analytics'
 
 export function SiteAnalytics() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const lastPath = useRef<string | null>(null)
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export function SiteAnalytics() {
       referrer: document.referrer || null,
       source: 'planet-x.co',
     })
-  }, [pathname])
+  }, [pathname, searchParams])
 
   return null
 }

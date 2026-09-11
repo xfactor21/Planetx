@@ -19,7 +19,7 @@ export function XLetter({ className = '' }: { className?: string; xCase?: XCase 
   return <XGlyph className={className} />
 }
 
-export function withXGlyph(text: string, _small = false, _variant: 'clean' | 'grunge' = 'clean'): React.ReactNode {
+export function withXGlyph(text: string, small = false, variant: 'clean' | 'grunge' = 'clean'): React.ReactNode {
   const words = text.split(/(\s+)/)
   return words.map((word, wi) => {
     if (/^\s+$/.test(word)) return word
@@ -28,7 +28,7 @@ export function withXGlyph(text: string, _small = false, _variant: 'clean' | 'gr
     return (
       <span key={wi} className="inline-block whitespace-nowrap">
         {parts.map((part, i) =>
-          part === 'X' || part === 'x' ? <XGlyph key={i} /> : <Fragment key={i}>{part}</Fragment>
+          part === 'X' || part === 'x' ? <XGlyph key={i} variant={variant} className={small ? 'nx-small' : ''} /> : <Fragment key={i}>{part}</Fragment>
         )}
       </span>
     )

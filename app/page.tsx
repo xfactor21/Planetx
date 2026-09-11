@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
@@ -8,6 +9,7 @@ import { UpcomingApps } from '@/components/upcoming-apps'
 import { JoinBeta } from '@/components/join-beta'
 import { StudioSection } from '@/components/studio-section'
 import { SiteFooter } from '@/components/site-footer'
+import { AnalyticsLink } from '@/components/analytics-link'
 
 export default function Page() {
   return (
@@ -18,8 +20,11 @@ export default function Page() {
         <section aria-label="planet.X banner" className="border-b border-border bg-black">
           <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
             <div className="overflow-hidden border border-border bg-card shadow-[0_0_30px_-18px_rgba(0,245,255,.45)]">
-              <img
+              <Image
                 src="/brand/planet-x-blinking-banner.gif"
+                width={1600}
+                height={400}
+                unoptimized
                 alt="planet.X — music and development"
                 loading="lazy"
                 decoding="async"
@@ -42,13 +47,15 @@ export default function Page() {
               <p className="mt-4 max-w-2xl leading-relaxed text-white/65">
                 Visual.X is a deterministic 360° music engine that turns rhythm, structure, texture, and dynamics into a reactive visual experience. The current web demo is live while the engine keeps expanding.
               </p>
-              <Link
+              <AnalyticsLink
                 href="/visual-x"
+                event="visual_x_interest_click"
+                properties={{ placement: 'homepage_feature' }}
                 className="group mt-6 inline-flex items-center gap-2 border border-cyan-300/50 px-5 py-3 font-mono text-xs font-bold uppercase tracking-[0.16em] text-cyan-200 transition hover:border-cyan-200 hover:bg-cyan-300/10"
               >
                 Enter Visual.X
                 <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-              </Link>
+              </AnalyticsLink>
             </div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-white/[0.025] p-6 shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
               <div aria-hidden="true" className="absolute inset-6 rounded-full border border-fuchsia-400/25" />

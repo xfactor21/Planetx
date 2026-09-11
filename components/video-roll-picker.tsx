@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { Play } from 'lucide-react'
 
 export type ChannelVideo = {
@@ -56,11 +57,12 @@ export function VideoRollPicker({
               className="group flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-white/5"
             >
               <div className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-black/60">
-                <img
+                <Image
                   src={video.thumbnail || `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
                   alt={video.title}
+                  width={48}
+                  height={48}
                   className="size-full object-cover"
-                  loading="lazy"
                 />
                 <span
                   aria-hidden="true"
