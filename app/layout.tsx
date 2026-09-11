@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import { Space_Grotesk, JetBrains_Mono, Poppins } from 'next/font/google'
 import { MonsterXAnnouncement } from '@/components/monsterx-announcement'
 import { XFactorSitePet } from '@/components/xfactor-site-pet'
@@ -120,7 +121,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <MonsterXAnnouncement />
-        <SiteAnalytics />
+        <Suspense fallback={null}>
+          <SiteAnalytics />
+        </Suspense>
         {children}
         <XFactorSitePet />
         {process.env.VERCEL === '1' && <Analytics />}
