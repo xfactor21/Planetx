@@ -69,13 +69,17 @@ export function MiniAudioPlayer({
     setCurrentTime(value)
   }
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
     <div
       className={`flex w-full items-center gap-3 rounded-full border border-amber-400/30 bg-black/50 px-3 py-2 sm:gap-4 sm:px-4 sm:py-2.5 ${className ?? ''}`}
     >
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        data-track-id={src.split('/').pop() || src}
+      />
 
       <button
         type="button"
