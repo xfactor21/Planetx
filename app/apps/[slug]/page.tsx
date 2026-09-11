@@ -7,6 +7,8 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { withXGlyph } from '@/components/x-glyph'
 import { releasedApps, upcomingApps } from '@/lib/data'
+import { AnalyticsLink } from '@/components/analytics-link'
+import { ProductViewTracker } from '@/components/product-view-tracker'
 
 const siteUrl = 'https://www.planet-x.co'
 const publicReleased = releasedApps.filter((app) => !app.mature && app.id !== 'studyhive')
@@ -95,6 +97,11 @@ export default async function ProductPage({
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ProductViewTracker
+        productId={product.id}
+        productName={product.name}
+        productStatus={isUpcoming ? product.status : 'available'}
+      />
       <SiteHeader />
       <main>
         <section className="relative overflow-hidden border-b border-border bg-card">
@@ -162,27 +169,29 @@ export default async function ProductPage({
                     <div className="mt-3 h-1.5 overflow-hidden bg-border" role="progressbar" aria-valuenow={product.progress} aria-valuemin={0} aria-valuemax={100} aria-label={`${product.name} development progress`}>
                       <div className="h-full bg-accent" style={{ width: `${product.progress}%` }} />
                     </div>
-                    <Link
+                    <AnalyticsLink
                       href="/beta"
+                      event="beta_cta_click"
+                      properties={{ product_id: product.id, product_name: product.name }}
                       className="group mt-6 inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
                     >
                       Join beta list
                       <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </Link>
+                    </AnalyticsLink>
                   </>
                 ) : (
                   <div className="mt-4 flex flex-wrap gap-3">
                     {product.betaHref ? (
-                      <Link href={product.betaHref} className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground">
+                      <AnalyticsLink href={product.betaHref} event="beta_cta_click" properties={{ product_id: product.id, product_name: product.name }} className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground">
                         Join beta
                         <ArrowUpRight className="size-4" aria-hidden="true" />
-                      </Link>
+                      </AnalyticsLink>
                     ) : null}
                     {product.downloads.map((download) => (
-                      <a key={download.href} href={download.href} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2 border border-accent px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground">
+                      <AnalyticsLink key={download.href} href={download.href} external event="product_cta_click" properties={{ product_id: product.id, product_name: product.name, cta_label: download.label }} className="group inline-flex items-center gap-2 border border-accent px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground">
                         {download.label}
                         <ArrowUpRight className="size-4" aria-hidden="true" />
-                      </a>
+                      </AnalyticsLink>
                     ))}
                   </div>
                 )}
