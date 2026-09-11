@@ -10,7 +10,7 @@ export function WaitlistForm() {
   const [website, setWebsite] = useState('')
   const [status, setStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const startedAt = useRef(Date.now())
+  const startedAt = useRef<number | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -18,6 +18,7 @@ export function WaitlistForm() {
 
     setStatus('submitting')
     setErrorMessage('')
+    startedAt.current ??= Date.now()
     planetXTrack('waitlist_submit_attempt', { source: 'homepage' })
 
     try {
