@@ -216,7 +216,7 @@ export async function activateLicense(input: LicenseRequest): Promise<LicenseRes
     const { response, json } = await lemonCall('activate', { license_key: licenseKey, instance_name: deviceId.slice(0, 120) })
     const valid = Boolean(response.ok && json?.activated && json?.instance?.id && lemonMatchesProduct(product, json))
     if (!valid) return { ok: true, valid: false, provider, status: json?.license_key?.status ?? 'invalid', error: json?.error ?? undefined }
-    const instanceId = String(json.instance.id)
+    const instanceId = String(json?.instance?.id || '')
     const token = signToken({ product, licenseHash: licenseHash(licenseKey), deviceId, provider, instanceId, issuedAt: Date.now() })
     return { ok: true, valid: true, provider, status: 'active', token, instanceId, uses: Number(json?.license_key?.activation_usage ?? 0), activationLimit: json?.license_key?.activation_limit ?? null }
   } catch {
