@@ -19,17 +19,52 @@ export async function epidemic(path: string, user?: string) {
   return { missing: false as const, ok: response.ok, status: response.status, data }
 }
 
-export function normalizeTracks(raw: any) {
-  const list = Array.isArray(raw) ? raw : raw?.tracks || raw?.items || raw?.results || raw?.data || []
-  return (Array.isArray(list) ? list : []).map((track: any) => ({
-    id: String(track.id ?? track.trackId ?? track.recordingId ?? ''),
-    title: String(track.title ?? track.name ?? 'Untitled'),
-    artist: Array.isArray(track.artists)
-      ? track.artists.map((artist: any) => artist?.name || artist).filter(Boolean).join(', ')
-      : String(track.artist?.name ?? track.artist ?? track.creator?.name ?? 'Epidemic Sound'),
-    bpm: Number(track.bpm ?? track.tempo ?? 0) || null,
-    duration: Number(track.duration ?? track.durationMs ?? track.length ?? 0) || null,
-    isPreviewOnly: Boolean(track.isPreviewOnly),
-    image: track.imageUrl ?? track.coverUrl ?? track.cover?.url ?? track.image?.url ?? null,
-  })).filter((track: any) => track.id)
+type CatalogRecord = Record<string, unknown>
+
+function asRecord(value: unknown): CatalogRecord {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? value as CatalogRecord
+    : {}
+}
+
+function nestedString(record: CatalogRecord, field: string, nestedField = 'name') {
+  const value = record[field]
+  if (typeof value === 'string' || typeof value === 'number') return String(value)
+  const nested = asRecord(value)[nestedField]
+  return typeof nested === 'string' || typeof nested === 'number' ? String(nested) : ''
+}
+
+export function normalizeTracks(raw: unknown) {
+  const root = asRecord(raw)
+  const candidate = Array.isArray(raw)
+    ? raw
+    : root.tracks ?? root.items ?? root.results ?? root.data ?? []
+  const list = Array.isArray(candidate) ? candidate : []
+
+  return list
+    .map((value) => {
+      const track = asRecord(value)
+      const artists = Array.isArray(track.artists)
+        ? track.artists
+            .map((artist) => nestedString(asRecord(artist), 'name') || String(artist ?? ''))
+            .filter(Boolean)
+            .join(', ')
+        : nestedString(track, 'artist') || nestedString(track, 'creator') || 'Epidemic Sound'
+
+      return {
+        id: String(track.id ?? track.trackId ?? track.recordingId ?? ''),
+        title: String(track.title ?? track.name ?? 'Untitled'),
+        artist: artists,
+        bpm: Number(track.bpm ?? track.tempo ?? 0) || null,
+        duration: Number(track.duration ?? track.durationMs ?? track.length ?? 0) || null,
+        isPreviewOnly: Boolean(track.isPreviewOnly),
+        image:
+          nestedString(track, 'imageUrl') ||
+          nestedString(track, 'coverUrl') ||
+          nestedString(track, 'cover', 'url') ||
+          nestedString(track, 'image', 'url') ||
+          null,
+      }
+    })
+    .filter((track) => track.id)
 }
