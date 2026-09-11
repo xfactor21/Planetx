@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Download, Pause, Play, SkipBack, SkipForward } from 'lucide-react'
 import { withXGlyph } from '@/components/x-glyph'
+import { planetXTrack } from '@/lib/client-analytics'
 
 export type PlayerTrack = {
   id: string
@@ -118,12 +119,21 @@ export function GlowPlayer({
     }
   }
 
+  function selectTrack(next: number, direction: 'next' | 'previous' | 'selected') {
+    planetXTrack('music_track_change', {
+      from_track_id: track.id,
+      to_track_id: tracks[next].id,
+      direction,
+    })
+    setTrackIndex(next)
+  }
+
   function goNext() {
-    setTrackIndex((i) => (i + 1) % tracks.length)
+    selectTrack((trackIndex + 1) % tracks.length, 'next')
   }
 
   function goPrev() {
-    setTrackIndex((i) => (i - 1 + tracks.length) % tracks.length)
+    selectTrack((trackIndex - 1 + tracks.length) % tracks.length, 'previous')
   }
 
   function handleSeek(e: React.ChangeEvent<HTMLInputElement>) {
@@ -146,6 +156,7 @@ export function GlowPlayer({
   function downloadSelected() {
     const toDownload = tracks.filter((t) => selected.has(t.id))
     for (const t of toDownload) {
+      planetXTrack('music_download', { track_id: t.id, track_title: t.title })
       const a = document.createElement('a')
       a.href = t.src
       a.download = `${t.title}.${t.src.split('.').pop()}`
@@ -175,7 +186,13 @@ export function GlowPlayer({
             'linear-gradient(120deg, rgba(255,46,159,.25), transparent 45%, rgba(0,245,255,.2))',
         }}
       />
-      <audio ref={audioRef} src={track.src} preload="metadata" />
+      <audio
+        ref={audioRef}
+        src={track.src}
+        preload="metadata"
+        data-track-id={track.id}
+        data-track-title={track.title}
+      />
 
       {square ? (
         <button
@@ -316,7 +333,7 @@ export function GlowPlayer({
                 <button
                   type="button"
                   onClick={() => {
-                    setTrackIndex(tracks.indexOf(t))
+                    selectTrack(tracks.indexOf(t), 'selected')
                     setIsPlaying(true)
                   }}
                   className="min-w-0 flex-1 truncate text-left text-xs text-white/70 hover:text-white"
