@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { Check, Loader2, X } from 'lucide-react'
-import { track } from '@vercel/analytics'
+import { planetXTrack } from '@/lib/client-analytics'
 import type { BetaAppConfig } from '@/lib/beta-questions'
 import { withXGlyph } from '@/components/x-glyph'
 import { useLockBodyScroll } from '@/lib/use-lock-body-scroll'
@@ -19,7 +19,7 @@ export function BetaApplicationModal({
   const [values, setValues] = useState<Record<string, string>>({})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const startedAt = useRef(Date.now())
+  const startedAt = useRef<number | null>(null)
 
   useLockBodyScroll(true)
 
@@ -40,7 +40,8 @@ export function BetaApplicationModal({
 
     setErrorMessage('')
     setStatus('submitting')
-    track('beta_application_submit_attempt', { appId: config.id })
+    startedAt.current ??= Date.now()
+    planetXTrack('beta_application_submit_attempt', { app_id: config.id })
 
     const answers = config.questions.map((q) => ({
       question: q.label,
@@ -57,7 +58,7 @@ export function BetaApplicationModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          appId: config.id,
+          app_id: config.id,
           appName: config.appName,
           email,
           answers,
@@ -70,19 +71,19 @@ export function BetaApplicationModal({
         const data = await res.json().catch(() => ({}))
         setErrorMessage(data.error || 'Something went wrong. Please try again.')
         setStatus('error')
-        track('beta_application_submit_error', {
-          appId: config.id,
+        planetXTrack('beta_application_submit_error', {
+          app_id: config.id,
           status: res.status,
         })
         return
       }
 
       setStatus('done')
-      track('beta_application_submit_success', { appId: config.id })
+      planetXTrack('beta_application_submit_success', { app_id: config.id })
     } catch {
       setErrorMessage('Something went wrong. Please try again.')
       setStatus('error')
-      track('beta_application_submit_error', { appId: config.id, status: 0 })
+      planetXTrack('beta_application_submit_error', { app_id: config.id, status: 0 })
     }
   }
 
