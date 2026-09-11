@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import {
   ArrowUpRight,
@@ -15,6 +15,7 @@ import {
   type StoreProduct,
 } from '@/lib/store-data'
 import { sessionGridProduct } from '@/lib/sessiongrid-product'
+import { planetXTrack } from '@/lib/client-analytics'
 
 type CategoryFilter = 'All' | StoreCategory
 
@@ -110,6 +111,7 @@ function ProductGallery({ product }: { product: StoreProduct }) {
 }
 
 function ProductSection({ product }: { product: StoreProduct }) {
+  const sectionRef = useRef<HTMLElement>(null)
   const productNumber = String(allStoreProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
   const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
   const isPayhipStorefront = product.checkoutUrl === PAYHIP_STORE_URL
@@ -132,8 +134,31 @@ function ProductSection({ product }: { product: StoreProduct }) {
       ? 'Shop on Payhip'
       : 'View checkout'
 
+  useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    let tracked = false
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || tracked) return
+        tracked = true
+        planetXTrack('product_view', {
+          product_id: product.id,
+          product_name: product.name,
+          product_status: status,
+          product_category: product.category,
+        })
+        observer.disconnect()
+      },
+      { threshold: 0.35 },
+    )
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [product.category, product.id, product.name, status])
+
   return (
-    <article id={product.id} className="scroll-mt-36 border-t-2 border-primary/80 bg-[linear-gradient(180deg,rgba(255,46,159,.035),transparent_12rem)]">
+    <article ref={sectionRef} id={product.id} className="scroll-mt-36 border-t-2 border-primary/80 bg-[linear-gradient(180deg,rgba(255,46,159,.035),transparent_12rem)]">
       <header className="mx-auto max-w-7xl px-4 pb-7 pt-8 md:px-8 md:pb-9 md:pt-11">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className={`border px-2.5 py-1 font-mono text-[0.62rem] tracking-[0.14em] uppercase ${categoryStyles[product.category]}`}>{product.category}</span>
@@ -201,6 +226,10 @@ function ProductSection({ product }: { product: StoreProduct }) {
                 href={checkoutHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  planetXTrack('product_cta_click', { product_id: product.id, product_name: product.name, cta_label: ctaLabel })
+                  planetXTrack('external_app_launch', { product_id: product.id, product_name: product.name, destination: checkoutHref })
+                }}
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
                 {ctaLabel}
@@ -259,6 +288,10 @@ export function StoreCatalog() {
             href={PAYHIP_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => {
+              planetXTrack('product_cta_click', { product_id: 'xupply-store', product_name: 'Xupply store', cta_label: 'visit_payhip' })
+              planetXTrack('external_app_launch', { product_id: 'xupply-store', product_name: 'Xupply store', destination: PAYHIP_STORE_URL })
+            }}
             className="shrink-0 border border-accent/50 px-4 py-3 font-mono text-[0.64rem] font-bold tracking-[0.14em] text-accent uppercase transition-colors hover:border-primary hover:text-primary"
           >
             Visit Payhip store
