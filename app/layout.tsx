@@ -7,9 +7,9 @@ import { XFactorSitePet } from '@/components/xfactor-site-pet'
 import { SiteAnalytics } from '@/components/site-analytics'
 import './globals.css'
 
-const _spaceGrotesk = Space_Grotesk({ subsets: ['latin'] })
-const _jetBrainsMono = JetBrains_Mono({ subsets: ['latin'] })
-const _poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'] })
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
+const jetBrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
+const poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-poppins' })
 
 const siteUrl = 'https://www.planet-x.co'
 
@@ -110,7 +110,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
+    <html lang="en" className={`bg-background ${spaceGrotesk.variable} ${jetBrainsMono.variable} ${poppins.variable}`}>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"
