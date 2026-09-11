@@ -7,6 +7,7 @@ import { ImageIcon, X } from 'lucide-react'
 import { BetaApplicationModal } from '@/components/beta-application-modal'
 import { withXGlyph } from '@/components/x-glyph'
 import type { BetaAppConfig } from '@/lib/beta-questions'
+import { planetXTrack } from '@/lib/client-analytics'
 
 export function BetaAppCard({
   id,
@@ -129,6 +130,7 @@ export function BetaAppCard({
         {linkHref ? (
           <Link
             href={linkHref}
+            onClick={() => planetXTrack('beta_cta_click', { app_id: id || config?.id || name, app_name: name })}
             className="w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             {buttonLabel}
@@ -136,7 +138,10 @@ export function BetaAppCard({
         ) : (
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              planetXTrack('beta_cta_click', { app_id: id || config?.id || name, app_name: name })
+              setOpen(true)
+            }}
             className="w-fit bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.18em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             {buttonLabel}
