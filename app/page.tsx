@@ -57,16 +57,15 @@ export default function Page() {
                 <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
               </AnalyticsLink>
             </div>
-            <div className="relative aspect-square overflow-hidden border border-white/10 bg-white/[0.025] p-6 shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
-              <div aria-hidden="true" className="absolute inset-6 rounded-full border border-fuchsia-400/25" />
-              <div aria-hidden="true" className="absolute inset-12 rounded-full border border-cyan-300/20" />
-              <div aria-hidden="true" className="absolute inset-[28%] rotate-45 border border-violet-400/35" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="bg-gradient-to-br from-pink-500 via-violet-400 to-cyan-300 bg-clip-text text-[8rem] font-black leading-none text-transparent md:text-[10rem]">X</span>
-              </div>
-              <div className="absolute inset-x-6 bottom-6 border-t border-white/10 pt-3 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/45">
-                360° music engine / reactive world generation
-              </div>
+            <div className="relative aspect-square overflow-hidden border border-white/10 bg-black shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
+              <Image
+                src="/visual-x/VisualX-09.12-v1-home-approved.svg"
+                alt="Visual.X — What will your song make? 360° Music Engine"
+                fill
+                priority={false}
+                sizes="(min-width: 768px) 36vw, 100vw"
+                className="object-cover"
+              />
             </div>
           </div>
         </section>
