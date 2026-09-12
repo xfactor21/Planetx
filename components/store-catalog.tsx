@@ -2,11 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
-import {
-  ArrowUpRight,
-  Check,
-  MonitorSmartphone,
-} from 'lucide-react'
+import Script from 'next/script'
+import { ArrowUpRight, Check, Chrome, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import {
   storeCategories,
   storeProducts,
@@ -18,8 +15,8 @@ import { sessionGridProduct } from '@/lib/sessiongrid-product'
 import { planetXTrack } from '@/lib/client-analytics'
 
 type CategoryFilter = 'All' | StoreCategory
+type CheckoutMap = Record<string, string>
 
-const PAYHIP_STORE_URL = 'https://payhip.com/planetX'
 const CONTEXT_CHROME_URL = 'https://chromewebstore.google.com/detail/context-encrypted-credent/ikedbigbancjamohakblaclcoljlhdbn'
 
 function normalizeProduct(product: StoreProduct): StoreProduct {
@@ -27,15 +24,27 @@ function normalizeProduct(product: StoreProduct): StoreProduct {
     return {
       ...product,
       name: 'conteXt',
+      productType: 'Chrome extension · encrypted developer workspace',
       price: 'Free',
       priceNote: 'Chrome extension',
-      status: 'Available free',
+      status: 'Available now',
       platforms: ['Chrome extension', 'Full-page Chrome workspace'],
+      format: 'Chrome extension / Manifest V3',
       license:
-        'Install free from the Chrome Web Store. Existing local vault data remains on-device. Pro licensing is offered through the private in-app upgrade flow rather than the public store catalog.',
+        'Install free from the Chrome Web Store. Existing local vault data remains on-device. Pro licensing is available from the private in-extension upgrade flow.',
       checkoutUrl: CONTEXT_CHROME_URL,
     }
   }
+
+  if (product.id === 'project-x') {
+    return {
+      ...product,
+      checkoutUrl: undefined,
+      status: 'Coming soon',
+      priceNote: 'Planned release',
+    }
+  }
+
   return product
 }
 
@@ -80,7 +89,9 @@ function ProductGallery({ product }: { product: StoreProduct }) {
         />
         <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_55%,rgba(3,3,8,.48))]" aria-hidden="true" />
         <XupplyMark category={product.category} />
-        <div className="absolute left-4 top-4 border border-white/10 bg-black/55 px-2.5 py-1 font-mono text-[0.55rem] font-bold tracking-[0.16em] text-white/75 uppercase backdrop-blur">Xupply / {product.category}</div>
+        <div className="absolute left-4 top-4 border border-white/10 bg-black/55 px-2.5 py-1 font-mono text-[0.55rem] font-bold tracking-[0.16em] text-white/75 uppercase backdrop-blur">
+          Xupply / {product.category}
+        </div>
         <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 border-t border-white/10 bg-black/85 px-4 py-3 backdrop-blur">
           <span className="font-mono text-[0.64rem] tracking-[0.14em] text-white uppercase">{image.label}</span>
           <span className="font-mono text-[0.6rem] tracking-[0.12em] text-muted-foreground">{selected + 1} / {product.gallery.length}</span>
@@ -110,29 +121,47 @@ function ProductGallery({ product }: { product: StoreProduct }) {
   )
 }
 
-function ProductSection({ product }: { product: StoreProduct }) {
+function ProductSection({
+  product,
+  checkoutMap,
+  checkoutLoading,
+}: {
+  product: StoreProduct
+  checkoutMap: CheckoutMap
+  checkoutLoading: boolean
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const productNumber = String(allStoreProducts.findIndex((item) => item.id === product.id) + 1).padStart(2, '0')
-  const isLegacyCheckout = product.checkoutUrl?.includes('lemonsqueezy.com') ?? false
-  const isPayhipStorefront = product.checkoutUrl === PAYHIP_STORE_URL
   const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
-  const checkoutHref = isLegacyCheckout ? undefined : product.checkoutUrl
-  const isAvailable = Boolean(checkoutHref)
-  const priceNote = isAvailable
-    ? product.priceNote === 'Test-mode pricing' ? 'Current pricing' : product.priceNote
-    : 'Planned price'
-  const status = isAvailable ? product.status : isLegacyCheckout ? 'Checkout migration pending' : 'Coming soon'
-  const license = isAvailable
-    ? /draft|planned|not active yet/i.test(product.license)
-      ? 'Current license terms are provided with the product checkout.'
-      : product.license
-    : 'Final license terms will be published before checkout opens.'
+  const isProjectX = product.id === 'project-x'
+  const isPaidProduct = !isChromeStore && !isProjectX
+  const embeddedCheckoutHref = isPaidProduct ? checkoutMap[product.id] : undefined
 
-  const ctaLabel = isChromeStore
-    ? product.id === 'sessiongrid-x' ? 'Get SessionGrid X' : 'Get Free Extension'
-    : isPayhipStorefront
-      ? 'Shop on Payhip'
-      : 'View checkout'
+  const priceNote = isChromeStore
+    ? 'Chrome extension'
+    : isProjectX
+      ? 'Planned release'
+      : /test-mode|proposed/i.test(product.priceNote)
+        ? 'Current price'
+        : product.priceNote
+
+  const status = isChromeStore
+    ? 'Available now'
+    : isProjectX
+      ? 'Coming soon'
+      : embeddedCheckoutHref
+        ? 'Available now'
+        : checkoutLoading
+          ? 'Loading checkout'
+          : 'Checkout temporarily unavailable'
+
+  const license = isChromeStore
+    ? product.license
+    : isProjectX
+      ? 'Final license terms will be published before release.'
+      : /draft|planned|not active yet|requires final legal review/i.test(product.license)
+        ? 'License terms are included with the product purchase.'
+        : product.license
 
   useEffect(() => {
     const section = sectionRef.current
@@ -157,6 +186,19 @@ function ProductSection({ product }: { product: StoreProduct }) {
     return () => observer.disconnect()
   }, [product.category, product.id, product.name, status])
 
+  const trackCta = (ctaLabel: string, destination: string) => {
+    planetXTrack('product_cta_click', {
+      product_id: product.id,
+      product_name: product.name,
+      cta_label: ctaLabel,
+    })
+    planetXTrack('external_app_launch', {
+      product_id: product.id,
+      product_name: product.name,
+      destination,
+    })
+  }
+
   return (
     <article ref={sectionRef} id={product.id} className="scroll-mt-36 border-t-2 border-primary/80 bg-[linear-gradient(180deg,rgba(255,46,159,.035),transparent_12rem)]">
       <header className="mx-auto max-w-7xl px-4 pb-7 pt-8 md:px-8 md:pb-9 md:pt-11">
@@ -176,7 +218,7 @@ function ProductSection({ product }: { product: StoreProduct }) {
 
           {product.platforms ? (
             <p className="mt-5 inline-flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.12em] text-muted-foreground uppercase">
-              <MonitorSmartphone className="size-4 text-accent" aria-hidden="true" />
+              {isChromeStore ? <Chrome className="size-4 text-accent" aria-hidden="true" /> : <MonitorSmartphone className="size-4 text-accent" aria-hidden="true" />}
               {product.platforms.join(' / ')}
             </p>
           ) : null}
@@ -221,24 +263,42 @@ function ProductSection({ product }: { product: StoreProduct }) {
               <p className="mt-1 text-xl font-medium text-primary">{product.price}</p>
               <p className="mt-1 font-mono text-[0.58rem] tracking-[0.1em] text-accent uppercase">{status}</p>
             </div>
-            {checkoutHref ? (
+
+            {isChromeStore && product.checkoutUrl ? (
               <a
-                href={checkoutHref}
+                href={product.checkoutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => {
-                  planetXTrack('product_cta_click', { product_id: product.id, product_name: product.name, cta_label: ctaLabel })
-                  planetXTrack('external_app_launch', { product_id: product.id, product_name: product.name, destination: checkoutHref })
-                }}
+                onClick={() => trackCta('add_to_chrome', product.checkoutUrl!)}
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                {ctaLabel}
+                <Chrome className="size-4" aria-hidden="true" />
+                Add to Chrome
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
-            ) : (
-              <span className="inline-flex min-h-12 items-center justify-center border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase" aria-label="Checkout will open when this product is ready">
+            ) : isProjectX ? (
+              <span className="inline-flex min-h-12 items-center justify-center border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
                 Coming soon
               </span>
+            ) : embeddedCheckoutHref ? (
+              <a
+                href={embeddedCheckoutHref}
+                className="payhip-buy-button inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
+                data-theme="none"
+                onClick={() => trackCta('buy_now', 'embedded_checkout')}
+              >
+                <ShoppingBag className="size-4" aria-hidden="true" />
+                Buy Now
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                className="inline-flex min-h-12 cursor-not-allowed items-center justify-center border border-border px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase opacity-70"
+                aria-label={checkoutLoading ? 'Checkout is loading' : 'Checkout is temporarily unavailable'}
+              >
+                {checkoutLoading ? 'Loading…' : 'Checkout unavailable'}
+              </button>
             )}
           </div>
         </div>
@@ -249,13 +309,40 @@ function ProductSection({ product }: { product: StoreProduct }) {
 
 export function StoreCatalog() {
   const [category, setCategory] = useState<CategoryFilter>('All')
+  const [checkoutMap, setCheckoutMap] = useState<CheckoutMap>({})
+  const [checkoutLoading, setCheckoutLoading] = useState(true)
+
   const products = useMemo(
     () => category === 'All' ? allStoreProducts : allStoreProducts.filter((product) => product.category === category),
     [category],
   )
 
+  useEffect(() => {
+    let cancelled = false
+
+    fetch('/api/store-checkouts')
+      .then((response) => response.json())
+      .then((payload: { checkouts?: CheckoutMap }) => {
+        if (!cancelled) setCheckoutMap(payload.checkouts ?? {})
+      })
+      .catch(() => {
+        if (!cancelled) setCheckoutMap({})
+      })
+      .finally(() => {
+        if (!cancelled) setCheckoutLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const hasEmbeddedCheckout = Object.keys(checkoutMap).length > 0
+
   return (
     <>
+      {hasEmbeddedCheckout ? <Script src="https://payhip.com/payhip.js" strategy="afterInteractive" /> : null}
+
       <div className="sticky top-[5.5rem] z-30 border-b border-primary/60 bg-background/95 px-4 py-3 backdrop-blur md:top-[7.5rem] md:px-8">
         <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto scrollbar-none">
           {storeCategories.map((item) => (
@@ -274,28 +361,23 @@ export function StoreCatalog() {
       </div>
 
       <section aria-live="polite">
-        {products.map((product) => <ProductSection key={product.id} product={product} />)}
+        {products.map((product) => (
+          <ProductSection
+            key={product.id}
+            product={product}
+            checkoutMap={checkoutMap}
+            checkoutLoading={checkoutLoading}
+          />
+        ))}
       </section>
 
       <section className="border-y-2 border-primary/80 bg-[linear-gradient(90deg,rgba(255,46,159,.08),transparent_40%,rgba(0,245,255,.07))]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-10 md:flex-row md:items-center md:justify-between md:px-8">
-          <div>
-            <p className="font-mono text-[0.65rem] tracking-[0.16em] text-primary uppercase">Xupply bundles</p>
-            <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Bundles are coming soon.</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Curated Xupply collections are being packaged now. Individual products remain available wherever a verified checkout link is shown.</p>
-          </div>
-          <a
-            href={PAYHIP_STORE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => {
-              planetXTrack('product_cta_click', { product_id: 'xupply-store', product_name: 'Xupply store', cta_label: 'visit_payhip' })
-              planetXTrack('external_app_launch', { product_id: 'xupply-store', product_name: 'Xupply store', destination: PAYHIP_STORE_URL })
-            }}
-            className="shrink-0 border border-accent/50 px-4 py-3 font-mono text-[0.64rem] font-bold tracking-[0.14em] text-accent uppercase transition-colors hover:border-primary hover:text-primary"
-          >
-            Visit Payhip store
-          </a>
+        <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
+          <p className="font-mono text-[0.65rem] tracking-[0.16em] text-primary uppercase">Xupply bundles</p>
+          <h2 className="mt-2 text-2xl font-medium tracking-normal sm:text-3xl">Bundles are coming soon.</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+            Curated Xupply collections are being packaged now. Individual products above can be purchased directly from their listings.
+          </p>
         </div>
       </section>
     </>
