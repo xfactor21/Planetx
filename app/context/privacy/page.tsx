@@ -102,8 +102,7 @@ export default function ContextPrivacyPage() {
             borderLeft: '3px solid #ff18ad',
           }}
         >
-          A public support contact must be supplied by the publisher in the Chrome Web Store
-          listing before publication.
+          Privacy questions can be sent to xFactor@planet-x.co.
         </div>
       </article>
     </main>
