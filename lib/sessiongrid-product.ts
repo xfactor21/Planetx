@@ -4,7 +4,7 @@ export const sessionGridProduct: StoreProduct = {
   id: 'sessiongrid-x',
   name: 'SessionGrid X',
   category: 'Software',
-  productType: 'Chrome tab & workspace manager',
+  productType: 'Chrome extension · tab & workspace manager',
   description:
     'Save complete Chrome workspaces, restore windows and native tab groups, recover session snapshots, search saved context, and keep duplicate tabs under control without uploading browsing data to a cloud service.',
   price: 'Free',
@@ -12,21 +12,21 @@ export const sessionGridProduct: StoreProduct = {
   status: 'Available free',
   platforms: ['Chrome extension'],
   metrics: [
-    { value: '7 days', label: 'Full Pro trial' },
-    { value: '1', label: 'Free workstation' },
-    { value: '3', label: 'Free snapshots' },
+    { value: 'Chrome', label: 'Extension' },
+    { value: 'Local', label: 'Browsing data' },
+    { value: 'Free', label: 'Install' },
   ],
   includes: [
     'Complete workspace save and restore with pinned tabs and native Chrome tab groups',
-    'Permanent Free tier with 1 saved workstation and 3 recovery snapshots',
+    'Permanent Free tier with saved-workspace and recovery-snapshot support',
     'Search across workspace names, tab titles, URLs, notes, and tags where available',
     'Duplicate-tab detection and local JSON backup',
-    'Lifetime Pro unlocks unlimited workspaces, up to 100 snapshots, notes and tags',
+    'Optional Pro unlock for larger workspace and snapshot limits, notes, and tags',
     'Pro adds Archive + Close, Markdown export, and configurable recovery intervals',
   ],
   bestFor: ['Heavy-tab workflows', 'Research sessions', 'Multi-project browser work'],
   format: 'Chrome extension / Manifest V3',
-  license: 'Install free from the Chrome Web Store. New installs receive a 7-day Pro trial, then continue on the permanent Free tier. Pro licensing is purchased from the private upgrade flow inside the extension.',
+  license: 'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
   gallery: [
     {
       src: '/store/listings/sessiongrid-x-logo.svg',
