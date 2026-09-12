@@ -18,7 +18,7 @@ export default function SessionGridPrivacyPage() {
           <p className="mt-4 max-w-3xl text-base leading-7 text-white/70">
             This policy explains how SessionGrid X handles data when you use the Chrome extension.
           </p>
-          <p className="mt-3 text-sm text-white/50">Effective date: September 6, 2026</p>
+          <p className="mt-3 text-sm text-white/50">Effective date: September 12, 2026</p>
         </header>
 
         <div className="space-y-5 text-[15px] leading-7 text-white/80">
@@ -57,10 +57,10 @@ export default function SessionGridPrivacyPage() {
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-white">4. Pro license activation</h2>
             <p>
-              If you choose to activate SessionGrid X Pro, the license key you enter and an extension/device instance identifier may be sent to Lemon Squeezy solely to activate, validate, or deactivate your purchased license.
+              If you choose to activate SessionGrid X Pro, the extension sends the license key, a random extension/device identifier, and a signed entitlement token to planet.X solely to activate, validate, or deactivate your purchased license. planet.X sends the license key to Payhip for entitlement verification.
             </p>
             <p>
-              SessionGrid X does not send your saved tab URLs, workspace contents, notes, tags, or recovery snapshots to Lemon Squeezy for license verification.
+              SessionGrid X does not send your saved tab URLs, workspace contents, notes, tags, or recovery snapshots to planet.X or Payhip for license verification.
             </p>
           </section>
 
@@ -76,7 +76,7 @@ export default function SessionGridPrivacyPage() {
               <li><strong className="text-white">alarms</strong> — create scheduled local recovery snapshots.</li>
             </ul>
             <p>
-              The extension may also connect to Lemon Squeezy&apos;s license API only for optional Pro entitlement verification.
+              The extension connects only to the planet.X license gateway for optional Pro entitlement verification. The Payhip product secret remains server-side and is never included in the extension.
             </p>
           </section>
 
@@ -93,7 +93,7 @@ export default function SessionGridPrivacyPage() {
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-white">7. Third-party service</h2>
             <p>
-              Lemon Squeezy is used only for optional paid-license entitlement verification. Its handling of information sent to its service is governed by its own privacy terms.
+              planet.X operates the license gateway, and Payhip is used only for optional paid-license entitlement verification. Payhip receives the license key but not saved workspace data. Information processed by Payhip is also governed by Payhip&apos;s privacy terms.
             </p>
           </section>
 
