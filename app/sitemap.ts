@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/studyhive',
     '/coming-soon',
     '/visual-x',
+    '/build-notes',
   ]
 
   const productRoutes = [
@@ -26,14 +27,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...coreRoutes, ...productRoutes].map((route): MetadataRoute.Sitemap[number] => ({
     url: `${siteUrl}${route}`,
-    changeFrequency: route === '' || route === '/visual-x' ? 'weekly' : 'monthly',
+    changeFrequency:
+      route === '' || route === '/visual-x' || route === '/build-notes' ? 'weekly' : 'monthly',
     priority:
       route === ''
         ? 1
         : route === '/store' || route === '/beta' || route === '/visual-x'
           ? 0.9
-          : route.startsWith('/apps/')
+          : route === '/build-notes'
             ? 0.8
-            : 0.7,
+            : route.startsWith('/apps/')
+              ? 0.8
+              : 0.7,
   }))
 }
