@@ -12,6 +12,9 @@ const jetBrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 const poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-poppins' })
 
 const siteUrl = 'https://www.planet-x.co'
+const siteTitle = 'planet.X — Independent Apps, Developer Tools & Creative Software Studio'
+const siteDescription =
+  'planet.X is an independent software studio building mobile apps, Chrome extensions, developer tools, creative software, experimental web experiences, and loud music.'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -20,19 +23,20 @@ export const metadata: Metadata = {
   creator: 'planet.X',
   publisher: 'planet.X',
   title: {
-    default: 'planet.X — Apps, Software, Music & Beta Projects',
+    default: siteTitle,
     template: '%s | planet.X',
   },
-  description:
-    'planet.X builds independent software, mobile apps, creator tools, experiments, and loud music. Explore shipped products, beta projects, Xupply assets, and what is coming next.',
+  description: siteDescription,
   keywords: [
     'planet.X',
-    'Planet-X Development',
-    'indie software',
-    'mobile apps',
+    'independent software studio',
+    'mobile app development',
+    'Chrome extensions',
     'developer tools',
+    'creative software',
+    'indie software',
     'creator tools',
-    'beta apps',
+    'audio reactive visuals',
     'Xupply',
     'xFactor music',
     'loud music',
@@ -41,26 +45,26 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'planet.X — Apps, Software, Music & Beta Projects',
-    description:
-      'Independent software, apps, creator tools, experiments, and loud music from planet.X.',
+    title: siteTitle,
+    description: siteDescription,
     url: siteUrl,
     siteName: 'planet.X',
     locale: 'en_US',
     type: 'website',
     images: [
       {
-        url: '/brand/planet-x-wordmark-transparent.png',
-        alt: 'planet.X',
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'planet.X — independent apps, developer tools and creative software',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'planet.X — Apps, Software, Music & Beta Projects',
-    description:
-      'Independent software, apps, creator tools, experiments, and loud music from planet.X.',
-    images: ['/brand/planet-x-wordmark-transparent.png'],
+    title: siteTitle,
+    description: siteDescription,
+    images: ['/opengraph-image'],
   },
   robots: {
     index: true,
@@ -87,6 +91,7 @@ const organizationSchema = {
   url: siteUrl,
   logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png`,
   email: 'xFactor@planet-x.co',
+  description: siteDescription,
 }
 
 const websiteSchema = {
@@ -100,8 +105,7 @@ const websiteSchema = {
     name: 'planet.X',
     url: siteUrl,
   },
-  description:
-    'Independent software, mobile apps, creator tools, experiments, and music from planet.X.',
+  description: siteDescription,
 }
 
 export default function RootLayout({
