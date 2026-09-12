@@ -22,6 +22,7 @@ const columns = [
   {
     title: 'Studio',
     links: [
+      { label: 'Build Notes', href: '/build-notes' },
       { label: 'The Studio', href: '/#studio' },
       { label: 'Contact', href: 'mailto:xFactor@planet-x.co' },
     ],
@@ -61,17 +62,11 @@ export function SiteFooter() {
                   {col.links.map((link) => (
                     <li key={link.label}>
                       {link.href.startsWith('mailto:') ? (
-                        <a
-                          href={link.href}
-                          className="text-foreground/80 transition-colors hover:text-primary"
-                        >
+                        <a href={link.href} className="text-foreground/80 transition-colors hover:text-primary">
                           {withXGlyph(link.label, true)}
                         </a>
                       ) : (
-                        <Link
-                          href={link.href}
-                          className="text-foreground/80 transition-colors hover:text-primary"
-                        >
+                        <Link href={link.href} className="text-foreground/80 transition-colors hover:text-primary">
                           {withXGlyph(link.label, true)}
                         </Link>
                       )}
@@ -83,17 +78,14 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border pt-6 font-mono text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v12</p>
+          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v14.4</p>
           <p className="flex items-center gap-2">
             <XMark className="size-4 text-primary" />
             Built in the dark
           </p>
         </div>
       </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden opacity-10"
-      >
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center overflow-hidden opacity-10">
         <Image
           src="/brand/x-mark-grunge.png"
           alt=""
