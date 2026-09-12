@@ -30,7 +30,7 @@ export default function ContextPrivacyPage() {
         <h1 style={{ margin: '0 0 8px', fontSize: 32, fontWeight: 480 }}>
           conteXt Chrome Extension Privacy Policy
         </h1>
-        <p style={{ color: '#ff18ad', fontSize: 13 }}>Effective August 27, 2026</p>
+        <p style={{ color: '#ff18ad', fontSize: 13 }}>Effective September 12, 2026</p>
         <p style={{ color: '#b8c5d9' }}>
           conteXt is a local encrypted credential vault for developer API keys, secrets,
           project mappings, environment mappings, account references, and user-written notes.
@@ -57,15 +57,18 @@ export default function ContextPrivacyPage() {
 
         <h2 style={headingStyle}>Website and Browser Access</h2>
         <p style={paragraphStyle}>
-          conteXt does not request host permissions and does not use content scripts. It cannot
-          read websites, browsing history, cookies, page forms, or page content.
+          conteXt requests access only to planet-x.co so users can purchase, activate, verify, or
+          deactivate an optional Pro license. It does not use content scripts and cannot read
+          websites, browsing history, cookies, page forms, or page content.
         </p>
 
         <h2 style={headingStyle}>Network Transmission</h2>
         <p style={paragraphStyle}>
-          This version has no account system, cloud synchronization, telemetry, analytics,
-          advertising, or provider API connection. Vault data is not transmitted to the developer
-          or any third party.
+          conteXt has no account system, cloud synchronization, telemetry, analytics, or
+          advertising. Optional Pro license actions send only the license key, a random
+          extension/device identifier, and a signed entitlement token to planet.X. planet.X sends
+          the license key to Payhip for entitlement verification. Vault contents, passphrases,
+          projects, credentials, notes, and backups are never transmitted.
         </p>
 
         <h2 style={headingStyle}>Retention and Deletion</h2>
@@ -99,8 +102,7 @@ export default function ContextPrivacyPage() {
             borderLeft: '3px solid #ff18ad',
           }}
         >
-          A public support contact must be supplied by the publisher in the Chrome Web Store
-          listing before publication.
+          Privacy questions can be sent to xFactor@planet-x.co.
         </div>
       </article>
     </main>
