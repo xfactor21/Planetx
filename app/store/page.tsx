@@ -4,7 +4,6 @@ import { SiteFooter } from '@/components/site-footer'
 import { StoreCatalog } from '@/components/store-catalog'
 
 const siteUrl = 'https://www.planet-x.co'
-const payhipStoreUrl = 'https://payhip.com/planetX'
 
 export const metadata: Metadata = {
   title: 'Xupply Store — Software, Audio, FX & Creator Assets',
@@ -50,16 +49,16 @@ const breadcrumbSchema = {
 
 const startHere = [
   {
-    eyebrow: 'Browser workflow',
+    eyebrow: 'Chrome extension',
     name: 'SessionGrid X',
     description: 'Save and recover Chrome workspaces. Starts with a 7-day Pro trial and keeps a permanent Free tier.',
     href: '#sessiongrid-x',
   },
   {
-    eyebrow: 'Creator utility',
-    name: 'Creator Asset Forge',
-    description: 'Turn one source image into correctly sized social, app, channel, and web assets locally.',
-    href: '#creator-asset-forge',
+    eyebrow: 'Chrome extension',
+    name: 'conteXt',
+    description: 'Keep project credentials and environment context organized in a local-first encrypted Chrome workspace.',
+    href: '#context-pro',
   },
   {
     eyebrow: 'Sound design',
@@ -86,18 +85,13 @@ export default function StorePage() {
                 Software, audio, effects, and creator resources from planet.X.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3 md:justify-end">
-              <span className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
+            <div className="md:text-right">
+              <p className="font-mono text-[0.62rem] tracking-[0.12em] text-muted-foreground uppercase">
                 Xupply catalog
-              </span>
-              <a
-                href={payhipStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-accent/60 px-4 py-2.5 font-mono text-[0.65rem] font-bold tracking-[0.14em] text-accent uppercase transition-colors hover:border-primary hover:text-primary"
-              >
-                Shop on Payhip
-              </a>
+              </p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-foreground/65">
+                Product checkout opens here on planet.X. Chrome extensions install through the Chrome Web Store.
+              </p>
             </div>
           </div>
         </section>
