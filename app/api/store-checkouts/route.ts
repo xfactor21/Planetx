@@ -56,20 +56,26 @@ function nearestProductUrl(markup: string, names: string[]) {
   return best?.href ?? null
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const debug = new URL(request.url).searchParams.get('debug') === 'resolver'
+
   try {
     const response = await fetch(STORE_URL, {
       headers: {
         Accept: 'text/html,application/xhtml+xml',
-        'User-Agent': 'planet.X storefront resolver/1.0',
+        'User-Agent': 'Mozilla/5.0 (compatible; planet.X storefront resolver/1.1)',
       },
-      next: { revalidate: 300 },
+      cache: debug ? 'no-store' : undefined,
+      next: debug ? undefined : { revalidate: 300 },
+      redirect: 'follow',
     })
 
     if (!response.ok) {
       return NextResponse.json(
-        { checkouts: {}, available: false },
-        { status: 200, headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
+        debug
+          ? { checkouts: {}, available: false, diagnostic: { status: response.status, finalUrl: response.url } }
+          : { checkouts: {}, available: false },
+        { status: 200, headers: { 'Cache-Control': 'no-store' } },
       )
     }
 
@@ -80,14 +86,38 @@ export async function GET() {
         .filter((entry): entry is readonly [string, string] => Boolean(entry[1])),
     )
 
+    if (debug) {
+      const linkMatches = Array.from(markup.matchAll(/(?:https?:\/\/payhip\.com)?\/(?:b|buy)[^\s"'<>]*/gi))
+        .slice(0, 30)
+        .map((match) => match[0])
+      const nameHits = Object.fromEntries(
+        Object.entries(aliases).map(([id, names]) => [id, names.some((name) => markup.toLowerCase().includes(name.toLowerCase()))]),
+      )
+
+      return NextResponse.json({
+        checkouts,
+        available: Object.keys(checkouts).length > 0,
+        diagnostic: {
+          status: response.status,
+          finalUrl: response.url,
+          length: markup.length,
+          title: markup.match(/<title[^>]*>(.*?)<\/title>/i)?.[1] ?? null,
+          nameHits,
+          linkMatches,
+        },
+      }, { headers: { 'Cache-Control': 'no-store' } })
+    }
+
     return NextResponse.json(
       { checkouts, available: Object.keys(checkouts).length > 0 },
       { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' } },
     )
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { checkouts: {}, available: false },
-      { status: 200, headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
+      debug
+        ? { checkouts: {}, available: false, diagnostic: { error: error instanceof Error ? error.message : 'unknown' } }
+        : { checkouts: {}, available: false },
+      { status: 200, headers: { 'Cache-Control': 'no-store' } },
     )
   }
 }
