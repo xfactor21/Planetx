@@ -1,5 +1,5 @@
 {
-  "release": "VisualX-09.11-v4.3.2-motion-reset",
+  "release": "VisualX-09.12-v4.3.3-motion-wave-camera",
   "sourceArchive": "Visual.X-09.09-v4.2-site-ready.zip",
   "sourceArchiveBytes": 14983049,
   "sourceArchiveGitBlobSha": "99ccff6b9f6aa4245f91d4199eaa758637ef38b3",
@@ -7,6 +7,10 @@
     "patch-visualx-v42.mjs",
     "patch-visualx-v42-cache-runtime.mjs",
     "patch-visualx-regions.mjs",
+    "patch-visualx-dynamic-regions-waveform.mjs",
+    "patch-visualx-motion-waveform-polish.mjs",
+    "patch-visualx-region-motion-recovery.mjs",
+    "patch-visualx-motion-stabilizer.mjs",
     "patch-visualx-analytics-hardening.mjs"
   ]
 }
