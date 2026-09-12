@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Image from 'next/image'
 import Script from 'next/script'
-import { ArrowUpRight, Check, Chrome, MonitorSmartphone, ShoppingBag } from 'lucide-react'
+import { ArrowUpRight, Check, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import {
   storeCategories,
   storeProducts,
@@ -218,7 +218,7 @@ function ProductSection({
 
           {product.platforms ? (
             <p className="mt-5 inline-flex items-center gap-2 font-mono text-[0.65rem] tracking-[0.12em] text-muted-foreground uppercase">
-              {isChromeStore ? <Chrome className="size-4 text-accent" aria-hidden="true" /> : <MonitorSmartphone className="size-4 text-accent" aria-hidden="true" />}
+              <MonitorSmartphone className="size-4 text-accent" aria-hidden="true" />
               {product.platforms.join(' / ')}
             </p>
           ) : null}
@@ -272,7 +272,7 @@ function ProductSection({
                 onClick={() => trackCta('add_to_chrome', product.checkoutUrl!)}
                 className="inline-flex min-h-12 items-center justify-center gap-2 bg-primary px-5 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent"
               >
-                <Chrome className="size-4" aria-hidden="true" />
+                <MonitorSmartphone className="size-4" aria-hidden="true" />
                 Add to Chrome
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </a>
