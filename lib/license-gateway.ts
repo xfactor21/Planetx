@@ -50,6 +50,20 @@ function allowedProduct(product: string) {
   return allowed.includes(product.trim().toLowerCase())
 }
 
+function payhipProductLink(value: string | undefined) {
+  const trimmed = (value || '').trim()
+  if (!trimmed) return ''
+  try {
+    const url = new URL(trimmed)
+    if (url.hostname === 'payhip.com' || url.hostname.endsWith('.payhip.com')) {
+      return url.pathname.split('/').filter(Boolean).at(-1) || trimmed
+    }
+  } catch {
+    // Product keys such as 0Cfj1 are already in the format returned by Payhip.
+  }
+  return trimmed
+}
+
 function providerFor(product: string): Provider | null {
   const key = productEnvKey(product)
   const explicit = process.env[`LICENSE_${key}_PROVIDER`]?.toLowerCase()
@@ -104,8 +118,8 @@ async function payhipVerify(product: string, licenseKey: string) {
   const json = await response.json().catch(() => null) as PayhipResponse | null
   const data = json?.data
   if (!response.ok || !data) return { valid: false, data: null }
-  const expectedLink = process.env[`PAYHIP_${key}_PRODUCT_LINK`]
-  const matchesProduct = !expectedLink || data.product_link === expectedLink
+  const expectedLink = payhipProductLink(process.env[`PAYHIP_${key}_PRODUCT_LINK`])
+  const matchesProduct = !expectedLink || payhipProductLink(data.product_link) === expectedLink
   return { valid: Boolean(data.enabled && matchesProduct), data }
 }
 
