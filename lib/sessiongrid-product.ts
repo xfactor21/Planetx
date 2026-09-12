@@ -13,12 +13,12 @@ export const sessionGridProduct: StoreProduct = {
   platforms: ['Chrome extension'],
   metrics: [
     { value: '7 days', label: 'Full Pro trial' },
-    { value: '5', label: 'Free workspaces' },
-    { value: '10', label: 'Free snapshots' },
+    { value: '1', label: 'Free workstation' },
+    { value: '3', label: 'Free snapshots' },
   ],
   includes: [
     'Complete workspace save and restore with pinned tabs and native Chrome tab groups',
-    'Permanent Free tier with 5 saved workspaces and 10 recovery snapshots',
+    'Permanent Free tier with 1 saved workstation and 3 recovery snapshots',
     'Search across workspace names, tab titles, URLs, notes, and tags where available',
     'Duplicate-tab detection and local JSON backup',
     'Lifetime Pro unlocks unlimited workspaces, up to 100 snapshots, notes and tags',

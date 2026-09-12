@@ -21,7 +21,7 @@ export default async function ContextProLicensePage({ searchParams }: { searchPa
         <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Upgrade your encrypted vault.</h1>
         <p className="mt-4 leading-7 text-muted-foreground">Your vault stays local and encrypted. Purchasing Pro only adds a license entitlement; your credentials are never sent to planet.X or Payhip.</p>
         <div className="mt-7 grid gap-3 text-sm text-foreground/80 sm:grid-cols-2">
-          <div className="border border-border p-4"><strong className="text-white">Free</strong><p className="mt-2">Up to 3 projects and 25 credentials.</p></div>
+          <div className="border border-border p-4"><strong className="text-white">Free</strong><p className="mt-2">Up to 1 project and 3 credentials.</p></div>
           <div className="border border-primary/50 p-4"><strong className="text-primary">Pro</strong><p className="mt-2">Unlimited projects and credentials plus .env import/export.</p></div>
         </div>
         <a href={PAYHIP_URL} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex min-h-12 items-center justify-center bg-primary px-6 py-3 font-mono text-xs font-bold tracking-[0.14em] text-primary-foreground uppercase transition-colors hover:bg-accent">Purchase conteXt Pro</a>

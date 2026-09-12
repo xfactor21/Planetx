@@ -27,7 +27,7 @@ export default async function SessionGridLicensePage({ searchParams }: { searchP
         <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Remove the workspace limits.</h1>
         <p className="mt-4 leading-7 text-muted-foreground">SessionGrid X stays local-first. Purchasing Pro adds a license entitlement; your tabs, URLs, workspace data, notes, and browsing content are not sent to planet.X or Payhip.</p>
         <div className="mt-7 grid gap-3 text-sm text-foreground/80 sm:grid-cols-2">
-          <div className="border border-border p-4"><strong className="text-white">Free</strong><p className="mt-2">5 saved workspaces and 10 recovery snapshots after the 7-day Pro trial.</p></div>
+          <div className="border border-border p-4"><strong className="text-white">Free</strong><p className="mt-2">1 saved workstation and 3 recovery snapshots after the 7-day Pro trial.</p></div>
           <div className="border border-accent/50 p-4"><strong className="text-accent">Pro</strong><p className="mt-2">Unlimited workspaces, up to 100 snapshots, notes/tags, Archive + Close, Markdown export, and configurable recovery intervals.</p></div>
         </div>
         {checkout ? (
