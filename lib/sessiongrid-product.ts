@@ -29,22 +29,22 @@ export const sessionGridProduct: StoreProduct = {
   license: 'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
   gallery: [
     {
-      src: '/store/listings/sessiongrid-x-logo.svg',
+      src: '/store/listings/sessiongrid-x-main.jpg',
+      alt: 'SessionGrid X tab and workspace manager promo image',
+      label: 'Tab & workspace manager',
+      fit: 'cover',
+    },
+    {
+      src: '/store/listings/sessiongrid-x-secondary.jpg',
+      alt: 'SessionGrid X — Organize Tabs. Own Your Workspaces.',
+      label: 'Organize your workspaces',
+      fit: 'cover',
+    },
+    {
+      src: '/store/listings/sessiongrid-x-app-icon.jpg',
       alt: 'SessionGrid X product identity',
-      label: 'Product identity',
+      label: 'SessionGrid identity',
       fit: 'contain',
-    },
-    {
-      src: '/store/listings/sessiongrid-x-workflow.svg',
-      alt: 'SessionGrid X save, search, and restore workflow',
-      label: 'Workspace workflow',
-      fit: 'cover',
-    },
-    {
-      src: '/store/listings/sessiongrid-x-privacy.svg',
-      alt: 'SessionGrid X local-first privacy model',
-      label: 'Local-first privacy',
-      fit: 'cover',
     },
   ],
   checkoutUrl: 'https://chromewebstore.google.com/detail/sessiongrid-x/gghgjnmclndonogigpahmgopldpomcel',

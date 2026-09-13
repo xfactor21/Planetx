@@ -51,7 +51,7 @@ const startHere = [
   {
     eyebrow: 'Chrome extension',
     name: 'SessionGrid X',
-    description: 'Save and recover Chrome workspaces. Starts with a 7-day Pro trial and keeps a permanent Free tier.',
+    description: 'Save, organize, and recover Chrome workspaces with a local-first tab and workspace manager.',
     href: '#sessiongrid-x',
   },
   {
