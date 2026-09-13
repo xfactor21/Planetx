@@ -19,6 +19,19 @@ type CheckoutMap = Record<string, string>
 
 const CONTEXT_CHROME_URL = 'https://chromewebstore.google.com/detail/context-encrypted-credent/ikedbigbancjamohakblaclcoljlhdbn'
 
+const VERIFIED_PAYHIP_CHECKOUTS: CheckoutMap = {
+  'essential-ui-sounds': 'https://payhip.com/b/CIwxS',
+  'digital-glitch-fx': 'https://payhip.com/b/ROlqw',
+  'indie-launch-kit': 'https://payhip.com/b/7cJjO',
+  'creator-asset-forge': 'https://payhip.com/b/3K5at',
+  'creator-stream-pack': 'https://payhip.com/b/tA5To',
+  'interface-hud-kit': 'https://payhip.com/b/BCK4P',
+  'website-atmosphere-pack': 'https://payhip.com/b/49vW6',
+  'creator-editing-overlays': 'https://payhip.com/b/NGUKi',
+  'digital-worlds-wallpapers': 'https://payhip.com/b/6x4EO',
+  'producer-transitions-impacts': 'https://payhip.com/b/PcOWp',
+}
+
 const brandedCoverById: Record<string, string> = {
   'creator-stream-pack': '/store/listings/xupply-creator-stream-pack.svg',
   'interface-hud-kit': '/store/listings/xupply-interface-hud-kit.svg',
@@ -139,7 +152,7 @@ function ProductSection({ product, checkoutMap, checkoutLoading }: { product: St
   const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
   const isProjectX = product.id === 'project-x'
   const isPaidProduct = !isChromeStore && !isProjectX
-  const embeddedCheckoutHref = isPaidProduct ? checkoutMap[product.id] : undefined
+  const embeddedCheckoutHref = isPaidProduct ? (checkoutMap[product.id] ?? VERIFIED_PAYHIP_CHECKOUTS[product.id]) : undefined
   const cleanProductType = product.productType.replace(/^Chrome extension\s*·\s*/i, '')
 
   const priceNote = isChromeStore
@@ -307,7 +320,7 @@ export function StoreCatalog() {
     return () => { cancelled = true }
   }, [])
 
-  const hasEmbeddedCheckout = Object.keys(checkoutMap).length > 0
+  const hasEmbeddedCheckout = Object.keys(VERIFIED_PAYHIP_CHECKOUTS).length > 0 || Object.keys(checkoutMap).length > 0
 
   return (
     <>
