@@ -31,27 +31,28 @@ const personality = `private personality(index:number,c:Cue,l:LiveFrame){
       [.08,.62,.94,.74,.34,.36,.60], // Signal Forest: high/mid signal flicker
     ] as const
     const p=profiles[index%profiles.length]
-    const trigger=C(c.bassPulse*p[0]+c.midPulse*p[1]+c.highPulse*p[2]+c.onsetPulse*p[3]+c.tonalPulse*p[4]+c.phrasePulse*p[5])
-    const bar=C(c.barPulse*(.38+p[6]*.55))
-    const phrase=C(c.phrasePulse*(.52+p[5]*.52))
+    const lane=C(c.bassPulse*p[0]+c.midPulse*p[1]+c.highPulse*p[2]+c.onsetPulse*p[3]+c.tonalPulse*p[4]+c.phrasePulse*p[5])
+    const bar=C(c.barPulse*(.82+p[6]*.28))
+    const phrase=C(c.phrasePulse*(.88+p[5]*.24))
     return{
       cue:{
         ...c,
-        beatPulse:trigger*.68,
+        // Preserve each world's original animation energy; instrument lanes add character instead of replacing it.
+        beatPulse:C(c.beatPulse*.82+lane*.42),
         barPulse:bar,
         phrasePulse:phrase,
-        bassPulse:C(c.bassPulse*(.35+p[0]*.92)),
-        midPulse:C(c.midPulse*(.35+p[1]*.92)),
-        highPulse:C(c.highPulse*(.35+p[2]*.92)),
-        onsetPulse:C(c.onsetPulse*(.25+p[3]*.9)),
-        tonalPulse:C(c.tonalPulse*(.35+p[4]*.88)),
+        bassPulse:C(c.bassPulse*(.78+p[0]*.42)),
+        midPulse:C(c.midPulse*(.78+p[1]*.42)),
+        highPulse:C(c.highPulse*(.78+p[2]*.42)),
+        onsetPulse:C(c.onsetPulse*(.72+p[3]*.46)),
+        tonalPulse:C(c.tonalPulse*(.78+p[4]*.40)),
       },
       live:{
         ...l,
-        bass:C(l.bass*(.42+p[0]*.76)),
-        mid:C(l.mid*(.42+p[1]*.76)),
-        treble:C(l.treble*(.42+p[2]*.76)),
-        flux:C(l.flux*(.4+p[3]*.72)),
+        bass:C(l.bass*(.82+p[0]*.34)),
+        mid:C(l.mid*(.82+p[1]*.34)),
+        treble:C(l.treble*(.82+p[2]*.34)),
+        flux:C(l.flux*(.78+p[3]*.36)),
       }
     }
   }
@@ -59,4 +60,4 @@ const personality = `private personality(index:number,c:Cue,l:LiveFrame){
 
 region = region.replace(personalityPattern, personality)
 writeFileSync(regionPath, region)
-console.log('Patched Visual.X v4.3.5 distinct instrument lanes per region')
+console.log('Patched Visual.X v4.3.5 instrument lanes without suppressing native region animation')
