@@ -58,13 +58,12 @@ export default function Page() {
               </AnalyticsLink>
             </div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-black shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
-              <Image
+              <img
                 src="/visual-x/VisualX-09.12-v1-home-approved.svg"
                 alt="Visual.X — What will your song make? 360° Music Engine"
-                fill
-                priority={false}
-                sizes="(min-width: 768px) 36vw, 100vw"
-                className="object-cover"
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
               />
             </div>
           </div>
