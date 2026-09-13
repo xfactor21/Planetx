@@ -10,49 +10,70 @@ const personalityPattern = /private personality\(index:number,c:Cue,l:LiveFrame\
 if (!personalityPattern.test(region)) throw new Error('Visual.X v4.3.5 patch missing: v4.3.4 region personality')
 
 const personality = `private personality(index:number,c:Cue,l:LiveFrame){
+    // Each profile weights a wider musical vocabulary: bass, mids, highs, onset,
+    // tonal change, phrase, bar, harmonic motion, build tension, motion/tempo,
+    // section/story importance, and drop/release energy.
     const profiles=[
-      [.82,.10,.06,.08,.12,.22,.42], // Orbital System: low-end gravity + phrases
-      [.12,.88,.26,.92,.08,.14,.72], // Neon Monoliths: mid/onset "keys"
-      [.06,.92,.28,.72,.38,.42,.66], // Ribbon Cathedral: melodic mids + tonal movement
-      [.05,.24,.96,.88,.46,.22,.58], // Crystal Lattice: highs/onsets + tonal sparkle
-      [.58,.06,.04,.06,.48,.62,.24], // Singularity Void: slow bass/tonal pressure
-      [.72,.34,.08,.28,.12,.18,.64], // Reactive Terrain: bass waves + structural bars
-      [.16,.58,.76,.72,.34,.26,.52], // Plasma Ocean: mids/highs + flux
-      [.08,.72,.88,.62,.46,.32,.54], // Neural Grove: melodic mids/highs
-      [.16,.66,.58,.42,.24,.52,.76], // Dimensional Tunnel: mids + phrase travel
-      [.78,.16,.08,.18,.14,.36,.64], // Megastructure Ring: bass + phrase rotation
-      [.20,.42,.82,.88,.18,.20,.56], // Fracture Desert: transients/highs
-      [.10,.78,.64,.38,.42,.54,.58], // Floating Archipelago: mids + tonal lift
-      [.12,.92,.30,.86,.08,.16,.74], // Kinetic Causeway: piano-like mid/onset stepping
-      [.08,.64,.92,.72,.52,.46,.62], // Chroma Reef: bright melodic motion
-      [.84,.12,.12,.20,.38,.44,.56], // Gravity Garden: bass gravity + tonal pull
-      [.08,.42,.86,.62,.58,.50,.48], // Mirror Basin: high/tonal reflections
-      [.16,.86,.46,.80,.14,.18,.78], // Pulse Bridge: mid/onset sequencing
-      [.08,.62,.94,.74,.34,.36,.60], // Signal Forest: high/mid signal flicker
+      [.95,.12,.08,.10,.18,.35,.44,.42,.62,.58,.72,.46], // Orbital: gravity / precession / large phrases
+      [.16,1.00,.34,1.00,.16,.22,.76,.30,.44,.72,.58,.30], // Monoliths: piano-key stepping / waves
+      [.10,1.00,.38,.78,.62,.64,.64,.70,.42,.50,.74,.28], // Ribbon: bend / braid / tonal breathing
+      [.06,.30,1.00,.96,.70,.26,.54,.76,.38,.44,.58,.46], // Crystal: refract / propagate / fracture
+      [.76,.08,.06,.08,.72,.76,.28,.78,.88,.30,.92,.62], // Singularity: pressure / pull / release
+      [.90,.46,.10,.36,.20,.28,.72,.34,.64,.72,.66,.52], // Terrain: traveling low waves / uplift
+      [.22,.72,.90,.82,.54,.42,.52,.62,.58,.66,.56,.44], // Plasma: flow / turbulence / arcs
+      [.12,.86,.96,.74,.70,.48,.52,.78,.44,.54,.68,.30], // Neural Grove: signal growth / branch firing
+      [.20,.78,.66,.54,.40,.76,.80,.50,.78,.92,.78,.34], // Tunnel: travel / acceleration / phrase shifts
+      [.92,.20,.10,.22,.24,.56,.70,.42,.62,.68,.82,.50], // Megastructure: rotation / machinery / mass
+      [.24,.52,.96,.98,.28,.30,.58,.54,.52,.78,.62,.88], // Fracture Desert: shatter / debris / impact
+      [.14,.90,.74,.46,.68,.72,.58,.72,.44,.42,.74,.28], // Archipelago: lift / drift / harmonic rise
+      [.16,1.00,.36,.96,.18,.26,.82,.38,.46,.86,.64,.34], // Causeway: piano/onset sequencing / chase
+      [.10,.76,1.00,.82,.78,.62,.66,.76,.46,.58,.70,.38], // Chroma Reef: bloom / sparkle / color motion
+      [.98,.16,.14,.24,.60,.62,.56,.86,.72,.50,.84,.58], // Gravity Garden: attraction / orbit / release
+      [.10,.52,.96,.70,.86,.70,.54,.90,.36,.38,.66,.34], // Mirror Basin: reflection / phase / harmonic motion
+      [.18,.96,.56,.90,.24,.32,.88,.42,.56,.88,.64,.44], // Pulse Bridge: sequence / travel / rhythmic structure
+      [.10,.74,1.00,.84,.60,.52,.62,.74,.42,.64,.62,.36], // Signal Forest: flicker / scan / transmission
     ] as const
     const p=profiles[index%profiles.length]
-    const lane=C(c.bassPulse*p[0]+c.midPulse*p[1]+c.highPulse*p[2]+c.onsetPulse*p[3]+c.tonalPulse*p[4]+c.phrasePulse*p[5])
-    const bar=C(c.barPulse*(.82+p[6]*.28))
-    const phrase=C(c.phrasePulse*(.88+p[5]*.24))
+    const harmonic=C(c.harmonicMotion)
+    const build=C(c.buildPressure)
+    const release=C(c.dropPulse)
+    const motion=C((c.motionSpeed-.42)/1.23)
+    const accel=C(Math.max(0,c.speedDelta)/.65)
+    const decel=C(Math.max(0,-c.speedDelta)/.65)
+    const story=C((c.section?.importance??0)*.68+(c.hero?.28:0)+c.phrasePulse*.18)
+    const texture=C(l.flux*.54+l.level*.18+harmonic*.28)
+    const tension=C(build*.56+harmonic*.24+accel*.22+story*.16)
+    const lane=C(
+      c.bassPulse*p[0]+c.midPulse*p[1]+c.highPulse*p[2]+c.onsetPulse*p[3]+
+      c.tonalPulse*p[4]+c.phrasePulse*p[5]+c.barPulse*p[6]+harmonic*p[7]*.58+
+      tension*p[8]*.46+motion*p[9]*.30+story*p[10]*.34+release*p[11]*.50
+    )
+    const motionGain=.92+p[9]*.34
     return{
       cue:{
         ...c,
-        // Preserve each world's original animation energy; instrument lanes add character instead of replacing it.
-        beatPulse:C(c.beatPulse*.82+lane*.42),
-        barPulse:bar,
-        phrasePulse:phrase,
-        bassPulse:C(c.bassPulse*(.78+p[0]*.42)),
-        midPulse:C(c.midPulse*(.78+p[1]*.42)),
-        highPulse:C(c.highPulse*(.78+p[2]*.42)),
-        onsetPulse:C(c.onsetPulse*(.72+p[3]*.46)),
-        tonalPulse:C(c.tonalPulse*(.78+p[4]*.40)),
+        // Native motion stays dominant; these channels add region-specific musical causality.
+        beatPulse:C(c.beatPulse*.92+lane*.48+texture*.10),
+        barPulse:C(c.barPulse*.92+harmonic*p[7]*.18+tension*p[8]*.14),
+        phrasePulse:C(c.phrasePulse*.94+story*p[10]*.26+decel*.08),
+        bassPulse:C(c.bassPulse*(.88+p[0]*.52)+release*p[11]*.08),
+        midPulse:C(c.midPulse*(.88+p[1]*.52)+harmonic*p[7]*.10),
+        highPulse:C(c.highPulse*(.88+p[2]*.52)+texture*p[2]*.08),
+        onsetPulse:C(c.onsetPulse*(.84+p[3]*.54)+accel*p[9]*.10),
+        tonalPulse:C(c.tonalPulse*(.88+p[4]*.50)+harmonic*p[7]*.18),
+        harmonicMotion:C(harmonic*(.90+p[7]*.48)+c.tonalPulse*p[4]*.08),
+        buildPressure:C(build*(.92+p[8]*.42)+accel*p[9]*.10),
+        dropPulse:C(release*(.92+p[11]*.48)+story*p[10]*.08),
+        motionSpeed:Math.min(1.65,Math.max(.42,c.motionSpeed*motionGain+tension*.12+release*p[11]*.08)),
+        speedDelta:Math.max(-.65,Math.min(.65,c.speedDelta*(.94+p[9]*.26)+release*.05-decel*.03)),
       },
       live:{
         ...l,
-        bass:C(l.bass*(.82+p[0]*.34)),
-        mid:C(l.mid*(.82+p[1]*.34)),
-        treble:C(l.treble*(.82+p[2]*.34)),
-        flux:C(l.flux*(.78+p[3]*.36)),
+        bass:C(l.bass*(.90+p[0]*.42)+build*p[8]*.06),
+        mid:C(l.mid*(.90+p[1]*.42)+harmonic*p[7]*.07),
+        treble:C(l.treble*(.90+p[2]*.42)+texture*p[2]*.06),
+        flux:C(l.flux*(.88+p[3]*.44)+accel*p[9]*.08),
+        level:C(l.level*(.96+story*p[10]*.10)),
       }
     }
   }
@@ -60,4 +81,4 @@ const personality = `private personality(index:number,c:Cue,l:LiveFrame){
 
 region = region.replace(personalityPattern, personality)
 writeFileSync(regionPath, region)
-console.log('Patched Visual.X v4.3.5 instrument lanes without suppressing native region animation')
+console.log('Patched Visual.X v4.3.5 with expanded region motion variables and stronger native personality')
