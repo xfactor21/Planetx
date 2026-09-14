@@ -6,7 +6,7 @@ import {
   rejectOversizedBody,
 } from '@/lib/request-guard'
 
-const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
+const NOTIFY_EMAILS = ['xfactor.planetx@gmail.com', 'chris@planet-x.co']
 
 const ALLOWED_APPLICATIONS: Record<string, string> = {
   bdxm: 'bdXm',
@@ -143,7 +143,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         from: 'Beta Applications <onboarding@resend.dev>',
-        to: [NOTIFY_EMAIL],
+        to: NOTIFY_EMAILS,
         reply_to: email,
         subject: `New ${appName} beta application — ${email}`,
         html,

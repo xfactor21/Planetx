@@ -5,8 +5,7 @@ import {
   rejectOversizedBody,
 } from '@/lib/request-guard'
 
-// Notify-me signups are emailed here. This is the single system of record for now.
-const NOTIFY_EMAIL = 'xfactor.planetx@gmail.com'
+const NOTIFY_EMAILS = ['xfactor.planetx@gmail.com', 'chris@planet-x.co']
 
 type NotifySignupPayload = {
   email: string
@@ -82,7 +81,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         from: 'xFactor Notify <onboarding@resend.dev>',
-        to: [NOTIFY_EMAIL],
+        to: NOTIFY_EMAILS,
         reply_to: email,
         subject: `New notify-me signup — ${email}`,
         html: `<p><strong>${escapeHtml(email)}</strong> wants to be notified about: ${escapeHtml(interestedIn)}</p>`,

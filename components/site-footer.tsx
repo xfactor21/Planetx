@@ -24,7 +24,7 @@ const columns = [
     links: [
       { label: 'Build Notes', href: '/build-notes' },
       { label: 'The Studio', href: '/#studio' },
-      { label: 'Contact', href: 'mailto:xFactor@planet-x.co' },
+      { label: 'Contact', href: 'mailto:chris@planet-x.co' },
     ],
   },
 ]
@@ -46,10 +46,10 @@ export function SiteFooter() {
               Apps, sound and signal. Built somewhere dark, released everywhere.
             </p>
             <a
-              href="mailto:xFactor@planet-x.co"
+              href="mailto:chris@planet-x.co"
               className="mt-6 inline-block border-b border-accent pb-0.5 font-mono text-xs tracking-[0.16em] text-accent uppercase"
             >
-              xFactor@planet-x.co
+              chris@planet-x.co
             </a>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
@@ -78,7 +78,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border pt-6 font-mono text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v14.4</p>
+          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v14.8</p>
           <p className="flex items-center gap-2">
             <XMark className="size-4 text-primary" />
             Built in the dark
