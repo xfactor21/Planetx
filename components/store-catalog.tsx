@@ -52,7 +52,31 @@ function normalizeProduct(product: StoreProduct): StoreProduct {
       format: 'Chrome extension / Manifest V3',
       license:
         'Install free from the Chrome Web Store. Existing local vault data remains on-device. Optional Pro licensing is available from the private in-extension upgrade flow.',
+      gallery: [
+        {
+          src: '/store/listings/context-pro-hero.jpg',
+          alt: 'conteXt — Encrypted Developer Workspace',
+          label: 'conteXt banner',
+          fit: 'cover',
+        },
+        ...product.gallery,
+      ],
       checkoutUrl: CONTEXT_CHROME_URL,
+    }
+  }
+
+  if (product.id === 'essential-ui-sounds') {
+    return {
+      ...product,
+      gallery: [
+        {
+          src: '/store/listings/xupply-essential-ui-sounds-hero.jpg',
+          alt: 'Essential UI Sounds Vol. 1 by Xupply',
+          label: 'Product banner',
+          fit: 'cover',
+        },
+        ...product.gallery.slice(1),
+      ],
     }
   }
 
@@ -79,6 +103,25 @@ function categoryTone(category: StoreCategory) {
   if (category === 'Software') return '#00f0ff'
   if (category === 'Audio & FX') return '#a855f7'
   return '#ff2b8a'
+}
+
+function categoryBrandLogo(category: StoreCategory) {
+  if (category === 'Software') return '/store/brand/XupplySoftware-08.31-v1-initial.png'
+  if (category === 'Audio & FX') return '/store/brand/XupplyAudioFX-08.31-v1-initial.png'
+  return '/store/brand/XupplyCreator-08.31-v1-initial.png'
+}
+
+function BrandMark({ category }: { category: StoreCategory }) {
+  return (
+    <div className="pointer-events-none absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-black/55 p-1.5 shadow-lg backdrop-blur">
+      <img
+        src={categoryBrandLogo(category)}
+        alt=""
+        aria-hidden="true"
+        className="h-full w-full object-contain"
+      />
+    </div>
+  )
 }
 
 function ProductCard({
@@ -126,8 +169,9 @@ function ProductCard({
           </div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/25" />
+        <BrandMark category={product.category} />
         {active ? (
-          <span className="absolute right-3 top-3 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#ff2b8a]" />
+          <span className="absolute left-3 top-3 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#ff2b8a]" />
         ) : null}
       </div>
 
@@ -203,8 +247,9 @@ function ProductDetail({
         <span className="absolute left-3 top-3 rounded border border-white/10 bg-black/60 px-2 py-1 font-mono text-[9px] font-bold tracking-[.16em] text-white/80 uppercase backdrop-blur">
           Focus • {product.id.replaceAll('-', ' ')}
         </span>
+        <BrandMark category={product.category} />
         <span
-          className="absolute right-3 top-3 rounded border border-white/10 bg-black/65 px-2.5 py-1 font-mono text-[10px] font-bold backdrop-blur"
+          className="absolute bottom-3 right-3 rounded border border-white/10 bg-black/65 px-2.5 py-1 font-mono text-[10px] font-bold backdrop-blur"
           style={{ color: tone }}
         >
           {product.price}
