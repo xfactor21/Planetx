@@ -18,6 +18,7 @@
     "patch-visualx-spatial-component-pass-v438.mjs",
     "patch-visualx-region-by-region-v439.mjs",
     "patch-visualx-region-by-region-v439-fix.mjs",
+    "patch-visualx-region-by-region-v439-fix2.mjs",
     "patch-visualx-analytics-hardening.mjs"
   ]
 }
