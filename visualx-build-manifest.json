@@ -1,5 +1,5 @@
 {
-  "release": "VisualX-09.14-v4.3.8-spatial-component-pass",
+  "release": "VisualX-09.14-v4.3.9-region-by-region-motion",
   "sourceArchive": "Visual.X-09.09-v4.2-site-ready.zip",
   "sourceArchiveBytes": 14983049,
   "sourceArchiveGitBlobSha": "99ccff6b9f6aa4245f91d4199eaa758637ef38b3",
@@ -16,6 +16,7 @@
     "patch-visualx-region-verbs-v436.mjs",
     "patch-visualx-component-choreography-v437.mjs",
     "patch-visualx-spatial-component-pass-v438.mjs",
+    "patch-visualx-region-by-region-v439.mjs",
     "patch-visualx-analytics-hardening.mjs"
   ]
 }
