@@ -29,6 +29,12 @@ export const sessionGridProduct: StoreProduct = {
   license: 'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
   gallery: [
     {
+      src: '/store/listings/sessiongrid-x-hero.jpg',
+      alt: 'SessionGrid X — Tab & Workspace Manager',
+      label: 'SessionGrid X banner',
+      fit: 'cover',
+    },
+    {
       src: '/store/listings/sessiongrid-x-main.jpg',
       alt: 'SessionGrid X tab and workspace manager promo image',
       label: 'Tab & workspace manager',
