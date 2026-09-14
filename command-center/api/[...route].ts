@@ -1,7 +1,8 @@
 type AppResponse={statusCode:number;body:unknown;headers?:Record<string,string>};
 const json=(body:unknown,statusCode=200):AppResponse=>({statusCode,body,headers:{'Content-Type':'application/json'}});
 const error=(message:string,statusCode=500)=>json({error:message},statusCode);
-const router=(routes:Record<string,Array<(context:any)=>Promise<AppResponse>|((context:any)=>AppResponse)>>)=>async(req:any,res:any)=>{
+type RouteHandler=(context:any)=>Promise<AppResponse>|AppResponse;
+const router=(routes:Record<string,RouteHandler[]>)=>async(req:any,res:any)=>{
   const routeValue=Array.isArray(req.query?.route)?req.query.route.join('/'):req.query?.route;
   const pathname=routeValue?('/api/'+String(routeValue).replace(/^\/+/,'')):new URL(req.url||'/','http://localhost').pathname;
   const handlers=routes[`${req.method} ${pathname}`];
