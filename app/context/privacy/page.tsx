@@ -102,7 +102,7 @@ export default function ContextPrivacyPage() {
             borderLeft: '3px solid #ff18ad',
           }}
         >
-          Privacy questions can be sent to xFactor@planet-x.co.
+          Privacy questions can be sent to chris@planet-x.co.
         </div>
       </article>
     </main>
