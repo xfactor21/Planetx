@@ -95,7 +95,7 @@ export default function SessionGridPrivacyPolicyPage() {
           <section className={sectionClass}>
             <h2 className="text-xl font-bold text-white">10. Contact</h2>
             <p>Questions about SessionGrid X privacy can be sent to planet.X.</p>
-            <a className="mr-3 inline-flex rounded-lg border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 font-semibold text-cyan-200 transition hover:bg-cyan-500/20" href="mailto:xFactor@planet-x.co">xFactor@planet-x.co</a>
+            <a className="mr-3 inline-flex rounded-lg border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 font-semibold text-cyan-200 transition hover:bg-cyan-500/20" href="mailto:chris@planet-x.co">chris@planet-x.co</a>
             <Link href="/" className="inline-flex rounded-lg border border-fuchsia-400/40 bg-fuchsia-500/10 px-4 py-2 font-semibold text-fuchsia-200 transition hover:bg-fuchsia-500/20">Visit planet.X</Link>
           </section>
         </div>
