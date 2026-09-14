@@ -90,7 +90,7 @@ const organizationSchema = {
   name: 'planet.X',
   url: siteUrl,
   logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png`,
-  email: 'xFactor@planet-x.co',
+  email: 'chris@planet-x.co',
   description: siteDescription,
 }
 
