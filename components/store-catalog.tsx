@@ -452,7 +452,7 @@ export function StoreCatalog() {
                   <span>planet.X / Xupply</span>
                   <span className="flex items-center gap-1.5">
                     <span className="size-1 rounded-full bg-primary" />
-                    Checkout secured by Payhip
+                    Secure checkout
                   </span>
                 </div>
               </div>
