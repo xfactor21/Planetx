@@ -32,13 +32,13 @@ export const sessionGridProduct: StoreProduct = {
       src: '/store/listings/sessiongrid-x-main.jpg',
       alt: 'SessionGrid X tab and workspace manager promo image',
       label: 'Tab & workspace manager',
-      fit: 'cover',
+      fit: 'contain',
     },
     {
       src: '/store/listings/sessiongrid-x-secondary.jpg',
       alt: 'SessionGrid X — Organize Tabs. Own Your Workspaces.',
       label: 'Organize your workspaces',
-      fit: 'cover',
+      fit: 'contain',
     },
     {
       src: '/store/listings/sessiongrid-x-app-icon.jpg',
