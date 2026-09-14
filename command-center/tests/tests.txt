@@ -1,0 +1,51 @@
+# Tests
+
+## Test 1 - Command Center v2 overview [sanity]
+Viewport: desktop (1440x900)
+Covers: redesigned shell, selected window, real website and Visual.X KPIs, source status, theme, refresh
+Description: Verifies the rebuilt command surface loads real core analytics and its global controls work.
+Steps:
+1. Open the Command Center overview
+2. Confirm Website and Visual.X are LIVE and numeric metrics render
+3. Switch between 24H, 7D, 30D and All, toggle theme, then refresh
+Expected: The interface remains readable, values reload from the selected window, and no mock metrics or runtime errors appear.
+
+## Test 2 - Acquisition and Google setup states
+Viewport: desktop (1280x800)
+Covers: first-party traffic trend, landing pages, referrers, Search Console performance, URL indexing/crawl status, GA4, unconfigured and failed-source states
+Description: Verifies acquisition data stays truthful whether Google is connected, awaiting setup, or unavailable.
+Steps:
+1. Open Acquisition
+2. Inspect first-party traffic and both Google modules
+3. If Google is unconfigured, confirm the UI states Setup required instead of drawing charts
+Expected: Existing traffic renders from the shared ledger; Google renders only real API data or a precise setup/error state.
+
+## Test 3 - Store and Visual.X truthfulness
+Viewport: desktop (1280x800)
+Covers: product view/click/launch aggregation, intent rate, revenue disclosure, Visual.X trend, historical independent events
+Description: Verifies store intent and Visual.X behavior are derived from the shared ledger without invented revenue or conversions.
+Steps:
+1. Open Store and review every product row
+2. Confirm revenue is not inferred from checkout clicks
+3. Open Visual.X and inspect the trend, event mix and funnel
+Expected: Product totals match the shared ledger, revenue remains explicitly unconnected, and Visual.X never forces impossible funnel percentages.
+
+## Test 4 - Privacy-safe event pulse and system health
+Viewport: desktop (1280x800)
+Covers: recent aggregate event metadata, app analytics summaries, hidden identifiers, integration health, protected ingestion, Google credential status
+Description: Verifies the activity and system views disclose health without exposing protected data.
+Steps:
+1. Open Live pulse
+2. Confirm event, source, path/label, platform and time render without anonymous or session IDs
+3. Open System and inspect all integration states
+Expected: No raw identity, IP or secret value appears; shared reads remain aggregate-only and writes remain authenticated.
+
+## Test 5 - Mobile navigation and responsive modules
+Viewport: mobile (375x667)
+Covers: drawer navigation, overview cards, range control, Store table, Apps summaries, Live pulse, System setup guidance
+Description: Verifies all primary Command Center workflows remain usable on a phone.
+Steps:
+1. Open the mobile menu and navigate through every module
+2. Change the date range and refresh
+3. Scroll the Store, Visual.X, Live pulse and System views
+Expected: No horizontal clipping, hidden controls, overlapping navigation or unreadable chart/table content occurs.
