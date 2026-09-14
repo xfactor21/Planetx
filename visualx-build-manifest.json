@@ -1,5 +1,5 @@
 {
-  "release": "VisualX-09.12-v4.3.5-instrument-lanes",
+  "release": "VisualX-09.14-v4.3.6-region-verbs",
   "sourceArchive": "Visual.X-09.09-v4.2-site-ready.zip",
   "sourceArchiveBytes": 14983049,
   "sourceArchiveGitBlobSha": "99ccff6b9f6aa4245f91d4199eaa758637ef38b3",
@@ -13,6 +13,7 @@
     "patch-visualx-motion-stabilizer.mjs",
     "patch-visualx-region-camera-wave-v434.mjs",
     "patch-visualx-instrument-lanes-v435.mjs",
+    "patch-visualx-region-verbs-v436.mjs",
     "patch-visualx-analytics-hardening.mjs"
   ]
 }
