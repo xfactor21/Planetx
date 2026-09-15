@@ -26,17 +26,12 @@ export const sessionGridProduct: StoreProduct = {
   ],
   bestFor: ['Heavy-tab workflows', 'Research sessions', 'Multi-project browser work'],
   format: 'Chrome extension / Manifest V3',
-  license: 'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
+  license:
+    'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
   gallery: [
     {
-      src: '/store/listings/sessiongrid-x-hero.jpg',
-      alt: 'SessionGrid X — Tab & Workspace Manager',
-      label: 'SessionGrid X banner',
-      fit: 'cover',
-    },
-    {
       src: '/store/listings/sessiongrid-x-main.jpg',
-      alt: 'SessionGrid X tab and workspace manager promo image',
+      alt: 'SessionGrid X — Tab & Workspace Manager — Organize tabs into powerful grids',
       label: 'Tab & workspace manager',
       fit: 'contain',
     },
@@ -53,5 +48,6 @@ export const sessionGridProduct: StoreProduct = {
       fit: 'contain',
     },
   ],
-  checkoutUrl: 'https://chromewebstore.google.com/detail/sessiongrid-x/gghgjnmclndonogigpahmgopldpomcel',
+  checkoutUrl:
+    'https://chromewebstore.google.com/detail/sessiongrid-x/gghgjnmclndonogigpahmgopldpomcel',
 }
