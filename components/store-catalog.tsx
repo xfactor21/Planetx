@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react'
 import Script from 'next/script'
 import { ArrowUpRight, Check, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import {
@@ -30,6 +30,12 @@ const VERIFIED_PAYHIP_CHECKOUTS: CheckoutMap = {
   'creator-editing-overlays': 'https://payhip.com/b/NGUKi',
   'digital-worlds-wallpapers': 'https://payhip.com/b/6x4EO',
   'producer-transitions-impacts': 'https://payhip.com/b/PcOWp',
+}
+
+const CATEGORY_LOGOS: Record<StoreCategory, string> = {
+  Software: '/store/brand/XupplySoftware-08.31-v1-initial.png',
+  'Audio & FX': '/store/brand/XupplyAudioFX-08.31-v1-initial.png',
+  'Creator Resources': '/store/brand/XupplyCreator-08.31-v1-initial.png',
 }
 
 const TRENDING_IDS = new Set([
@@ -80,8 +86,43 @@ function productGallery(product: StoreProduct): ProductGalleryImage[] {
 
 function categoryTone(category: StoreCategory) {
   if (category === 'Software') return '#00f0ff'
-  if (category === 'Audio & FX') return '#a855f7'
-  return '#ff2b8a'
+  if (category === 'Audio & FX') return '#ff2b8a'
+  return '#a855f7'
+}
+
+function safeTrack(product: StoreProduct, ctaLabel: string, destination: string) {
+  try {
+    planetXTrack('product_cta_click', {
+      product_id: product.id,
+      product_name: product.name,
+      cta_label: ctaLabel,
+    })
+    planetXTrack('external_app_launch', {
+      product_id: product.id,
+      product_name: product.name,
+      destination,
+    })
+  } catch {
+    // Navigation and checkout must never depend on analytics.
+  }
+}
+
+function CategoryBrand({ category, compact = false }: { category: StoreCategory; compact?: boolean }) {
+  return (
+    <div className={`flex items-center gap-3 ${compact ? '' : 'min-w-0'}`}>
+      <img
+        src={CATEGORY_LOGOS[category]}
+        alt={`Xupply ${category}`}
+        loading="lazy"
+        decoding="async"
+        className={`${compact ? 'h-11 w-11' : 'h-14 w-14'} shrink-0 object-contain`}
+      />
+      <div className="min-w-0">
+        <p className="font-mono text-[9px] tracking-[.18em] text-white/35 uppercase">Xupply category</p>
+        <p className="truncate font-mono text-[10px] font-bold tracking-[.15em] text-white/75 uppercase">{category}</p>
+      </div>
+    </div>
+  )
 }
 
 function ProductCard({
@@ -124,33 +165,27 @@ function ProductCard({
             }`}
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_50%_35%,rgba(255,43,138,.12),transparent_45%),#080b13] font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">
+          <div className="flex h-full items-center justify-center bg-[#080b13] font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">
             planet.X / asset
           </div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/30" />
-        {active ? (
-          <span className="absolute left-3 top-3 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#ff2b8a]" />
-        ) : null}
+        {active ? <span className="absolute left-3 top-3 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#ff2b8a]" /> : null}
       </div>
 
       <div className="border-t border-white/[.05] p-4">
-        <p
-          className="font-mono text-[10px] font-bold tracking-[.14em] uppercase"
-          style={{ color: tone }}
-        >
+        <div className="mb-3 border-b border-white/[.05] pb-3">
+          <CategoryBrand category={product.category} compact />
+        </div>
+        <p className="font-mono text-[10px] font-bold tracking-[.14em] uppercase" style={{ color: tone }}>
           {product.productType}
         </p>
         <div className="mt-2 flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-[15px] font-bold leading-tight tracking-[-.01em] text-white">
-              {product.name}
-            </h3>
+            <h3 className="text-[15px] font-bold leading-tight tracking-[-.01em] text-white">{product.name}</h3>
             <p className="mt-2 font-mono text-sm font-bold text-primary">{product.price}</p>
           </div>
-          <span className="shrink-0 font-mono text-[10px] font-bold tracking-[.12em] text-cyan-300 uppercase">
-            Inspect →
-          </span>
+          <span className="shrink-0 font-mono text-[10px] font-bold tracking-[.12em] text-cyan-300 uppercase">Inspect →</span>
         </div>
       </div>
     </button>
@@ -160,9 +195,11 @@ function ProductCard({
 function ProductDetail({
   product,
   checkoutMap,
+  payhipReady,
 }: {
   product: StoreProduct
   checkoutMap: CheckoutMap
+  payhipReady: boolean
 }) {
   const [imageIndex, setImageIndex] = useState(0)
   const gallery = productGallery(product)
@@ -170,24 +207,18 @@ function ProductDetail({
   const tone = categoryTone(product.category)
   const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
   const isProjectX = product.id === 'project-x'
-  const checkoutHref =
-    !isChromeStore && !isProjectX
-      ? checkoutMap[product.id] ?? VERIFIED_PAYHIP_CHECKOUTS[product.id]
-      : undefined
+  const checkoutHref = !isChromeStore && !isProjectX
+    ? checkoutMap[product.id] ?? VERIFIED_PAYHIP_CHECKOUTS[product.id]
+    : undefined
 
   useEffect(() => setImageIndex(0), [product.id])
 
-  const trackCta = (ctaLabel: string, destination: string) => {
-    planetXTrack('product_cta_click', {
-      product_id: product.id,
-      product_name: product.name,
-      cta_label: ctaLabel,
-    })
-    planetXTrack('external_app_launch', {
-      product_id: product.id,
-      product_name: product.name,
-      destination,
-    })
+  const handlePayhipClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!payhipReady) {
+      event.preventDefault()
+      return
+    }
+    safeTrack(product, 'buy_now', 'embedded_checkout')
   }
 
   return (
@@ -199,23 +230,16 @@ function ProductDetail({
             src={image.src}
             alt={image.alt}
             decoding="async"
-            className={`h-full w-full ${
-              image.fit === 'contain' ? 'object-contain' : 'object-cover'
-            }`}
+            className={`h-full w-full ${image.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
           />
         ) : (
-          <div className="flex h-full items-center justify-center font-mono text-xs tracking-[.18em] text-white/35 uppercase">
-            planet.X / preview
-          </div>
+          <div className="flex h-full items-center justify-center font-mono text-xs tracking-[.18em] text-white/35 uppercase">planet.X / preview</div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#090c15]/65" />
         <span className="absolute left-3 top-3 rounded border border-white/10 bg-black/60 px-2 py-1 font-mono text-[9px] font-bold tracking-[.16em] text-white/80 uppercase backdrop-blur">
           Focus • {product.id.replaceAll('-', ' ')}
         </span>
-        <span
-          className="absolute bottom-3 right-3 rounded border border-white/10 bg-black/65 px-2.5 py-1 font-mono text-[10px] font-bold backdrop-blur"
-          style={{ color: tone }}
-        >
+        <span className="absolute bottom-3 right-3 rounded border border-white/10 bg-black/65 px-2.5 py-1 font-mono text-[10px] font-bold backdrop-blur" style={{ color: tone }}>
           {product.price}
         </span>
       </div>
@@ -230,36 +254,26 @@ function ProductDetail({
               aria-label={`Show ${item.label}`}
               aria-pressed={index === imageIndex}
               className="relative h-12 w-20 shrink-0 overflow-hidden rounded border bg-black/35 transition-opacity"
-              style={{
-                borderColor: index === imageIndex ? '#ff2b8a' : 'rgba(255,255,255,.15)',
-                opacity: index === imageIndex ? 1 : 0.62,
-              }}
+              style={{ borderColor: index === imageIndex ? '#ff2b8a' : 'rgba(255,255,255,.15)', opacity: index === imageIndex ? 1 : 0.62 }}
             >
-              <img
-                src={item.src}
-                alt=""
-                loading="lazy"
-                className={`h-full w-full ${item.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
-              />
+              <img src={item.src} alt="" loading="lazy" className={`h-full w-full ${item.fit === 'contain' ? 'object-contain' : 'object-cover'}`} />
             </button>
           ))}
           <div className="ml-auto hidden shrink-0 items-center gap-2 font-mono text-[9px] tracking-[.18em] text-white/45 uppercase sm:flex">
-            <span className="size-1 animate-pulse rounded-full bg-cyan-300" />
-            Live preview
+            <span className="size-1 animate-pulse rounded-full bg-cyan-300" /> Live preview
           </div>
         </div>
       ) : null}
 
+      <div className="border-b border-white/[.06] bg-black/50 px-5 py-3">
+        <CategoryBrand category={product.category} />
+      </div>
+
       <div className="p-5">
-        <p
-          className="font-mono text-[10px] font-bold tracking-[.18em] uppercase"
-          style={{ color: tone }}
-        >
+        <p className="font-mono text-[10px] font-bold tracking-[.18em] uppercase" style={{ color: tone }}>
           {product.category} / {product.productType}
         </p>
-        <h2 className="mt-2 text-xl font-bold tracking-[-.02em] text-white sm:text-2xl">
-          {product.name}
-        </h2>
+        <h2 className="mt-2 text-xl font-bold tracking-[-.02em] text-white sm:text-2xl">{product.name}</h2>
         <p className="mt-3 text-[13px] leading-6 text-white/55">{product.description}</p>
 
         <ul className="mt-5 grid gap-2">
@@ -273,44 +287,42 @@ function ProductDetail({
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-white/[.08] pt-5">
           <div>
-            <p className="font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">
-              {product.priceNote}
-            </p>
+            <p className="font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">{product.priceNote}</p>
             <p className="mt-1 font-mono text-lg font-bold text-primary">{product.price}</p>
           </div>
 
           {isChromeStore && product.checkoutUrl ? (
             <a
               href={product.checkoutUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackCta('add_to_chrome', product.checkoutUrl!)}
+              onClick={() => safeTrack(product, 'add_to_chrome', product.checkoutUrl!)}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white uppercase shadow-[0_4px_20px_rgba(255,43,138,.25)] transition hover:bg-accent"
             >
               <MonitorSmartphone className="size-4" aria-hidden="true" />
-              Add to Chrome
+              Open Chrome Web Store
               <ArrowUpRight className="size-4" aria-hidden="true" />
             </a>
           ) : isProjectX ? (
-            <span className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white/45 uppercase">
-              Coming soon
-            </span>
-          ) : checkoutHref ? (
+            <span className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white/45 uppercase">Coming soon</span>
+          ) : checkoutHref && payhipReady ? (
             <a
               href={checkoutHref}
               className="payhip-buy-button inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white uppercase shadow-[0_4px_20px_rgba(255,43,138,.25)] transition hover:bg-accent"
               data-theme="none"
-              onClick={() => trackCta('buy_now', 'embedded_checkout')}
+              onClick={handlePayhipClick}
             >
               <ShoppingBag className="size-4" aria-hidden="true" />
               Buy Now
             </a>
-          ) : (
+          ) : checkoutHref ? (
             <button
               type="button"
               disabled
-              className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-md border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white/35 uppercase"
+              className="inline-flex min-h-11 cursor-wait items-center justify-center rounded-md border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white/45 uppercase"
             >
+              Loading secure checkout…
+            </button>
+          ) : (
+            <button type="button" disabled className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-md border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.14em] text-white/35 uppercase">
               Checkout unavailable
             </button>
           )}
@@ -329,22 +341,18 @@ export function StoreCatalog() {
   const [view, setView] = useState<StoreView>('Trending')
   const [selectedId, setSelectedId] = useState('sessiongrid-x')
   const [checkoutMap, setCheckoutMap] = useState<CheckoutMap>({})
+  const [payhipReady, setPayhipReady] = useState(false)
   const detailRef = useRef<HTMLDivElement>(null)
 
   const products = useMemo(() => {
-    if (view === 'Trending') {
-      return allProducts.filter((product) => TRENDING_IDS.has(product.id))
-    }
+    if (view === 'Trending') return allProducts.filter((product) => TRENDING_IDS.has(product.id))
     return allProducts.filter((product) => product.category === view)
   }, [view])
 
-  const selected =
-    allProducts.find((product) => product.id === selectedId) ?? products[0] ?? allProducts[0]
+  const selected = allProducts.find((product) => product.id === selectedId) ?? products[0] ?? allProducts[0]
 
   useEffect(() => {
-    if (!products.some((product) => product.id === selectedId) && products[0]) {
-      setSelectedId(products[0].id)
-    }
+    if (!products.some((product) => product.id === selectedId) && products[0]) setSelectedId(products[0].id)
   }, [products, selectedId])
 
   useEffect(() => {
@@ -357,78 +365,61 @@ export function StoreCatalog() {
       .catch(() => {
         if (!cancelled) setCheckoutMap({})
       })
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [])
 
   useEffect(() => {
     if (!selected) return
-    planetXTrack('product_view', {
-      product_id: selected.id,
-      product_name: selected.name,
-      product_status: selected.status,
-      product_category: selected.category,
-      store_surface: 'vault_detail',
-    })
+    try {
+      planetXTrack('product_view', {
+        product_id: selected.id,
+        product_name: selected.name,
+        product_status: selected.status,
+        product_category: selected.category,
+        store_surface: 'vault_detail',
+      })
+    } catch {
+      // Product selection must remain usable if analytics is unavailable.
+    }
   }, [selected])
 
   const selectProduct = (id: string) => {
     setSelectedId(id)
     if (window.matchMedia('(max-width: 1023px)').matches) {
-      requestAnimationFrame(() =>
-        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-      )
+      requestAnimationFrame(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     }
   }
 
   return (
     <>
-      <Script src="https://payhip.com/payhip.js" strategy="afterInteractive" />
+      <Script
+        src="https://payhip.com/payhip.js"
+        strategy="afterInteractive"
+        onLoad={() => setPayhipReady(true)}
+        onReady={() => setPayhipReady(true)}
+        onError={() => setPayhipReady(false)}
+      />
 
       <section className="relative overflow-hidden bg-[#030305] text-white">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -left-20 -top-28 size-[420px] rounded-full bg-primary/10 blur-[90px]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -right-24 top-44 size-[520px] rounded-full bg-cyan-400/10 blur-[110px]"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 left-[30%] h-80 w-[600px] rounded-full bg-violet-500/[.06] blur-[120px]"
-          aria-hidden="true"
-        />
+        <div className="pointer-events-none absolute inset-0 opacity-60" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px)', backgroundSize: '24px 24px' }} aria-hidden="true" />
+        <div className="pointer-events-none absolute -left-20 -top-28 size-[420px] rounded-full bg-primary/10 blur-[90px]" aria-hidden="true" />
+        <div className="pointer-events-none absolute -right-24 top-44 size-[520px] rounded-full bg-cyan-400/10 blur-[110px]" aria-hidden="true" />
+        <div className="pointer-events-none absolute bottom-0 left-[30%] h-80 w-[600px] rounded-full bg-violet-500/[.06] blur-[120px]" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto max-w-[1380px]">
           <header className="flex items-center justify-between gap-5 border-b border-white/[.08] px-5 py-5 md:px-8">
             <div className="flex flex-wrap items-baseline gap-2.5">
               <span className="text-xl font-bold tracking-[-.02em]">planet.X</span>
               <span className="font-mono text-[11px] tracking-[.18em] text-white/35">//</span>
-              <span className="font-mono text-[11px] font-bold tracking-[.22em] text-white/80 uppercase">
-                Vault Matrix
-              </span>
+              <span className="font-mono text-[11px] font-bold tracking-[.22em] text-white/80 uppercase">Vault Matrix</span>
             </div>
             <div className="hidden text-right sm:block">
-              <p className="font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">
-                Dynamic Vault
-              </p>
+              <p className="font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">Dynamic Vault</p>
               <div className="ml-auto mt-2 h-px w-24 bg-white/10" />
             </div>
           </header>
 
-          <nav
-            className="flex items-center gap-2.5 overflow-x-auto border-b border-white/[.06] px-5 py-4 md:px-8"
-            aria-label="Store categories"
-          >
+          <nav className="flex items-center gap-2.5 overflow-x-auto border-b border-white/[.06] px-5 py-4 md:px-8" aria-label="Store categories">
             {views.map((item) => {
               const active = item === view
               return (
@@ -438,20 +429,14 @@ export function StoreCatalog() {
                   onClick={() => setView(item)}
                   aria-pressed={active}
                   className="shrink-0 rounded-full px-4 py-1.5 font-mono text-[11px] font-bold tracking-[.08em] uppercase transition"
-                  style={{
-                    border: `1px solid ${active ? '#ff2b8a' : 'rgba(255,255,255,.14)'}`,
-                    background: active ? 'rgba(255,43,138,.12)' : 'transparent',
-                    color: active ? '#fff' : 'rgba(255,255,255,.45)',
-                  }}
+                  style={{ border: `1px solid ${active ? '#ff2b8a' : 'rgba(255,255,255,.14)'}`, background: active ? 'rgba(255,43,138,.12)' : 'transparent', color: active ? '#fff' : 'rgba(255,255,255,.45)' }}
                 >
                   {item}
                 </button>
               )
             })}
             <div className="ml-auto hidden shrink-0 items-center gap-2 font-mono text-[10px] tracking-[.16em] text-white/35 uppercase md:flex">
-              <span>{products.length} items</span>
-              <span className="size-1 rounded-full bg-white/35" />
-              <span>{allProducts.length} total</span>
+              <span>{products.length} items</span><span className="size-1 rounded-full bg-white/35" /><span>{allProducts.length} total</span>
             </div>
           </nav>
 
@@ -459,34 +444,20 @@ export function StoreCatalog() {
             <div className="order-2 lg:order-1">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-[18px]">
                 {products.map((product, index) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    active={selected?.id === product.id}
-                    index={index}
-                    onSelect={() => selectProduct(product.id)}
-                  />
+                  <ProductCard key={product.id} product={product} active={selected?.id === product.id} index={index} onSelect={() => selectProduct(product.id)} />
                 ))}
               </div>
-
               <div className="mt-10 flex items-center gap-3 font-mono text-[10px] tracking-[.16em] text-white/35 uppercase">
-                <div className="h-px flex-1 bg-white/[.08]" />
-                <span>
-                  {view} • {products.length} / {allProducts.length}
-                </span>
-                <div className="h-px flex-1 bg-white/[.08]" />
+                <div className="h-px flex-1 bg-white/[.08]" /><span>{view} • {products.length} / {allProducts.length}</span><div className="h-px flex-1 bg-white/[.08]" />
               </div>
             </div>
 
             <div ref={detailRef} className="order-1 scroll-mt-28 lg:order-2">
               <div className="lg:sticky lg:top-28">
-                {selected ? <ProductDetail product={selected} checkoutMap={checkoutMap} /> : null}
+                {selected ? <ProductDetail product={selected} checkoutMap={checkoutMap} payhipReady={payhipReady} /> : null}
                 <div className="mt-4 flex items-center justify-between px-1 font-mono text-[10px] tracking-[.14em] text-white/35 uppercase">
                   <span>planet.X / Xupply</span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="size-1 rounded-full bg-primary" />
-                    Secure checkout
-                  </span>
+                  <span className="flex items-center gap-1.5"><span className="size-1 rounded-full bg-primary" />Secure checkout</span>
                 </div>
               </div>
             </div>
