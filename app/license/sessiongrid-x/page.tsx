@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { StorePurchaseCta } from '@/components/store-purchase-cta'
 
 export const metadata: Metadata = {
   title: 'SessionGrid X Pro License',
@@ -24,18 +25,20 @@ export default async function SessionGridLicensePage({ searchParams }: { searchP
     <main className="min-h-screen bg-background px-4 py-14 text-foreground md:px-8">
       <section className="mx-auto max-w-2xl border border-accent/60 bg-black/35 p-6 sm:p-8">
         <p className="font-mono text-xs tracking-[0.18em] text-accent uppercase">SessionGrid X Pro</p>
-        <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Remove the workspace limits.</h1>
-        <p className="mt-4 leading-7 text-muted-foreground">SessionGrid X stays local-first. Purchasing Pro adds a license entitlement; your tabs, URLs, workspace data, notes, and browsing content are not sent to planet.X or Payhip.</p>
+        <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">Start with Pro. Keep a useful Free mode.</h1>
+        <p className="mt-4 leading-7 text-muted-foreground">New installs receive a 7-day Pro trial. If Pro is not activated after the trial, SessionGrid X continues in Free mode with 1 saved workstation and 3 recovery snapshots. Purchasing Pro adds a license entitlement; your tabs, URLs, workspace data, notes, and browsing content are not sent to planet.X or the payment provider.</p>
         <div className="mt-7 grid gap-3 text-sm text-foreground/80 sm:grid-cols-2">
-          <div className="border border-border p-4"><strong className="text-white">Free</strong><p className="mt-2">1 saved workstation and 3 recovery snapshots after the 7-day Pro trial.</p></div>
+          <div className="border border-border p-4"><strong className="text-white">Free after trial</strong><p className="mt-2">1 saved workstation and 3 recovery snapshots.</p></div>
           <div className="border border-accent/50 p-4"><strong className="text-accent">Pro</strong><p className="mt-2">Unlimited workspaces, up to 100 snapshots, notes/tags, Archive + Close, Markdown export, and configurable recovery intervals.</p></div>
         </div>
         {checkout ? (
-          <a href={checkout} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex min-h-12 items-center justify-center bg-accent px-6 py-3 font-mono text-xs font-bold tracking-[0.14em] text-black uppercase transition-opacity hover:opacity-90">Purchase SessionGrid X Pro</a>
+          <div className="mt-8">
+            <StorePurchaseCta productId="sessiongrid-x" productName="SessionGrid X Pro" mode="payhip" checkoutUrl={checkout} />
+          </div>
         ) : (
-          <div className="mt-8 border border-amber-400/40 bg-amber-400/5 p-4 text-sm leading-6 text-amber-200">Pro checkout is being finalized. The extension remains fully usable during its trial and on the Free tier.</div>
+          <div className="mt-8 border border-amber-400/40 bg-amber-400/5 p-4 text-sm leading-6 text-amber-200">Pro checkout is being finalized. The extension remains fully usable during its 7-day Pro trial and continues afterward in Free mode with 1 saved workstation and 3 recovery snapshots.</div>
         )}
-        <p className="mt-4 text-xs leading-5 text-muted-foreground">After purchase, copy the Payhip license key and paste it into SessionGrid X → License.</p>
+        <p className="mt-4 text-xs leading-5 text-muted-foreground">After purchase, copy the license key from your purchase receipt and paste it into SessionGrid X → License.</p>
       </section>
     </main>
   )

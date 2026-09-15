@@ -8,26 +8,26 @@ export const sessionGridProduct: StoreProduct = {
   description:
     'Save complete Chrome workspaces, restore windows and native tab groups, recover session snapshots, search saved context, and keep duplicate tabs under control without uploading browsing data to a cloud service.',
   price: 'Free',
-  priceNote: 'Chrome extension',
-  status: 'Available free',
+  priceNote: '7-day Pro trial → permanent Free mode',
+  status: 'Available — 7-day Pro trial, then Free',
   platforms: ['Chrome extension'],
   metrics: [
-    { value: 'Chrome', label: 'Extension' },
-    { value: 'Local', label: 'Browsing data' },
-    { value: 'Free', label: 'Install' },
+    { value: '7 days', label: 'Pro trial' },
+    { value: '1', label: 'Saved workstation in Free' },
+    { value: '3', label: 'Recovery snapshots in Free' },
   ],
   includes: [
     'Complete workspace save and restore with pinned tabs and native Chrome tab groups',
-    'Permanent Free tier with saved-workspace and recovery-snapshot support',
+    '7-day Pro trial, then permanent Free mode with 1 saved workstation and 3 recovery snapshots',
     'Search across workspace names, tab titles, URLs, notes, and tags where available',
     'Duplicate-tab detection and local JSON backup',
-    'Optional Pro unlock for larger workspace and snapshot limits, notes, and tags',
+    'Optional Pro unlock for unlimited workspaces, larger snapshot limits, notes, and tags',
     'Pro adds Archive + Close, Markdown export, and configurable recovery intervals',
   ],
   bestFor: ['Heavy-tab workflows', 'Research sessions', 'Multi-project browser work'],
   format: 'Chrome extension / Manifest V3',
   license:
-    'Install free from the Chrome Web Store. Browsing data stays local. Optional Pro licensing is available from the private upgrade flow inside the extension.',
+    'Install free from the Chrome Web Store. New installs receive a 7-day Pro trial; after the trial, SessionGrid X continues in Free mode with 1 saved workstation and 3 recovery snapshots unless Pro is activated. Browsing data stays local.',
   gallery: [
     {
       src: '/store/listings/sessiongrid-x-main.jpg',
@@ -39,6 +39,12 @@ export const sessionGridProduct: StoreProduct = {
       src: '/store/listings/sessiongrid-x-secondary.jpg',
       alt: 'SessionGrid X — Organize Tabs. Own Your Workspaces.',
       label: 'Organize your workspaces',
+      fit: 'contain',
+    },
+    {
+      src: '/store/listings/sessiongrid-x-workflow.svg',
+      alt: 'SessionGrid X workflow and 7-day Pro trial followed by 1-workstation Free mode',
+      label: 'Trial and Free mode',
       fit: 'contain',
     },
     {
