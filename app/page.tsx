@@ -59,7 +59,7 @@ export default function Page() {
             </div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-black shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
               <img
-                src="/visual-x/VisualX-09.12-v1-home-approved.svg"
+                src="/visual-x/VisualX-09.15-v14.9-home-approved.jpg"
                 alt="Visual.X — What will your song make? 360° Music Engine"
                 loading="lazy"
                 decoding="async"
