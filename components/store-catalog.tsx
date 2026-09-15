@@ -52,31 +52,7 @@ function normalizeProduct(product: StoreProduct): StoreProduct {
       format: 'Chrome extension / Manifest V3',
       license:
         'Install free from the Chrome Web Store. Existing local vault data remains on-device. Optional Pro licensing is available from the private in-extension upgrade flow.',
-      gallery: [
-        {
-          src: '/store/listings/context-pro-hero.jpg',
-          alt: 'conteXt — Encrypted Developer Workspace',
-          label: 'conteXt banner',
-          fit: 'cover',
-        },
-        ...product.gallery,
-      ],
       checkoutUrl: CONTEXT_CHROME_URL,
-    }
-  }
-
-  if (product.id === 'essential-ui-sounds') {
-    return {
-      ...product,
-      gallery: [
-        {
-          src: '/store/listings/xupply-essential-ui-sounds-hero.jpg',
-          alt: 'Essential UI Sounds Vol. 1 by Xupply',
-          label: 'Product banner',
-          fit: 'cover',
-        },
-        ...product.gallery.slice(1),
-      ],
     }
   }
 
@@ -93,7 +69,10 @@ function normalizeProduct(product: StoreProduct): StoreProduct {
 }
 
 const allProducts = [sessionGridProduct, ...storeProducts].map(normalizeProduct)
-const views: StoreView[] = ['Trending', ...storeCategories.filter((item): item is StoreCategory => item !== 'All')]
+const views: StoreView[] = [
+  'Trending',
+  ...storeCategories.filter((item): item is StoreCategory => item !== 'All'),
+]
 
 function productGallery(product: StoreProduct): ProductGalleryImage[] {
   return product.gallery.filter((image) => Boolean(image.src))
@@ -103,25 +82,6 @@ function categoryTone(category: StoreCategory) {
   if (category === 'Software') return '#00f0ff'
   if (category === 'Audio & FX') return '#a855f7'
   return '#ff2b8a'
-}
-
-function categoryBrandLogo(category: StoreCategory) {
-  if (category === 'Software') return '/store/brand/XupplySoftware-08.31-v1-initial.png'
-  if (category === 'Audio & FX') return '/store/brand/XupplyAudioFX-08.31-v1-initial.png'
-  return '/store/brand/XupplyCreator-08.31-v1-initial.png'
-}
-
-function BrandMark({ category }: { category: StoreCategory }) {
-  return (
-    <div className="pointer-events-none absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center overflow-hidden rounded-md border border-white/10 bg-black/55 p-1.5 shadow-lg backdrop-blur">
-      <img
-        src={categoryBrandLogo(category)}
-        alt=""
-        aria-hidden="true"
-        className="h-full w-full object-contain"
-      />
-    </div>
-  )
 }
 
 function ProductCard({
@@ -152,15 +112,15 @@ function ProductCard({
         animationDelay: `${index * 45}ms`,
       }}
     >
-      <div className="relative h-36 overflow-hidden bg-[#0a0e1a]">
+      <div className="relative h-40 overflow-hidden bg-[#0a0e1a] sm:h-44">
         {image ? (
           <img
             src={image.src}
             alt={image.alt}
             loading="lazy"
             decoding="async"
-            className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.03] ${
-              image.fit === 'contain' ? 'object-contain p-3' : 'object-cover'
+            className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.025] ${
+              image.fit === 'contain' ? 'object-contain' : 'object-cover'
             }`}
           />
         ) : (
@@ -168,21 +128,25 @@ function ProductCard({
             planet.X / asset
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/25" />
-        <BrandMark category={product.category} />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/30" />
         {active ? (
           <span className="absolute left-3 top-3 size-1.5 rounded-full bg-primary shadow-[0_0_10px_#ff2b8a]" />
         ) : null}
       </div>
 
-      <div className="p-3.5">
-        <p className="font-mono text-[10px] font-bold tracking-[.14em] uppercase" style={{ color: tone }}>
+      <div className="border-t border-white/[.05] p-4">
+        <p
+          className="font-mono text-[10px] font-bold tracking-[.14em] uppercase"
+          style={{ color: tone }}
+        >
           {product.productType}
         </p>
-        <div className="mt-1.5 flex items-end justify-between gap-3">
+        <div className="mt-2 flex items-end justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="truncate text-sm font-bold tracking-[-.01em] text-white">{product.name}</h3>
-            <p className="mt-1 font-mono text-xs font-bold text-primary">{product.price}</p>
+            <h3 className="text-[15px] font-bold leading-tight tracking-[-.01em] text-white">
+              {product.name}
+            </h3>
+            <p className="mt-2 font-mono text-sm font-bold text-primary">{product.price}</p>
           </div>
           <span className="shrink-0 font-mono text-[10px] font-bold tracking-[.12em] text-cyan-300 uppercase">
             Inspect →
@@ -206,9 +170,10 @@ function ProductDetail({
   const tone = categoryTone(product.category)
   const isChromeStore = product.checkoutUrl?.includes('chromewebstore.google.com') ?? false
   const isProjectX = product.id === 'project-x'
-  const checkoutHref = !isChromeStore && !isProjectX
-    ? checkoutMap[product.id] ?? VERIFIED_PAYHIP_CHECKOUTS[product.id]
-    : undefined
+  const checkoutHref =
+    !isChromeStore && !isProjectX
+      ? checkoutMap[product.id] ?? VERIFIED_PAYHIP_CHECKOUTS[product.id]
+      : undefined
 
   useEffect(() => setImageIndex(0), [product.id])
 
@@ -227,7 +192,7 @@ function ProductDetail({
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/[.08] bg-[#090c15] shadow-2xl shadow-black/30">
-      <div className="relative h-[260px] overflow-hidden bg-[#0a0e1a] sm:h-[300px]">
+      <div className="relative h-[250px] overflow-hidden bg-[#0a0e1a] sm:h-[310px]">
         {image ? (
           <img
             key={`${product.id}-${imageIndex}`}
@@ -235,7 +200,7 @@ function ProductDetail({
             alt={image.alt}
             decoding="async"
             className={`h-full w-full ${
-              image.fit === 'contain' ? 'object-contain p-5' : 'object-cover'
+              image.fit === 'contain' ? 'object-contain' : 'object-cover'
             }`}
           />
         ) : (
@@ -243,11 +208,10 @@ function ProductDetail({
             planet.X / preview
           </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#090c15]/70" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#090c15]/65" />
         <span className="absolute left-3 top-3 rounded border border-white/10 bg-black/60 px-2 py-1 font-mono text-[9px] font-bold tracking-[.16em] text-white/80 uppercase backdrop-blur">
           Focus • {product.id.replaceAll('-', ' ')}
         </span>
-        <BrandMark category={product.category} />
         <span
           className="absolute bottom-3 right-3 rounded border border-white/10 bg-black/65 px-2.5 py-1 font-mono text-[10px] font-bold backdrop-blur"
           style={{ color: tone }}
@@ -265,21 +229,21 @@ function ProductDetail({
               onClick={() => setImageIndex(index)}
               aria-label={`Show ${item.label}`}
               aria-pressed={index === imageIndex}
-              className="relative h-10 w-16 shrink-0 overflow-hidden rounded border transition-opacity"
+              className="relative h-12 w-20 shrink-0 overflow-hidden rounded border bg-black/35 transition-opacity"
               style={{
                 borderColor: index === imageIndex ? '#ff2b8a' : 'rgba(255,255,255,.15)',
-                opacity: index === imageIndex ? 1 : 0.6,
+                opacity: index === imageIndex ? 1 : 0.62,
               }}
             >
               <img
                 src={item.src}
                 alt=""
                 loading="lazy"
-                className={`h-full w-full ${item.fit === 'contain' ? 'object-contain p-1' : 'object-cover'}`}
+                className={`h-full w-full ${item.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
               />
             </button>
           ))}
-          <div className="ml-auto flex shrink-0 items-center gap-2 font-mono text-[9px] tracking-[.18em] text-white/45 uppercase">
+          <div className="ml-auto hidden shrink-0 items-center gap-2 font-mono text-[9px] tracking-[.18em] text-white/45 uppercase sm:flex">
             <span className="size-1 animate-pulse rounded-full bg-cyan-300" />
             Live preview
           </div>
@@ -287,10 +251,15 @@ function ProductDetail({
       ) : null}
 
       <div className="p-5">
-        <p className="font-mono text-[10px] font-bold tracking-[.18em] uppercase" style={{ color: tone }}>
+        <p
+          className="font-mono text-[10px] font-bold tracking-[.18em] uppercase"
+          style={{ color: tone }}
+        >
           {product.category} / {product.productType}
         </p>
-        <h2 className="mt-2 text-xl font-bold tracking-[-.02em] text-white sm:text-2xl">{product.name}</h2>
+        <h2 className="mt-2 text-xl font-bold tracking-[-.02em] text-white sm:text-2xl">
+          {product.name}
+        </h2>
         <p className="mt-3 text-[13px] leading-6 text-white/55">{product.description}</p>
 
         <ul className="mt-5 grid gap-2">
@@ -304,7 +273,9 @@ function ProductDetail({
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-white/[.08] pt-5">
           <div>
-            <p className="font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">{product.priceNote}</p>
+            <p className="font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">
+              {product.priceNote}
+            </p>
             <p className="mt-1 font-mono text-lg font-bold text-primary">{product.price}</p>
           </div>
 
@@ -346,8 +317,8 @@ function ProductDetail({
         </div>
 
         <div className="mt-5 flex items-center justify-between border-t border-white/[.08] pt-4 font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">
-          <span>Xupply entry</span>
-          <span>{product.category} • {product.format}</span>
+          <span>Vault entry</span>
+          <span>{product.category}</span>
         </div>
       </div>
     </div>
@@ -361,11 +332,14 @@ export function StoreCatalog() {
   const detailRef = useRef<HTMLDivElement>(null)
 
   const products = useMemo(() => {
-    if (view === 'Trending') return allProducts.filter((product) => TRENDING_IDS.has(product.id))
+    if (view === 'Trending') {
+      return allProducts.filter((product) => TRENDING_IDS.has(product.id))
+    }
     return allProducts.filter((product) => product.category === view)
   }, [view])
 
-  const selected = allProducts.find((product) => product.id === selectedId) ?? products[0] ?? allProducts[0]
+  const selected =
+    allProducts.find((product) => product.id === selectedId) ?? products[0] ?? allProducts[0]
 
   useEffect(() => {
     if (!products.some((product) => product.id === selectedId) && products[0]) {
@@ -402,7 +376,9 @@ export function StoreCatalog() {
   const selectProduct = (id: string) => {
     setSelectedId(id)
     if (window.matchMedia('(max-width: 1023px)').matches) {
-      requestAnimationFrame(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+      requestAnimationFrame(() =>
+        detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+      )
     }
   }
 
@@ -419,30 +395,40 @@ export function StoreCatalog() {
           }}
           aria-hidden="true"
         />
-        <div className="pointer-events-none absolute -left-20 -top-28 size-[420px] rounded-full bg-primary/10 blur-[90px]" aria-hidden="true" />
-        <div className="pointer-events-none absolute -right-24 top-44 size-[520px] rounded-full bg-cyan-400/10 blur-[110px]" aria-hidden="true" />
-        <div className="pointer-events-none absolute bottom-0 left-[30%] h-80 w-[600px] rounded-full bg-violet-500/[.06] blur-[120px]" aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute -left-20 -top-28 size-[420px] rounded-full bg-primary/10 blur-[90px]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute -right-24 top-44 size-[520px] rounded-full bg-cyan-400/10 blur-[110px]"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 left-[30%] h-80 w-[600px] rounded-full bg-violet-500/[.06] blur-[120px]"
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 mx-auto max-w-[1380px]">
-          <header className="flex items-end justify-between gap-5 border-b border-white/[.08] px-5 py-7 md:px-8">
-            <div>
-              <div className="flex flex-wrap items-baseline gap-2.5">
-                <span className="text-xl font-bold tracking-[-.02em]">planet.X</span>
-                <span className="font-mono text-[11px] tracking-[.18em] text-white/35">//</span>
-                <span className="font-mono text-[11px] font-bold tracking-[.22em] text-white/80 uppercase">Xupply Vault</span>
-              </div>
-              <h1 className="mt-4 text-3xl font-bold tracking-[-.03em] sm:text-4xl">Tools, sounds & assets built to ship.</h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/45">
-                Software, Chrome extensions, audio and creator resources from planet.X. Pick a category, inspect a product, then install or buy without losing your place.
-              </p>
+          <header className="flex items-center justify-between gap-5 border-b border-white/[.08] px-5 py-5 md:px-8">
+            <div className="flex flex-wrap items-baseline gap-2.5">
+              <span className="text-xl font-bold tracking-[-.02em]">planet.X</span>
+              <span className="font-mono text-[11px] tracking-[.18em] text-white/35">//</span>
+              <span className="font-mono text-[11px] font-bold tracking-[.22em] text-white/80 uppercase">
+                Vault Matrix
+              </span>
             </div>
-            <div className="hidden text-right md:block">
-              <p className="font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">Dynamic vault</p>
+            <div className="hidden text-right sm:block">
+              <p className="font-mono text-[10px] tracking-[.2em] text-white/35 uppercase">
+                Dynamic Vault
+              </p>
               <div className="ml-auto mt-2 h-px w-24 bg-white/10" />
             </div>
           </header>
 
-          <nav className="flex items-center gap-2.5 overflow-x-auto border-b border-white/[.06] px-5 py-5 md:px-8" aria-label="Store categories">
+          <nav
+            className="flex items-center gap-2.5 overflow-x-auto border-b border-white/[.06] px-5 py-4 md:px-8"
+            aria-label="Store categories"
+          >
             {views.map((item) => {
               const active = item === view
               return (
@@ -485,7 +471,9 @@ export function StoreCatalog() {
 
               <div className="mt-10 flex items-center gap-3 font-mono text-[10px] tracking-[.16em] text-white/35 uppercase">
                 <div className="h-px flex-1 bg-white/[.08]" />
-                <span>{view} • {products.length} / {allProducts.length}</span>
+                <span>
+                  {view} • {products.length} / {allProducts.length}
+                </span>
                 <div className="h-px flex-1 bg-white/[.08]" />
               </div>
             </div>
