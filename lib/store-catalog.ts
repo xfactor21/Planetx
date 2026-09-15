@@ -86,9 +86,31 @@ export const CATEGORY_CONTENT: Record<StoreCategorySlug, { category: StoreCatego
   },
 }
 
+const approvedContextHero = {
+  src: '/store/listings/context-pro-hero-v1410.svg',
+  alt: 'conteXt encrypted developer workspace product banner',
+  label: 'Product banner',
+  fit: 'cover' as const,
+}
+
 function normalizeStoreProduct(product: StoreProduct): StoreProduct {
   if (product.id === 'context-pro') {
-    return { ...product, name: 'conteXt', productType: 'Encrypted developer workspace', price: 'Free', priceNote: 'Chrome extension', status: 'Available now', platforms: ['Chrome extension'], format: 'Chrome extension / Manifest V3', license: 'Install free from the Chrome Web Store. Existing local vault data remains on-device. Optional Pro licensing is available from the private in-extension upgrade flow.', checkoutUrl: CONTEXT_CHROME_URL }
+    return {
+      ...product,
+      name: 'conteXt',
+      productType: 'Encrypted developer workspace',
+      price: 'Free',
+      priceNote: 'Chrome extension',
+      status: 'Available now',
+      platforms: ['Chrome extension'],
+      format: 'Chrome extension / Manifest V3',
+      license: 'Install free from the Chrome Web Store. Existing local vault data remains on-device. Optional Pro licensing is available from the private in-extension upgrade flow.',
+      checkoutUrl: CONTEXT_CHROME_URL,
+      gallery: [
+        approvedContextHero,
+        ...product.gallery.filter((image) => image.src !== approvedContextHero.src),
+      ],
+    }
   }
   if (product.id === 'project-x') return { ...product, checkoutUrl: undefined, status: 'Coming soon', priceNote: 'Planned release' }
   if (product.id === 'creator-asset-forge') return { ...product, category: 'Software', productType: 'Local browser utility', status: 'Available now', priceNote: product.priceNote === 'Proposed launch price' ? 'Current price' : product.priceNote, checkoutUrl: PAYHIP_CHECKOUTS[product.id] }
