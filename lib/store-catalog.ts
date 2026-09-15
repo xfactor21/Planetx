@@ -4,6 +4,13 @@ import { storeProducts, type StoreCategory, type StoreProduct } from '@/lib/stor
 export type StoreCategorySlug = 'software' | 'audio-fx' | 'creator-resources'
 
 export const CONTEXT_CHROME_URL = 'https://chromewebstore.google.com/detail/context-encrypted-credent/ikedbigbancjamohakblaclcoljlhdbn'
+export const XUPPLY_LICENSE_PATH = '/license/xupply'
+
+const XUPPLY_ASSET_LICENSE_SUMMARY =
+  'Licensed under the official Xupply Asset License. Personal and commercial end-product use is allowed; the source assets themselves may not be resold, shared, redistributed, sublicensed, or repackaged as standalone or competing assets.'
+
+const XUPPLY_UTILITY_LICENSE_SUMMARY =
+  'Licensed to one purchaser for personal and commercial use. You may use Creator Asset Forge and its exported results in your own and client projects, but you may not resell, redistribute, sublicense, or share the utility itself as a standalone product.'
 
 export const PAYHIP_CHECKOUTS: Record<string, string> = {
   'essential-ui-sounds': 'https://payhip.com/b/CIwxS',
@@ -112,11 +119,37 @@ function normalizeStoreProduct(product: StoreProduct): StoreProduct {
       ],
     }
   }
-  if (product.id === 'project-x') return { ...product, checkoutUrl: undefined, status: 'Coming soon', priceNote: 'Planned release' }
-  if (product.id === 'creator-asset-forge') return { ...product, category: 'Software', productType: 'Local browser utility', status: 'Available now', priceNote: product.priceNote === 'Proposed launch price' ? 'Current price' : product.priceNote, checkoutUrl: PAYHIP_CHECKOUTS[product.id] }
+
+  if (product.id === 'project-x') {
+    return { ...product, checkoutUrl: undefined, status: 'Coming soon', priceNote: 'Planned release' }
+  }
+
+  if (product.id === 'creator-asset-forge') {
+    return {
+      ...product,
+      category: 'Software',
+      productType: 'Local browser utility',
+      status: 'Available now',
+      priceNote: product.priceNote === 'Proposed launch price' ? 'Current price' : product.priceNote,
+      license: XUPPLY_UTILITY_LICENSE_SUMMARY,
+      checkoutUrl: PAYHIP_CHECKOUTS[product.id],
+    }
+  }
+
+  const usesAssetLicense = product.category === 'Audio & FX' || product.category === 'Creator Resources'
+  const normalized = usesAssetLicense ? { ...product, license: XUPPLY_ASSET_LICENSE_SUMMARY } : product
   const verifiedCheckout = PAYHIP_CHECKOUTS[product.id]
-  if (verifiedCheckout) return { ...product, status: 'Available now', priceNote: product.priceNote === 'Proposed launch price' ? 'Current price' : product.priceNote, checkoutUrl: verifiedCheckout }
-  return product
+
+  if (verifiedCheckout) {
+    return {
+      ...normalized,
+      status: 'Available now',
+      priceNote: normalized.priceNote === 'Proposed launch price' ? 'Current price' : normalized.priceNote,
+      checkoutUrl: verifiedCheckout,
+    }
+  }
+
+  return normalized
 }
 
 export const allStoreProducts = [sessionGridProduct, ...storeProducts].map(normalizeStoreProduct)
@@ -133,6 +166,7 @@ export function relatedProducts(product: StoreProduct, limit = 3): StoreProduct[
   return [...preferred, ...fallbacks].slice(0, limit)
 }
 export function storefrontBrand(product: StoreProduct): string { return product.category === 'Software' ? 'planet.X software' : 'Xupply by planet.X' }
+export function usesXupplyLicense(product: StoreProduct): boolean { return product.id === 'creator-asset-forge' || product.category === 'Audio & FX' || product.category === 'Creator Resources' }
 export function publicCheckoutUrl(product: StoreProduct): string | undefined { if (product.checkoutUrl?.includes('chromewebstore.google.com')) return product.checkoutUrl; return PAYHIP_CHECKOUTS[product.id] }
 export function isChromeStoreProduct(product: StoreProduct): boolean { return publicCheckoutUrl(product)?.includes('chromewebstore.google.com') ?? false }
 export function numericPrice(product: StoreProduct): string | null { const match = product.price.match(/\$([0-9]+(?:\.[0-9]{1,2})?)/); return match?.[1] ?? (product.price.trim().toLowerCase() === 'free' ? '0' : null) }
