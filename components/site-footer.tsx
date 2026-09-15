@@ -24,6 +24,7 @@ const columns = [
     links: [
       { label: 'Guides', href: '/guides' },
       { label: 'Build Notes', href: '/build-notes' },
+      { label: 'Xupply License', href: '/license/xupply' },
       { label: 'The Studio', href: '/#studio' },
       { label: 'Contact', href: 'mailto:chris@planet-x.co' },
     ],
@@ -79,7 +80,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-16 flex flex-col gap-3 border-t border-border pt-6 font-mono text-[0.65rem] tracking-[0.18em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v15.0</p>
+          <p>© {new Date().getFullYear()} Planet-<XLetter /> Development · Site v15.2</p>
           <p className="flex items-center gap-2">
             <XMark className="size-4 text-primary" />
             Built in the dark
