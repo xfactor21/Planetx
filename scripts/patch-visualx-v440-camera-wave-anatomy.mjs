@@ -1,3 +1,4 @@
+// v4.4.0 preview candidate
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
