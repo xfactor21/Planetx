@@ -35,7 +35,7 @@ const VERIFIED_PAYHIP_CHECKOUTS: CheckoutMap = {
 const CATEGORY_LOGOS: Record<StoreCategory, string> = {
   Software: '/store/brand/XupplySoftware-08.31-v1-initial.png',
   'Audio & FX': '/store/brand/XupplyAudioFX-08.31-v1-initial.png',
-  'Creator Resources': '/store/brand/XupplyCreator-08.31-v1-initial.png',
+  'Creator Resources': '/store/brand/XupplyCreatorResources-09.15-v1.svg',
 }
 
 const TRENDING_IDS = new Set([
