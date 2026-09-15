@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
-import { StoreCatalog } from '@/components/store-catalog'
+import { StoreCatalogWithContextHero } from '@/components/store-catalog-context-hero'
 
 const siteUrl = 'https://www.planet-x.co'
 
@@ -56,7 +56,7 @@ export default function StorePage() {
       />
       <SiteHeader />
       <main id="catalog">
-        <StoreCatalog />
+        <StoreCatalogWithContextHero />
       </main>
       <SiteFooter />
     </div>
