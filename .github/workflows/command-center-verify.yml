@@ -1,0 +1,31 @@
+name: Command Center verify
+
+on:
+  pull_request:
+    paths:
+      - 'command-center/**'
+      - 'supabase/functions/planetx-command-center-bridge/**'
+      - '.github/workflows/command-center-verify.yml'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: command-center
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: command-center/package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: API typecheck
+        run: npx tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node --skipLibCheck api/bridge.ts 'api/[...route].ts'
+      - name: Strict UI type audit
+        run: npx tsc -p tsconfig.json
+      - name: Production build
+        run: npm run build
