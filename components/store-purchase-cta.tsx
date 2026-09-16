@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Script from 'next/script'
 import { ArrowUpRight, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import { planetXTrack } from '@/lib/client-analytics'
@@ -21,6 +21,17 @@ function trackProductCta(productId: string, productName: string, ctaLabel: strin
     product_name: productName,
     cta_label: ctaLabel,
   }, { sourceSurface: 'store_product' })
+}
+
+function payhipProductKey(url?: string): string | null {
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname !== 'payhip.com' && parsed.hostname !== 'www.payhip.com') return null
+    return parsed.pathname.match(/^\/b\/([^/?#]+)/)?.[1] ?? null
+  } catch {
+    return null
+  }
 }
 
 export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: StorePurchaseCtaProps) {
@@ -73,6 +84,7 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
   }
 
   const embeddedCheckoutUrl = checkoutMap[productId] ?? checkoutUrl
+  const embeddedProductKey = useMemo(() => payhipProductKey(embeddedCheckoutUrl), [embeddedCheckoutUrl])
 
   return (
     <>
@@ -83,11 +95,12 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
         onReady={() => { setPayhipReady(true); setPayhipFailed(false) }}
         onError={() => { setPayhipReady(false); setPayhipFailed(true) }}
       />
-      {embeddedCheckoutUrl && payhipReady ? (
+      {embeddedCheckoutUrl && embeddedProductKey && payhipReady ? (
         <a
           href={embeddedCheckoutUrl}
           className="payhip-buy-button inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white uppercase shadow-[0_8px_30px_rgba(255,43,138,.24)] transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
           data-theme="none"
+          data-product={embeddedProductKey}
           onClick={() => {
             trackProductCta(productId, productName, 'buy_now')
             planetXTrack('checkout_started', { product_id: productId, product_name: productName, checkout_mode: 'embedded' }, { sourceSurface: 'store_product' })
