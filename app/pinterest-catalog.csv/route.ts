@@ -10,17 +10,17 @@ const csv = (value: string | number) => {
 const googleProductCategory = (productId: string) => {
   switch (productId) {
     case 'creator-asset-forge':
-      return '313' // Software > Computer Software
+      return 'Software > Computer Software'
     case 'essential-ui-sounds':
     case 'digital-glitch-fx':
     case 'producer-transitions-impacts':
-      return '855' // Media > Music & Sound Recordings
+      return 'Media > Music & Sound Recordings'
     case 'indie-launch-kit':
-      return '8022' // Software > Digital Goods & Currency > Document Templates
+      return 'Software > Digital Goods & Currency > Document Templates'
     case 'digital-worlds-wallpapers':
-      return '5035' // Software > Digital Goods & Currency > Desktop Wallpaper
+      return 'Software > Digital Goods & Currency > Desktop Wallpaper'
     default:
-      return '5032' // Software > Digital Goods & Currency
+      return 'Software > Digital Goods & Currency'
   }
 }
 
