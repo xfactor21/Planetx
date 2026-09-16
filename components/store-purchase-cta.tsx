@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Script from 'next/script'
 import { ArrowUpRight, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import { planetXTrack } from '@/lib/client-analytics'
@@ -84,7 +84,7 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
   }
 
   const embeddedCheckoutUrl = checkoutMap[productId] ?? checkoutUrl
-  const embeddedProductKey = useMemo(() => payhipProductKey(embeddedCheckoutUrl), [embeddedCheckoutUrl])
+  const embeddedProductKey = payhipProductKey(embeddedCheckoutUrl)
 
   return (
     <>
