@@ -1,3 +1,4 @@
+// Social analytics are read from the shared Supabase archive populated through the free Metricool MCP path.
 const ENDPOINT=process.env.PLANETX_SOCIAL_ANALYTICS_URL||'https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-social-analytics';
 const HEADER='X-PlanetX-Analytics-Key';
 const json=(res:any,status:number,body:unknown)=>res.status(status).json(body);
