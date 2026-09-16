@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { planetXTrack } from '@/lib/client-analytics'
-import { pinterestTrackCustom } from '@/lib/pinterest-events'
+import { pinterestTrack, pinterestTrackCustom } from '@/lib/pinterest-events'
 
 type TrackingValue = string | number | boolean | null
 
@@ -21,6 +21,20 @@ export function StorePageTracker({
     planetXTrack(event, parsed, {
       sourceSurface: 'store',
     })
+
+    if (event === 'store_view' || event === 'category_view') {
+      pinterestTrack('ViewCategory', {
+        product_category: typeof parsed.category === 'string' ? parsed.category : 'planet.X Store',
+      })
+    }
+
+    if (event === 'product_view' || event === 'article_view') {
+      pinterestTrack('ViewContent', {
+        product_id: typeof parsed.product_id === 'string' ? parsed.product_id : undefined,
+        product_name: typeof parsed.product_name === 'string' ? parsed.product_name : undefined,
+        product_category: typeof parsed.category === 'string' ? parsed.category : undefined,
+      })
+    }
 
     if (event === 'product_view') {
       pinterestTrackCustom('product_view', {
