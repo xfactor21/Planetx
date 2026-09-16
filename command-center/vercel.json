@@ -4,12 +4,13 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/events/config", "destination": "/api/_healthcheck?route=events/config" },
-    { "source": "/api/events/authorize", "destination": "/api/_healthcheck?route=events/authorize" },
+    { "source": "/api/events", "destination": "/api/bridge?route=events" },
+    { "source": "/api/events/config", "destination": "/api/bridge?route=events/config" },
+    { "source": "/api/events/authorize", "destination": "/api/bridge?route=events/authorize" },
     { "source": "/api/analytics/website", "destination": "/api/_healthcheck?route=analytics/website" },
     { "source": "/api/products/visualx/analytics", "destination": "/api/_healthcheck?route=products/visualx/analytics" },
     { "source": "/api/apps/analytics", "destination": "/api/_healthcheck?route=apps/analytics" },
-    { "source": "/api/google/overview", "destination": "/api/_healthcheck?route=google/overview" }
+    { "source": "/api/google/overview", "destination": "/api/bridge?route=google/overview" }
   ],
   "headers": [
     {
