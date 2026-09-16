@@ -48,23 +48,24 @@ export default function StorePage() {
 
         {SHOW_AFTER_HOURS_ENTRY ? (
           <div className="mt-10 border-t border-white/10 pt-8">
-            <Link href="/store/after-hours" className="group relative block overflow-hidden rounded-2xl border border-fuchsia-300/25 bg-gradient-to-r from-pink-500/[.09] via-fuchsia-500/[.08] to-violet-500/[.09] p-[1px] shadow-[0_0_45px_-24px_rgba(236,72,153,.9)] transition hover:-translate-y-0.5 hover:border-fuchsia-300/45 hover:shadow-[0_0_60px_-20px_rgba(236,72,153,.95)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-300">
-              <div className="relative flex flex-col gap-6 rounded-[15px] bg-[#08070d]/95 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-                <div className="pointer-events-none absolute -right-10 -top-16 size-40 rounded-full bg-fuchsia-500/20 blur-3xl transition group-hover:bg-fuchsia-500/30" aria-hidden="true" />
-                <div className="relative flex items-start gap-4">
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-fuchsia-300/25 bg-fuchsia-400/10 shadow-[0_0_25px_-12px_rgba(236,72,153,.9)]">
-                    <MoonStar className="size-5 text-fuchsia-300" aria-hidden="true" />
+            <Link href="/store/after-hours" className="group relative block overflow-hidden border border-[#2a2424] bg-[#070707] shadow-[0_22px_65px_-42px_rgba(142,18,24,.85)] transition duration-300 hover:-translate-y-0.5 hover:border-[#64171b] hover:shadow-[0_28px_75px_-35px_rgba(142,18,24,.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#981118]">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_30%,rgba(152,17,24,.13),transparent_34%),linear-gradient(110deg,rgba(255,255,255,.015),transparent_40%)]" aria-hidden="true" />
+              <div className="pointer-events-none absolute -right-20 -top-24 size-56 rounded-full border border-[#981118]/10 transition duration-700 group-hover:scale-110 group-hover:border-[#981118]/20" aria-hidden="true" />
+              <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+                <div className="flex items-start gap-5">
+                  <div className="flex size-12 shrink-0 items-center justify-center border border-[#3d292a] bg-[#981118]/[.06] shadow-[0_0_28px_-18px_rgba(152,17,24,.9)]">
+                    <MoonStar className="size-5 text-[#b9b2ab]" aria-hidden="true" />
                   </div>
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-mono text-[10px] font-bold tracking-[.18em] text-fuchsia-300 uppercase">18+ / separate collection</p>
-                      <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/[.07] px-2 py-0.5 font-mono text-[8px] font-bold tracking-[.12em] text-fuchsia-200 uppercase">After Hours</span>
+                      <p className="font-mono text-[9px] font-bold tracking-[.22em] text-[#a8161d] uppercase">18+ / private collection</p>
+                      <span className="border-l border-[#64171b] pl-2 font-serif text-[11px] italic text-[#77706a]">Obsidian</span>
                     </div>
-                    <h3 className="mt-2 text-2xl font-black tracking-[-.03em] text-white">After Hours</h3>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 text-white/50">A separate adults-only store for novelty products, outside the normal Xupply and software catalogs.</p>
+                    <h3 className="mt-2 font-serif text-3xl font-normal tracking-[-.035em] text-[#f1eee8]">After Hours</h3>
+                    <p className="mt-2 max-w-2xl text-sm font-light leading-6 text-[#8e8882]">A separate adults-only store for novelty products, outside the normal Xupply and software catalogs.</p>
                   </div>
                 </div>
-                <span className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 via-fuchsia-500 to-violet-500 px-5 py-3 font-mono text-[10px] font-bold tracking-[.13em] text-white uppercase shadow-[0_8px_30px_rgba(236,72,153,.2)] transition group-hover:brightness-110">Enter After Hours <ArrowRight className="size-4" aria-hidden="true" /></span>
+                <span className="relative inline-flex min-h-11 shrink-0 items-center justify-center gap-2 bg-[#981118] px-5 py-3 font-mono text-[9px] font-bold tracking-[.18em] text-white uppercase shadow-[0_10px_28px_rgba(80,8,12,.22)] transition duration-300 group-hover:bg-[#b6131d] group-hover:shadow-[0_12px_34px_rgba(152,17,24,.25)]">Enter After Hours <ArrowRight className="size-4" aria-hidden="true" /></span>
               </div>
             </Link>
           </div>
