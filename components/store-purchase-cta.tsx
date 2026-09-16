@@ -23,6 +23,17 @@ function trackProductCta(productId: string, productName: string, ctaLabel: strin
   }, { sourceSurface: 'store_product' })
 }
 
+function payhipProductKey(url?: string): string | null {
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.hostname !== 'payhip.com' && parsed.hostname !== 'www.payhip.com') return null
+    return parsed.pathname.match(/^\/b\/([^/?#]+)/)?.[1] ?? null
+  } catch {
+    return null
+  }
+}
+
 export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: StorePurchaseCtaProps) {
   const [checkoutMap, setCheckoutMap] = useState<CheckoutMap>({})
   const [payhipReady, setPayhipReady] = useState(false)
@@ -73,6 +84,7 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
   }
 
   const embeddedCheckoutUrl = checkoutMap[productId] ?? checkoutUrl
+  const embeddedProductKey = payhipProductKey(embeddedCheckoutUrl)
 
   return (
     <>
@@ -83,12 +95,18 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
         onReady={() => { setPayhipReady(true); setPayhipFailed(false) }}
         onError={() => { setPayhipReady(false); setPayhipFailed(true) }}
       />
-      {embeddedCheckoutUrl && payhipReady ? (
+      {embeddedCheckoutUrl && embeddedProductKey && !payhipFailed ? (
         <a
           href={embeddedCheckoutUrl}
-          className="payhip-buy-button inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white uppercase shadow-[0_8px_30px_rgba(255,43,138,.24)] transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+          className={`payhip-buy-button inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] uppercase transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${payhipReady ? 'bg-primary text-white shadow-[0_8px_30px_rgba(255,43,138,.24)] hover:bg-accent' : 'cursor-wait border border-white/15 text-white/45'}`}
           data-theme="none"
-          onClick={() => {
+          data-product={embeddedProductKey}
+          aria-disabled={!payhipReady}
+          onClick={(event) => {
+            if (!payhipReady) {
+              event.preventDefault()
+              return
+            }
             trackProductCta(productId, productName, 'buy_now')
             planetXTrack('checkout_started', { product_id: productId, product_name: productName, checkout_mode: 'embedded' }, { sourceSurface: 'store_product' })
             pinterestTrackCustom('checkout_started', {
@@ -99,10 +117,8 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
           }}
         >
           <ShoppingBag className="size-4" aria-hidden="true" />
-          Buy Now
+          {payhipReady ? 'Buy Now' : 'Loading secure checkout…'}
         </a>
-      ) : embeddedCheckoutUrl && !payhipFailed ? (
-        <button type="button" disabled className="inline-flex min-h-12 cursor-wait items-center justify-center rounded-lg border border-white/15 px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white/45 uppercase">Loading secure checkout…</button>
       ) : (
         <button type="button" disabled className="inline-flex min-h-12 cursor-not-allowed items-center justify-center rounded-lg border border-white/15 px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white/35 uppercase">Checkout unavailable</button>
       )}

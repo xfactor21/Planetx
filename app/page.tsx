@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
@@ -10,6 +9,7 @@ import { JoinBeta } from '@/components/join-beta'
 import { StudioSection } from '@/components/studio-section'
 import { SiteFooter } from '@/components/site-footer'
 import { AnalyticsLink } from '@/components/analytics-link'
+import { ResilientImage } from '@/components/resilient-image'
 
 export default function Page() {
   return (
@@ -19,17 +19,15 @@ export default function Page() {
         <Hero />
         <section aria-label="planet.X banner" className="border-b border-border bg-black">
           <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8 md:py-8">
-            <div className="overflow-hidden border border-border bg-card shadow-[0_0_30px_-18px_rgba(0,245,255,.45)]">
-              <Image
+            <div className="relative aspect-[4/1] overflow-hidden border border-border bg-card shadow-[0_0_30px_-18px_rgba(0,245,255,.45)]">
+              <ResilientImage
                 src="/brand/planet-x-blinking-banner.gif"
-                width={1600}
-                height={400}
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
                 unoptimized
                 alt="planet.X — music and development"
-                loading="lazy"
-                decoding="async"
-                fetchPriority="low"
-                className="block h-auto w-full"
+                fallbackLabel="planet.X"
+                className="object-cover"
               />
             </div>
           </div>
@@ -58,12 +56,13 @@ export default function Page() {
               </AnalyticsLink>
             </div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-black shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
-              <img
+              <ResilientImage
                 src="/visual-x/VisualX-09.15-v14.9-home-approved.jpg"
                 alt="Visual.X — What will your song make? 360° Music Engine"
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                fallbackLabel="Visual.X"
+                className="object-cover"
               />
             </div>
           </div>

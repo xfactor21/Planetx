@@ -10,6 +10,7 @@ import { planetXTrack } from '@/lib/client-analytics'
 
 export function AppCard({ app }: { app: ReleasedApp }) {
   const [revealed, setRevealed] = useState(!app.mature)
+  const [iconFailed, setIconFailed] = useState(false)
   const gated = Boolean(app.mature) && !revealed
   const productHref = !app.mature && app.id !== 'studyhive' ? `/apps/${app.id}` : null
 
@@ -22,13 +23,18 @@ export function AppCard({ app }: { app: ReleasedApp }) {
         aria-hidden={gated}
       >
         <div className="flex items-start gap-5">
-          <Image
-            src={app.icon || '/placeholder.svg'}
-            alt={`${app.name} app icon`}
-            width={72}
-            height={72}
-            className="app-icon-preview size-16 shrink-0 rounded-2xl border border-border object-cover md:size-[72px]"
-          />
+          {iconFailed ? (
+            <div role="img" aria-label={`${app.name} app icon unavailable`} className="flex size-16 shrink-0 items-center justify-center rounded-2xl border border-border bg-[radial-gradient(circle_at_30%_25%,rgba(255,43,138,.24),transparent_42%),#09090e] text-3xl font-black text-primary md:size-[72px]">X</div>
+          ) : (
+            <Image
+              src={app.icon || '/placeholder.svg'}
+              alt={`${app.name} app icon`}
+              width={72}
+              height={72}
+              onError={() => setIconFailed(true)}
+              className="app-icon-preview size-16 shrink-0 rounded-2xl border border-border object-cover md:size-[72px]"
+            />
+          )}
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <h3 className="text-2xl font-bold tracking-tight uppercase">
@@ -74,10 +80,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                 className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 Join Beta
-                <ArrowUpRight
-                  className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  aria-hidden="true"
-                />
+                <ArrowUpRight className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
               </Link>
             ) : app.detailHref ? (
               <Link
@@ -87,10 +90,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                 className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 Learn more
-                <ArrowUpRight
-                  className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  aria-hidden="true"
-                />
+                <ArrowUpRight className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
               </Link>
             ) : (
               app.downloads.map((dl) => (
@@ -107,10 +107,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                   className="group inline-flex items-center gap-2 bg-primary px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-primary-foreground uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
                   {dl.label}
-                  <ArrowUpRight
-                    className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    aria-hidden="true"
-                  />
+                  <ArrowUpRight className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                 </a>
               ))
             )}
@@ -123,10 +120,7 @@ export function AppCard({ app }: { app: ReleasedApp }) {
                 className="group inline-flex items-center gap-2 border border-accent px-4 py-2.5 font-mono text-xs font-bold tracking-[0.16em] text-accent uppercase transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 Product page
-                <ArrowUpRight
-                  className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  aria-hidden="true"
-                />
+                <ArrowUpRight className="size-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
               </Link>
             ) : null}
           </div>
@@ -137,12 +131,8 @@ export function AppCard({ app }: { app: ReleasedApp }) {
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-background/40 p-8 text-center backdrop-blur-md">
           <Lock className="size-8 text-primary" aria-hidden="true" />
           <div className="space-y-1">
-            <h3 className="text-xl font-bold tracking-tight uppercase">
-              Mature Content — 18+
-            </h3>
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              This app contains adult/BDSM themes.
-            </p>
+            <h3 className="text-xl font-bold tracking-tight uppercase">Mature Content — 18+</h3>
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">This app contains adult/BDSM themes.</p>
           </div>
           <button
             type="button"

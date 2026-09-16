@@ -1,8 +1,8 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import type { StoreProduct } from '@/lib/store-data'
 import { productPath, storefrontBrand } from '@/lib/store-catalog'
+import { ResilientImage } from '@/components/resilient-image'
 
 export function StoreProductCard({ product }: { product: StoreProduct }) {
   const image = product.gallery[0]
@@ -13,14 +13,17 @@ export function StoreProductCard({ product }: { product: StoreProduct }) {
       <Link href={href} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">
         <div className="relative aspect-[16/10] overflow-hidden bg-[#070a12]">
           {image ? (
-            <Image
+            <ResilientImage
               src={image.src}
               alt={image.alt}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              fallbackLabel={product.name}
               className={`${image.fit === 'contain' ? 'object-contain p-3' : 'object-cover'} transition duration-500 group-hover:scale-[1.02]`}
             />
-          ) : null}
+          ) : (
+            <ResilientImage src="/__missing-product-image__" alt={product.name} fill fallbackLabel={product.name} />
+          )}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
           <span className="absolute left-3 top-3 rounded-full border border-white/15 bg-black/60 px-3 py-1 font-mono text-[9px] font-bold tracking-[.14em] text-white/80 uppercase backdrop-blur">
             {storefrontBrand(product)}
