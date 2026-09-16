@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
   const items = Array.isArray(payload.items) ? payload.items : []
   const event = payload.type === 'paid' ? 'purchase_completed' : 'purchase_refunded'
-  const amountCents = payload.type === 'refunded'
+  const transactionAmountCents = payload.type === 'refunded'
     ? Number(payload.amount_refunded || 0)
     : Number(payload.price || 0)
 
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       product_id: id,
       product_name: String(item.product_name || id).slice(0, 160),
       quantity: Number(item.quantity || 1),
-      amount_cents: amountCents,
+      transaction_amount_cents: transactionAmountCents,
       currency: String(payload.currency || 'USD').slice(0, 8),
       payment_type: String(payload.payment_type || '').slice(0, 32),
     }
