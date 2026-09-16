@@ -10,16 +10,25 @@ import { CATEGORY_CONTENT, getProductById, productPath, productsForCategory, typ
 
 const siteUrl = 'https://www.planet-x.co'
 const validCategories = Object.keys(CATEGORY_CONTENT) as StoreCategorySlug[]
-const titles: Record<StoreCategorySlug, string> = { software: 'planet.X Software, Apps & Browser Tools', 'audio-fx': 'UI Sounds, Stingers & Digital FX for Apps and Creators | Xupply', 'creator-resources': 'Creator Resources for Indie Developers & Technical Creators | Xupply' }
+const titles: Record<StoreCategorySlug, string> = {
+  software: 'Apps, Chrome Extensions & Developer Tools | planet.X',
+  'audio-fx': 'UI Sounds & Digital FX for Apps & Creators | Xupply',
+  'creator-resources': 'Creator Resources for Indie Developers | Xupply',
+}
+const metaDescriptions: Record<StoreCategorySlug, string> = {
+  software: 'Browse planet.X Chrome extensions, browser tools, local utilities and apps with clear platform, privacy, release-state and install details.',
+  'audio-fx': 'Browse Xupply UI sounds, glitches, impacts, stingers and transition FX for apps, games, videos, streams, trailers and prototypes.',
+  'creator-resources': 'Browse Xupply UI kits, launch templates, overlays, web effects, wallpapers and creator resources built for practical reuse.',
+}
 export function generateStaticParams() { return validCategories.map((category) => ({ category })) }
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params
   if (!validCategories.includes(category as StoreCategorySlug)) return {}
   const slug = category as StoreCategorySlug
-  const content = CATEGORY_CONTENT[slug]
   const canonical = `${siteUrl}/store/${slug}`
   const title = titles[slug]
-  return { title: { absolute: title }, description: content.description, alternates: { canonical }, openGraph: { title, description: content.description, url: canonical, siteName: 'planet.X', type: 'website', images: ['/opengraph-image'] }, twitter: { card: 'summary_large_image', title, description: content.description, images: ['/opengraph-image'] } }
+  const description = metaDescriptions[slug]
+  return { title: { absolute: title }, description, alternates: { canonical }, openGraph: { title, description, url: canonical, siteName: 'planet.X', type: 'website', images: ['/opengraph-image'] }, twitter: { card: 'summary_large_image', title, description, images: ['/opengraph-image'] } }
 }
 
 export default async function StoreCategoryPage({ params }: { params: Promise<{ category: string }> }) {
