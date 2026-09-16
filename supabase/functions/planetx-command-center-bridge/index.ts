@@ -2,6 +2,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 const HEADER = 'X-PlanetX-Analytics-Key';
+const INGEST = 'https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-analytics-ingest';
 const ALLOWED_ORIGINS = new Set([
   'https://dashboard.planet-x.co',
   'https://command-center-eta-one.vercel.app',
@@ -27,13 +28,34 @@ function respond(req: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: headersFor(req) });
 }
 
-function constantTimeEqual(a: string, b: string) {
-  const left = new TextEncoder().encode(a);
-  const right = new TextEncoder().encode(b);
-  if (left.length !== right.length) return false;
-  let diff = 0;
-  for (let i = 0; i < left.length; i++) diff |= left[i] ^ right[i];
-  return diff === 0;
+async function verifyAgainstIngest(key: string) {
+  if (!key) return { ok: false, status: 401, reason: 'missing' };
+  try {
+    const response = await fetch(INGEST, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        [HEADER]: key,
+        'User-Agent': 'planetx-command-center-auth-probe/1.0',
+      },
+      body: JSON.stringify({
+        event: 'x',
+        source_product: 'planet-x.co',
+        source_surface: 'auth-probe',
+        session_id: 'auth-probe',
+        anonymous_user_id: 'auth-probe',
+        path: '/auth-probe',
+        platform: 'server',
+        properties: { synthetic: true, audit_probe: true },
+      }),
+    });
+    const payload = await response.json().catch(() => ({})) as { error?: string };
+    if (response.status === 400 && payload.error === 'Invalid event') return { ok: true, status: 200, reason: 'validated-by-ingest' };
+    if (response.status === 401) return { ok: false, status: 401, reason: 'unauthorized' };
+    return { ok: false, status: 502, reason: `ingest-${response.status}` };
+  } catch {
+    return { ok: false, status: 502, reason: 'ingest-unreachable' };
+  }
 }
 
 Deno.serve(async (req: Request) => {
@@ -44,11 +66,10 @@ Deno.serve(async (req: Request) => {
   const mode = url.searchParams.get('mode') || '';
 
   if (mode === 'authorize') {
-    const expected = Deno.env.get('PLANETX_ANALYTICS_KEY') || Deno.env.get('PLANETX_ANALYTICS_INGEST_KEY') || '';
-    if (!expected) return respond(req, { error: 'Analytics key authority is not configured.' }, 503);
     const incoming = req.headers.get(HEADER) || '';
-    if (!incoming || !constantTimeEqual(incoming, expected)) return respond(req, { error: 'Unauthorized' }, 401);
-    return respond(req, { ok: true, authority: 'supabase-edge' });
+    const check = await verifyAgainstIngest(incoming);
+    if (!check.ok) return respond(req, { error: check.status === 401 ? 'Unauthorized' : 'Analytics key authority unavailable.', authority: 'ingest-validation', reason: check.reason }, check.status);
+    return respond(req, { ok: true, authority: 'ingest-validation' });
   }
 
   if (mode === 'google-overview') {
@@ -81,6 +102,6 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 1 });
+  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 2, authAuthority: 'ingest-validation' });
   return respond(req, { error: 'Not found' }, 404);
 });
