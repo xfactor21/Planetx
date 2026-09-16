@@ -7,10 +7,37 @@ const csv = (value: string | number) => {
   return /[",\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
 }
 
+const googleProductCategory = (productId: string) => {
+  switch (productId) {
+    case 'creator-asset-forge':
+      return '313' // Software > Computer Software
+    case 'essential-ui-sounds':
+    case 'digital-glitch-fx':
+    case 'producer-transitions-impacts':
+      return '855' // Media > Music & Sound Recordings
+    case 'indie-launch-kit':
+      return '8022' // Software > Digital Goods & Currency > Document Templates
+    case 'digital-worlds-wallpapers':
+      return '5035' // Software > Digital Goods & Currency > Desktop Wallpaper
+    default:
+      return '5032' // Software > Digital Goods & Currency
+  }
+}
+
 export const dynamic = 'force-static'
 
 export function GET() {
-  const headers = ['id', 'title', 'description', 'link', 'image_link', 'price', 'availability']
+  const headers = [
+    'id',
+    'title',
+    'description',
+    'link',
+    'image_link',
+    'price',
+    'availability',
+    'condition',
+    'google_product_category',
+  ]
 
   const rows = allStoreProducts
     .filter((product) => {
@@ -29,6 +56,8 @@ export function GET() {
         image,
         `${price.toFixed(2)} USD`,
         'in stock',
+        'new',
+        googleProductCategory(product.id),
       ].map(csv).join(',')
     })
 
