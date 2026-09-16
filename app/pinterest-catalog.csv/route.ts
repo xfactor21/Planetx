@@ -16,10 +16,10 @@ export function GET() {
     .filter((product) => {
       const price = numericPrice(product)
       const checkout = publicCheckoutUrl(product)
-      return price !== null && price > 0 && Boolean(checkout) && !isChromeStoreProduct(product) && product.id !== 'project-x'
+      return price !== null && Number(price) > 0 && Boolean(checkout) && !isChromeStoreProduct(product) && product.id !== 'project-x'
     })
     .map((product) => {
-      const price = numericPrice(product)!
+      const price = Number(numericPrice(product)!)
       const image = product.gallery[0]?.src ? `${siteUrl}${product.gallery[0].src}` : `${siteUrl}/opengraph-image`
       return [
         product.id,
