@@ -44,6 +44,11 @@ export const metadata: Metadata = {
     'xFactor music',
     'loud music',
   ],
+  verification: {
+    other: {
+      'p:domain_verify': '943f5bb1e5f048198b9da6c122f6143d',
+    },
+  },
   alternates: {
     canonical: '/',
   },
