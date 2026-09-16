@@ -6,6 +6,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v
 
 `v15.2` — official Xupply licensing, SessionGrid X 7-day Pro trial → permanent Free mode with 1 saved workstation and 3 recovery snapshots, embedded planet.X checkout, expanded store architecture, sitemap, guides, and analytics preserved.
 
+Build note: the Next.js TypeScript project intentionally excludes `supabase/functions` because those files target the Supabase Deno runtime (`jsr:` / `npm:` specifiers). The analytics Edge Function source remains in the repository and is not removed or disabled by that exclusion.
+
 ## Built with v0
 
 This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
