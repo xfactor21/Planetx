@@ -14,7 +14,7 @@ const googleProductCategory = (productId: string) => {
     case 'essential-ui-sounds':
     case 'digital-glitch-fx':
     case 'producer-transitions-impacts':
-      return 'Media > Music & Sound Recordings'
+      return 'Media > Music & Sound Recordings > Digital Music Downloads'
     case 'indie-launch-kit':
       return 'Software > Digital Goods & Currency > Document Templates'
     case 'digital-worlds-wallpapers':
