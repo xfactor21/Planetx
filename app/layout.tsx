@@ -6,6 +6,7 @@ import { Space_Grotesk, JetBrains_Mono, Poppins } from 'next/font/google'
 import { MonsterXAnnouncement } from '@/components/monsterx-announcement'
 import { XFactorSitePet } from '@/components/xfactor-site-pet'
 import { SiteAnalytics } from '@/components/site-analytics'
+import { PinterestTag } from '@/components/pinterest-tag'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
@@ -149,6 +150,7 @@ export default function RootLayout({
             </Script>
           </>
         ) : null}
+        <PinterestTag />
         <MonsterXAnnouncement />
         <Suspense fallback={null}>
           <SiteAnalytics />
