@@ -1,5 +1,6 @@
 type GoogleConfig={client_email:string;private_key:string;search_console_site_url?:string;analytics_property_id?:string};
 const GOOGLE_NAME='GOOGLE_INSIGHTS_CONFIG';
+const DEFAULT_SITE=process.env.GOOGLE_SEARCH_CONSOLE_SITE_URL||'sc-domain:planet-x.co';
 const enc=(value:string)=>new TextEncoder().encode(value);
 const json=(res:any,status:number,body:unknown)=>res.status(status).json(body);
 const isoDate=(date:Date)=>date.toISOString().slice(0,10);
@@ -26,9 +27,9 @@ function opportunitySets(rows:any[]){const normalized=(rows||[]).map(r=>metricRo
 
 export default async function handler(req:any,res:any){
  if(req.method!=='GET')return json(res,405,{error:'Method not allowed'});
- const config=await googleConfig();if(!config?.search_console_site_url)return json(res,200,{status:'setup_required',configured:false,message:'Search Console is not configured in GOOGLE_INSIGHTS_CONFIG.'});
+ const config=await googleConfig();if(!config)return json(res,200,{status:'setup_required',configured:false,site:DEFAULT_SITE,message:'Google service-account credentials are not configured in the Command Center environment.'});
  try{
-  const token=await googleToken(config);const range=parseRange(req.query?.range);const r=ranges(range);const site=config.search_console_site_url;const endpoint=`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(site)}/searchAnalytics/query`;const dataState=range==='24h'?'hourly_all':'all';
+  const token=await googleToken(config);const range=parseRange(req.query?.range);const r=ranges(range);const site=config.search_console_site_url||DEFAULT_SITE;const endpoint=`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(site)}/searchAnalytics/query`;const dataState=range==='24h'?'hourly_all':'all';
   const base={...r.current,dataState};const previous={...r.previous,dataState:'all'};
   const [trendRaw,previousRaw,queriesRaw,pagesRaw,countriesRaw,devicesRaw,appearanceRaw,sitemapsRaw]=await Promise.all([
    post(endpoint,token,{...base,dimensions:range==='24h'?['date','hour']:['date'],rowLimit:range==='24h'?100:250}),
@@ -52,5 +53,5 @@ export default async function handler(req:any,res:any){
   const indexing=await Promise.all(inspectUrls.map(async(url:string)=>{try{const result=await post('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect',token,{inspectionUrl:url,siteUrl:site,languageCode:'en-US'});const status=result.inspectionResult?.indexStatusResult||{};return{url,path:stripHost(url),verdict:status.verdict||'VERDICT_UNSPECIFIED',coverageState:status.coverageState||'Unknown',indexingState:status.indexingState||'Unknown',pageFetchState:status.pageFetchState||'Unknown',robotsTxtState:status.robotsTxtState||'Unknown',lastCrawlTime:status.lastCrawlTime||null,googleCanonical:status.googleCanonical||null,userCanonical:status.userCanonical||null}}catch{return{url,path:stripHost(url),verdict:'ERROR',coverageState:'Inspection unavailable'}}}));
   const sitemaps=(sitemapsRaw.sitemap||[]).map((item:any)=>({path:item.path||'',lastSubmitted:item.lastSubmitted||null,lastDownloaded:item.lastDownloaded||null,isPending:Boolean(item.isPending),warnings:num(item.warnings),errors:num(item.errors),contents:(item.contents||[]).map((c:any)=>({type:c.type||'',submitted:num(c.submitted),indexed:num(c.indexed)}))}));
   return json(res,200,{status:'connected',configured:true,site,range,partial:range==='24h',settledThrough:r.settledThrough,fetchedAt:new Date().toISOString(),totals:currentTotals,comparison:{totals:previousTotals,delta:{clicks:delta(currentTotals.clicks,previousTotals.clicks),impressions:delta(currentTotals.impressions,previousTotals.impressions),ctr:round(currentTotals.ctr-previousTotals.ctr,2),position:round(currentTotals.position-previousTotals.position,2)}},trend,queries,pages,countries,devices,searchAppearance,indexing,sitemaps,opportunities:opportunitySets(queriesRaw.rows||[])});
- }catch(cause){console.error('Search intelligence failed.',cause);return json(res,502,{status:'error',configured:true,message:cause instanceof Error?cause.message:'Search Console is currently unavailable.'})}
+ }catch(cause){console.error('Search intelligence failed.',cause);return json(res,502,{status:'error',configured:true,site:config.search_console_site_url||DEFAULT_SITE,message:cause instanceof Error?cause.message:'Search Console is currently unavailable.'})}
 }
