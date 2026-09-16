@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Script from 'next/script'
 import { ArrowUpRight, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import { planetXTrack } from '@/lib/client-analytics'
-import { pinterestTrackCustom } from '@/lib/pinterest-events'
+import { pinterestTrack, pinterestTrackCustom } from '@/lib/pinterest-events'
 
 type CheckoutMap = Record<string, string>
 
@@ -109,6 +109,10 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
             }
             trackProductCta(productId, productName, 'buy_now')
             planetXTrack('checkout_started', { product_id: productId, product_name: productName, checkout_mode: 'embedded' }, { sourceSurface: 'store_product' })
+            pinterestTrack('InitiateCheckout', {
+              product_id: productId,
+              product_name: productName,
+            })
             pinterestTrackCustom('checkout_started', {
               product_id: productId,
               product_name: productName,
