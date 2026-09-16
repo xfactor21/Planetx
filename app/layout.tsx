@@ -13,9 +13,9 @@ const jetBrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jet
 const poppins = Poppins({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-poppins' })
 
 const siteUrl = 'https://www.planet-x.co'
-const siteTitle = 'planet.X — Independent Apps, Developer Tools & Creative Software Studio'
+const siteTitle = 'planet.X — Apps, Developer Tools & Creative Software'
 const siteDescription =
-  'planet.X is an independent software studio building mobile apps, Chrome extensions, developer tools, creative software, experimental web experiences, and loud music.'
+  'planet.X is an independent software studio building apps, Chrome extensions, developer tools, creative software, audio-reactive experiences, and loud music.'
 const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-1SHC3B1ZYX'
 const googleAnalyticsEnabled = process.env.VERCEL_ENV === 'production'
 
@@ -107,6 +107,7 @@ const websiteSchema = {
     '@type': 'Organization',
     name: 'planet.X',
     url: siteUrl,
+    logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png`,
   },
   description: siteDescription,
 }
