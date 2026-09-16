@@ -5,10 +5,29 @@ Canonical, GitHub-backed Vercel source for `dashboard.planet-x.co`.
 ## Architecture
 
 - Vite/React frontend
-- Vercel Functions under `api/[...route].ts`
-- Shared Supabase analytics ledger remains the data source
+- Vercel Functions under `api/[...route].ts` plus focused intelligence endpoints
+- Shared Supabase analytics ledger remains the data source for planet.X product analytics
 - Google Search Console and GA4 use read-only service-account access
 - No raw IP addresses are collected
+
+## Search Intelligence
+
+`api/search-console.ts` supplies the Command Center Search Intelligence panel with live, read-only Google Search Console data for `planet-x.co`.
+
+The panel includes:
+
+- 7-day, 28-day, and 90-day finalized performance windows with equal-length previous-period comparisons
+- clicks, impressions, CTR, and average position
+- top queries and landing pages
+- country, device, and search-appearance breakdowns
+- a separately labeled partial 24-hour Search Console pulse
+- business rollups for Store & Xupply, xFactor Music, Apps & Product Pages, and Guides & Free Resources
+- tracked topic rollups for planet.X Brand, xFactor Music, Store & Product Discovery, and Chrome Extension Discovery
+- a prioritized SEO opportunity queue for pages already receiving impressions
+- direct URL Inspection results for priority pages
+- submitted sitemap health
+
+Finalized comparisons intentionally use settled Search Console data instead of treating the fresh 24-hour feed as final. Google credentials stay server-side and are never sent to the browser.
 
 ## Vercel setup
 

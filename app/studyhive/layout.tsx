@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 const studyHiveUrl = 'https://www.planet-x.co/studyhive'
+const siteUrl = 'https://www.planet-x.co'
 
 export const metadata: Metadata = {
   title: 'StudyHive — Learn Together. Grow Together.',
@@ -26,12 +27,14 @@ const studyHiveSchema = {
   url: studyHiveUrl,
   applicationCategory: 'EducationalApplication',
   operatingSystem: 'Web',
+  image: `${siteUrl}/apps/studyhive.png`,
   description:
     'A student-focused study community with peer help, shared resources, planning tools, and AI-guided learning support.',
   creator: {
     '@type': 'Organization',
     name: 'planet.X',
-    url: 'https://www.planet-x.co',
+    url: siteUrl,
+    logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png`,
   },
 }
 

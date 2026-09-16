@@ -42,7 +42,7 @@ export async function generateMetadata({
   const canonical = `${siteUrl}/apps/${product.id}`
 
   return {
-    title: `${product.name} | planet.X`,
+    title: product.name,
     description,
     alternates: { canonical },
     openGraph: {
@@ -92,6 +92,7 @@ export default async function ProductPage({
       '@type': 'Organization',
       name: 'planet.X',
       url: siteUrl,
+      logo: `${siteUrl}/icon.svg`,
     },
   }
 

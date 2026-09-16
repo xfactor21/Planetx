@@ -1,19 +1,28 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'xFactor Music — Loud Music from planet.X',
+  title: 'xFactor Music — Songs, Videos & eXperiments Album',
   description:
-    'Listen to xFactor releases, videos, and loud music connected to the planet.X creative universe.',
+    'Listen to xFactor music, stream the eXperiments album, watch music videos, hear cover tracks, and explore the music side of planet.X.',
+  keywords: [
+    'xFactor music',
+    'xFactor songs',
+    'xFactor eXperiments',
+    'eXperiments album',
+    'planet.X music',
+    'loud music',
+  ],
   alternates: { canonical: '/music' },
   openGraph: {
-    title: 'xFactor Music — Loud Music from planet.X',
-    description: 'Listen to xFactor releases, videos, and loud music from planet.X.',
+    title: 'xFactor Music — Songs, Videos & eXperiments Album',
+    description: 'Stream xFactor music, the eXperiments album, cover tracks, and music videos from planet.X.',
     url: '/music',
+    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'xFactor Music — Loud Music from planet.X',
-    description: 'Listen to xFactor releases, videos, and loud music from planet.X.',
+    title: 'xFactor Music — Songs, Videos & eXperiments Album',
+    description: 'Stream xFactor music, the eXperiments album, cover tracks, and music videos from planet.X.',
   },
 }
 

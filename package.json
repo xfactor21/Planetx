@@ -1,8 +1,8 @@
 {
   "name": "my-project",
   "version": "0.13.0",
-  "planetXVersion": "v15.3.3",
-  "planetXDeployment": "09.15-v15.3.3-production-retry",
+  "planetXVersion": "v15.5.0",
+  "planetXDeployment": "09.15-v15.5-search-command-center",
   "private": true,
   "scripts": {
     "dev": "next dev",

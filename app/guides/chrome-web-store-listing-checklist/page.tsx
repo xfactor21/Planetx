@@ -9,8 +9,10 @@ const siteUrl = 'https://www.planet-x.co'
 const canonical = `${siteUrl}/guides/chrome-web-store-listing-checklist`
 const title = 'What a Chrome Web Store Listing Actually Needs'
 const description = 'A practical guide to Chrome extension listing copy, screenshots, permissions, privacy, reviewer context, and post-publication verification.'
+const image = `${siteUrl}/opengraph-image`
+const organization = { '@type': 'Organization', name: 'planet.X', url: siteUrl, logo: `${siteUrl}/brand/planet-x-wordmark-transparent.png` }
 export const metadata: Metadata = { title: { absolute: `${title} | planet.X` }, description, alternates: { canonical }, openGraph: { title, description, url: canonical, siteName: 'planet.X', type: 'article', images: ['/opengraph-image'] }, twitter: { card: 'summary_large_image', title, description, images: ['/opengraph-image'] } }
-const articleSchema = { '@context': 'https://schema.org', '@type': 'Article', headline: title, description, mainEntityOfPage: canonical, author: { '@type': 'Organization', name: 'planet.X' }, publisher: { '@type': 'Organization', name: 'planet.X', url: siteUrl } }
+const articleSchema = { '@context': 'https://schema.org', '@type': 'Article', headline: title, description, image, datePublished: '2026-09-15', dateModified: '2026-09-15', mainEntityOfPage: canonical, author: organization, publisher: organization }
 const points = [
   ['A name that says what the extension does', 'Keep the branded name, but pair it with a functional description. “SessionGrid X — Tab & Workspace Manager” is easier to understand than a mysterious product name alone.'],
   ['A short description with one concrete outcome', 'The first line should explain the job: save and restore workspaces, keep credentials encrypted, capture tabs, or whatever the core behavior is.'],

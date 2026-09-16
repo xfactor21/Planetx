@@ -49,3 +49,35 @@ Steps:
 2. Change the date range and refresh
 3. Scroll the Store, Visual.X, Live pulse and System views
 Expected: No horizontal clipping, hidden controls, overlapping navigation or unreadable chart/table content occurs.
+
+## Test 6 - Search Intelligence live data and comparison windows
+Viewport: desktop (1440x900)
+Covers: Search Console API, 7D/28D/90D selectors, previous-period deltas, top queries/pages, page groups, topic clusters, countries/devices, search appearance
+Description: Verifies the Search Intelligence overlay uses live Search Console data and does not mix partial fresh data into finalized comparisons.
+Steps:
+1. Open the Search Intelligence panel
+2. Confirm the default 28D totals, finalized-through date and previous-period deltas render
+3. Switch to 7D and 90D and confirm the data reloads
+4. Inspect queries, pages, page groups, topic clusters, countries, devices and search appearance
+Expected: Each window returns real numeric Search Console data or an explicit no-data state. The fresh 24H metrics remain separately labeled as partial and are not used for finalized deltas.
+
+## Test 7 - Search indexing, sitemap and opportunity queue
+Viewport: desktop (1280x800)
+Covers: URL Inspection, sitemap health, SEO opportunity scoring, graceful Google API failures
+Description: Verifies the panel separates crawl/index status from performance data and surfaces practical SEO opportunities without claiming indexing that Google has not confirmed.
+Steps:
+1. Open Search Intelligence and review Priority indexing
+2. Confirm each tracked URL shows Google's verdict and coverage state
+3. Review Sitemap health and confirm warnings/errors/submitted/indexed values are source-labeled
+4. Review Opportunity queue and compare a row against its impressions, CTR and position
+Expected: PASS is shown only for URLs Google reports as PASS; unknown/discovered/error states remain explicit. Opportunity rows are based on real impressions and position/CTR thresholds, not simulated scores.
+
+## Test 8 - Search Intelligence mobile and failure states
+Viewport: mobile (375x667)
+Covers: Search overlay launch/close, responsive tables/cards, keyboard/dialog behavior, missing Google config, transient API error
+Description: Verifies the Search Intelligence panel remains usable on a phone and fails independently from the rest of Command Center.
+Steps:
+1. Open Search Intelligence on mobile and scroll every section
+2. Change the date window and close/reopen the panel
+3. In a test environment without GOOGLE_INSIGHTS_CONFIG, reload the panel
+Expected: Cards collapse to two columns, sections stack without horizontal page clipping, the dialog closes normally, and missing/unavailable Google data produces a clear setup/error message while the rest of Command Center remains usable.

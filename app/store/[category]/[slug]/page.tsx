@@ -12,6 +12,13 @@ import { StoreTrackedLink } from '@/components/store-tracked-link'
 import { XUPPLY_LICENSE_PATH, allStoreProducts, categorySlug, getProductByRoute, isChromeStoreProduct, numericPrice, productOutcome, productPath, productSlug, publicCheckoutUrl, relatedProducts, storefrontBrand, usesXupplyLicense } from '@/lib/store-catalog'
 
 const siteUrl = 'https://www.planet-x.co'
+function searchDescription(value: string, maxLength = 155) {
+  const normalized = value.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= maxLength) return normalized
+  const clipped = normalized.slice(0, maxLength + 1)
+  const boundary = clipped.lastIndexOf(' ')
+  return `${clipped.slice(0, boundary > 110 ? boundary : maxLength).replace(/[,.!?:;\-–—\s]+$/g, '')}…`
+}
 export function generateStaticParams() { return allStoreProducts.map((product) => ({ category: categorySlug(product.category), slug: productSlug(product) })) }
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }): Promise<Metadata> {
   const { category, slug } = await params
@@ -19,9 +26,10 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   if (!product) return {}
   const canonical = `${siteUrl}${productPath(product)}`
   const brand = storefrontBrand(product)
-  const title = `${product.name} — ${product.productType} | ${brand}`
+  const title = `${product.name} | ${brand}`
+  const description = searchDescription(product.description)
   const image = product.gallery[0]?.src ?? '/opengraph-image'
-  return { title: { absolute: title }, description: product.description, alternates: { canonical }, openGraph: { title, description: product.description, url: canonical, siteName: 'planet.X', type: 'website', images: [{ url: image, alt: product.gallery[0]?.alt ?? product.name }] }, twitter: { card: 'summary_large_image', title, description: product.description, images: [image] } }
+  return { title: { absolute: title }, description, alternates: { canonical }, openGraph: { title, description, url: canonical, siteName: 'planet.X', type: 'website', images: [{ url: image, alt: product.gallery[0]?.alt ?? product.name }] }, twitter: { card: 'summary_large_image', title, description, images: [image] } }
 }
 function deliveryText(productId: string, chrome: boolean) {
   if (productId === 'project-x') return 'No purchase or download is offered yet. project.X is listed as Coming Soon.'
@@ -47,7 +55,7 @@ export default async function StoreProductPage({ params }: { params: Promise<{ c
   const price = numericPrice(product)
   const related = relatedProducts(product, 3)
   const productSchema: Record<string, unknown> = { '@context': 'https://schema.org', '@type': 'Product', name: product.name, sku: product.id, category: product.category, description: product.description, url: canonical, image: product.gallery.map((image) => `${siteUrl}${image.src}`), brand: { '@type': 'Brand', name: brand } }
-  if (!isComingSoon && price !== null && checkoutUrl) productSchema.offers = { '@type': 'Offer', price, priceCurrency: 'USD', url: chrome ? checkoutUrl : canonical, seller: { '@type': 'Organization', name: 'planet.X', url: siteUrl } }
+  if (!isComingSoon && price !== null && checkoutUrl) productSchema.offers = { '@type': 'Offer', price, priceCurrency: 'USD', url: chrome ? checkoutUrl : canonical, seller: { '@type': 'Organization', name: 'planet.X', url: siteUrl, logo: `${siteUrl}/icon.svg` } }
   const breadcrumb = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'planet.X', item: siteUrl }, { '@type': 'ListItem', position: 2, name: 'Store', item: `${siteUrl}/store` }, { '@type': 'ListItem', position: 3, name: product.category, item: `${siteUrl}/store/${categorySlug(product.category)}` }, { '@type': 'ListItem', position: 4, name: product.name, item: canonical }] }
   return <div className="min-h-screen bg-[#030305] text-white">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} /><StorePageTracker event="product_view" properties={{ product_id: product.id, product_name: product.name, category: product.category, product_status: product.status }} /><SiteHeader />
