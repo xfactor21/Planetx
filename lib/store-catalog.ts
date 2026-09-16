@@ -1,5 +1,6 @@
 import { sessionGridProduct } from '@/lib/sessiongrid-product'
 import { storeProducts, type StoreCategory, type StoreProduct } from '@/lib/store-data'
+import { buildSellIndieCreatorTools } from '@/lib/build-sell-indie-creator-tools'
 
 export type StoreCategorySlug = 'software' | 'audio-fx' | 'creator-resources'
 
@@ -12,6 +13,13 @@ const XUPPLY_ASSET_LICENSE_SUMMARY =
 const XUPPLY_UTILITY_LICENSE_SUMMARY =
   'Licensed to one purchaser for personal and commercial use. You may use Creator Asset Forge and its exported results in your own and client projects, but you may not resell, redistribute, sublicense, or share the utility itself as a standalone product.'
 
+const XUPPLY_UNIVERSAL_IMAGE = {
+  src: '/store/brand/Xupply-09.16-v1-universal-tech.jpg',
+  alt: 'Xupply by planet.X universal technology collection artwork',
+  label: 'Xupply collection',
+  fit: 'cover' as const,
+}
+
 export const PAYHIP_CHECKOUTS: Record<string, string> = {
   'essential-ui-sounds': 'https://payhip.com/b/CIwxS',
   'digital-glitch-fx': 'https://payhip.com/b/ROlqw',
@@ -23,6 +31,7 @@ export const PAYHIP_CHECKOUTS: Record<string, string> = {
   'creator-editing-overlays': 'https://payhip.com/b/NGUKi',
   'digital-worlds-wallpapers': 'https://payhip.com/b/6x4EO',
   'producer-transitions-impacts': 'https://payhip.com/b/PcOWp',
+  'build-sell-indie-creator-tools': 'https://payhip.com/b/0ugq1',
 }
 
 const CATEGORY_SLUGS: Record<StoreCategory, StoreCategorySlug> = {
@@ -45,6 +54,7 @@ const PRODUCT_SLUGS: Record<string, string> = {
   'creator-editing-overlays': 'creator-editing-overlays',
   'digital-worlds-wallpapers': 'digital-worlds-wallpaper-pack',
   'producer-transitions-impacts': 'producer-transitions-impacts-vol-1',
+  'build-sell-indie-creator-tools': 'build-sell-indie-creator-tools',
 }
 
 const RELATED_PRODUCT_IDS: Record<string, string[]> = {
@@ -53,14 +63,15 @@ const RELATED_PRODUCT_IDS: Record<string, string[]> = {
   'project-x': ['sessiongrid-x', 'context-pro', 'website-atmosphere-pack'],
   'essential-ui-sounds': ['producer-transitions-impacts', 'digital-glitch-fx', 'interface-hud-kit'],
   'digital-glitch-fx': ['producer-transitions-impacts', 'essential-ui-sounds', 'creator-editing-overlays'],
-  'indie-launch-kit': ['creator-asset-forge', 'interface-hud-kit', 'creator-editing-overlays'],
-  'creator-asset-forge': ['indie-launch-kit', 'creator-editing-overlays', 'website-atmosphere-pack'],
+  'indie-launch-kit': ['build-sell-indie-creator-tools', 'creator-asset-forge', 'creator-editing-overlays'],
+  'creator-asset-forge': ['build-sell-indie-creator-tools', 'indie-launch-kit', 'website-atmosphere-pack'],
   'creator-stream-pack': ['creator-editing-overlays', 'essential-ui-sounds', 'digital-glitch-fx'],
   'interface-hud-kit': ['website-atmosphere-pack', 'essential-ui-sounds', 'creator-editing-overlays'],
   'website-atmosphere-pack': ['interface-hud-kit', 'digital-worlds-wallpapers', 'creator-editing-overlays'],
   'creator-editing-overlays': ['creator-stream-pack', 'digital-glitch-fx', 'website-atmosphere-pack'],
   'digital-worlds-wallpapers': ['website-atmosphere-pack', 'creator-editing-overlays', 'interface-hud-kit'],
   'producer-transitions-impacts': ['essential-ui-sounds', 'digital-glitch-fx', 'creator-editing-overlays'],
+  'build-sell-indie-creator-tools': ['indie-launch-kit', 'creator-asset-forge', 'creator-editing-overlays'],
 }
 
 export const CATEGORY_CONTENT: Record<StoreCategorySlug, { category: StoreCategory; eyebrow: string; title: string; description: string; starterId: string; guideHref: string; guideLabel: string }> = {
@@ -86,8 +97,8 @@ export const CATEGORY_CONTENT: Record<StoreCategorySlug, { category: StoreCatego
     category: 'Creator Resources',
     eyebrow: 'Xupply by planet.X',
     title: 'Creator Resources for Indie Developers & Technical Creators',
-    description: 'Xupply creator resources are downloadable production systems: editable templates, interface kits, broadcast graphics, web effects, overlays, wallpapers, and launch materials. The goal is practical reuse. Each page shows what files are included, who the pack is intended for, what software or workflow it fits, and the real previews already available for the product.',
-    starterId: 'indie-launch-kit',
+    description: 'Xupply creator resources are downloadable production systems: editable templates, interface kits, broadcast graphics, web effects, overlays, wallpapers, launch materials, and practical creator education. The goal is practical reuse. Each page shows what files are included, who the product is intended for, what workflow it fits, and the real previews already available.',
+    starterId: 'build-sell-indie-creator-tools',
     guideHref: '/guides/chrome-extension-screenshot-guide',
     guideLabel: 'How to build clear Chrome extension screenshots',
   },
@@ -98,6 +109,11 @@ const approvedContextHero = {
   alt: 'conteXt encrypted developer workspace product banner',
   label: 'Product banner',
   fit: 'cover' as const,
+}
+
+function addXupplyCollectionImage(product: StoreProduct): StoreProduct {
+  if (product.gallery.some((image) => image.src === XUPPLY_UNIVERSAL_IMAGE.src)) return product
+  return { ...product, gallery: [...product.gallery, XUPPLY_UNIVERSAL_IMAGE] }
 }
 
 function normalizeStoreProduct(product: StoreProduct): StoreProduct {
@@ -113,10 +129,7 @@ function normalizeStoreProduct(product: StoreProduct): StoreProduct {
       format: 'Chrome extension / Manifest V3',
       license: 'Install free from the Chrome Web Store. Existing local vault data remains on-device. Optional Pro licensing is available from the private in-extension upgrade flow.',
       checkoutUrl: CONTEXT_CHROME_URL,
-      gallery: [
-        approvedContextHero,
-        ...product.gallery.filter((image) => image.src !== approvedContextHero.src),
-      ],
+      gallery: [approvedContextHero, ...product.gallery.filter((image) => image.src !== approvedContextHero.src)],
     }
   }
 
@@ -125,7 +138,7 @@ function normalizeStoreProduct(product: StoreProduct): StoreProduct {
   }
 
   if (product.id === 'creator-asset-forge') {
-    return {
+    return addXupplyCollectionImage({
       ...product,
       category: 'Software',
       productType: 'Local browser utility',
@@ -133,11 +146,11 @@ function normalizeStoreProduct(product: StoreProduct): StoreProduct {
       priceNote: product.priceNote === 'Proposed launch price' ? 'Current price' : product.priceNote,
       license: XUPPLY_UTILITY_LICENSE_SUMMARY,
       checkoutUrl: PAYHIP_CHECKOUTS[product.id],
-    }
+    })
   }
 
   const usesAssetLicense = product.category === 'Audio & FX' || product.category === 'Creator Resources'
-  const normalized = usesAssetLicense ? { ...product, license: XUPPLY_ASSET_LICENSE_SUMMARY } : product
+  const normalized = usesAssetLicense ? addXupplyCollectionImage({ ...product, license: XUPPLY_ASSET_LICENSE_SUMMARY }) : product
   const verifiedCheckout = PAYHIP_CHECKOUTS[product.id]
 
   if (verifiedCheckout) {
@@ -152,7 +165,7 @@ function normalizeStoreProduct(product: StoreProduct): StoreProduct {
   return normalized
 }
 
-export const allStoreProducts = [sessionGridProduct, ...storeProducts].map(normalizeStoreProduct)
+export const allStoreProducts = [sessionGridProduct, ...storeProducts, buildSellIndieCreatorTools].map(normalizeStoreProduct)
 export function categorySlug(category: StoreCategory): StoreCategorySlug { return CATEGORY_SLUGS[category] }
 export function productSlug(product: StoreProduct): string { return PRODUCT_SLUGS[product.id] ?? product.id }
 export function productPath(product: StoreProduct): string { return `/store/${categorySlug(product.category)}/${productSlug(product)}` }
@@ -170,8 +183,8 @@ export function usesXupplyLicense(product: StoreProduct): boolean { return produ
 export function publicCheckoutUrl(product: StoreProduct): string | undefined { if (product.checkoutUrl?.includes('chromewebstore.google.com')) return product.checkoutUrl; return PAYHIP_CHECKOUTS[product.id] }
 export function isChromeStoreProduct(product: StoreProduct): boolean { return publicCheckoutUrl(product)?.includes('chromewebstore.google.com') ?? false }
 export function numericPrice(product: StoreProduct): string | null { const match = product.price.match(/\$([0-9]+(?:\.[0-9]{1,2})?)/); return match?.[1] ?? (product.price.trim().toLowerCase() === 'free' ? '0' : null) }
-export const FEATURED_PRODUCT_IDS = ['sessiongrid-x', 'context-pro', 'essential-ui-sounds', 'interface-hud-kit']
-export const START_HERE_PRODUCT_IDS = ['sessiongrid-x', 'essential-ui-sounds', 'indie-launch-kit']
+export const FEATURED_PRODUCT_IDS = ['sessiongrid-x', 'context-pro', 'build-sell-indie-creator-tools', 'essential-ui-sounds']
+export const START_HERE_PRODUCT_IDS = ['sessiongrid-x', 'essential-ui-sounds', 'build-sell-indie-creator-tools']
 export const PRODUCT_OUTCOMES: Record<string, string> = {
   'sessiongrid-x': 'Close the tabs. Keep the context.',
   'context-pro': 'Keep developer credentials and project context encrypted on-device.',
@@ -186,5 +199,6 @@ export const PRODUCT_OUTCOMES: Record<string, string> = {
   'creator-editing-overlays': 'Add reusable titles, captions, callouts, and CTA graphics to landscape and vertical video.',
   'digital-worlds-wallpapers': 'Use matched desktop and mobile digital-world artwork without stretching one layout across both.',
   'producer-transitions-impacts': 'Add focused risers, impacts, whooshes, glitches, and pulses to production work.',
+  'build-sell-indie-creator-tools': 'Turn work you already build into a packaged, priced, listed, and launched product.',
 }
 export function productOutcome(product: StoreProduct): string { return PRODUCT_OUTCOMES[product.id] ?? product.description }
