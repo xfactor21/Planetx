@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  Activity, ArrowUpRight, BarChart3, CheckCircle2, CircleAlert, Database,
+  Activity, ArrowUpRight, BarChart3, CircleAlert, Database,
   Eye, Gauge, Globe2, LayoutDashboard, Menu, Moon, MousePointerClick,
   Radio, RefreshCw, Search, Settings, Share2, ShoppingBag, Sparkles,
   Sun, TrendingUp, Users, X,
@@ -56,6 +56,7 @@ const productNames: Record<string, string> = {
 }
 const socialNames: Record<string, string> = { pinterest: 'Pinterest', facebook: 'Facebook', instagram: 'Instagram', linkedin: 'LinkedIn', youtube: 'YouTube', tiktok: 'TikTok' }
 const socialOrder = ['pinterest', 'facebook', 'instagram', 'tiktok', 'linkedin', 'youtube']
+const viewLabels: Record<View, string> = { overview: 'Overview', search: 'Search', social: 'Social', store: 'Store', visualx: 'Visual.X', apps: 'Apps', activity: 'Live Pulse', system: 'System' }
 const nav = [
   { group: 'Command', items: [['overview', 'Overview', LayoutDashboard], ['search', 'Search', Search], ['social', 'Social', Share2]] },
   { group: 'Products', items: [['store', 'Store', ShoppingBag], ['visualx', 'Visual.X', Sparkles], ['apps', 'Apps', Gauge]] },
@@ -160,7 +161,7 @@ export default function CommandCenterPro() {
     ...apps.flatMap(app => (app.pulse || []).map(item => ({ ...item, source: title(app.source) }))),
   ].sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)).slice(0, 40), [site, visual, apps])
 
-  const currentLabel = nav.flatMap(group => group.items).find(item => item[0] === view)?.[1] || 'Overview'
+  const currentLabel = viewLabels[view]
   const go = (next: View) => { setView(next); setMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
   return <div className='cc-shell'>
