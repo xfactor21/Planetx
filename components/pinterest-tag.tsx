@@ -2,8 +2,8 @@
 
 import Script from 'next/script'
 
-const tagId = process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim()
-const enabled = process.env.NEXT_PUBLIC_PINTEREST_TRACKING_ENABLED === 'true'
+const tagId = process.env.NEXT_PUBLIC_PINTEREST_TAG_ID?.trim() || '2613428659806'
+const enabled = process.env.NEXT_PUBLIC_PINTEREST_TRACKING_ENABLED !== 'false'
 
 export function PinterestTag() {
   if (!tagId || !enabled) return null
