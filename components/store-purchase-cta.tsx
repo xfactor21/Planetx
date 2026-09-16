@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Script from 'next/script'
 import { ArrowUpRight, MonitorSmartphone, ShoppingBag } from 'lucide-react'
 import { planetXTrack } from '@/lib/client-analytics'
+import { pinterestTrackCustom } from '@/lib/pinterest-events'
 
 type CheckoutMap = Record<string, string>
 
@@ -56,6 +57,11 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
         onClick={() => {
           trackProductCta(productId, productName, 'open_chrome_web_store')
           planetXTrack('external_app_launch', { product_id: productId, product_name: productName, destination: 'chrome_web_store' }, { sourceSurface: 'store_product' })
+          pinterestTrackCustom('external_app_launch', {
+            product_id: productId,
+            product_name: productName,
+            destination: 'chrome_web_store',
+          })
         }}
         className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white uppercase shadow-[0_8px_30px_rgba(255,43,138,.24)] transition hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
       >
@@ -85,6 +91,11 @@ export function StorePurchaseCta({ productId, productName, mode, checkoutUrl }: 
           onClick={() => {
             trackProductCta(productId, productName, 'buy_now')
             planetXTrack('checkout_started', { product_id: productId, product_name: productName, checkout_mode: 'embedded' }, { sourceSurface: 'store_product' })
+            pinterestTrackCustom('checkout_started', {
+              product_id: productId,
+              product_name: productName,
+              checkout_mode: 'embedded',
+            })
           }}
         >
           <ShoppingBag className="size-4" aria-hidden="true" />
