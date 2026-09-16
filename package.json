@@ -2,6 +2,7 @@
   "name": "my-project",
   "version": "0.13.0",
   "planetXVersion": "v15.2",
+  "planetXDeployment": "09.15-v15.2-production",
   "private": true,
   "scripts": {
     "dev": "next dev",
