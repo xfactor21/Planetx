@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Suspense } from 'react'
 import { Space_Grotesk, JetBrains_Mono, Poppins } from 'next/font/google'
 import { MonsterXAnnouncement } from '@/components/monsterx-announcement'
@@ -15,6 +16,8 @@ const siteUrl = 'https://www.planet-x.co'
 const siteTitle = 'planet.X — Independent Apps, Developer Tools & Creative Software Studio'
 const siteDescription =
   'planet.X is an independent software studio building mobile apps, Chrome extensions, developer tools, creative software, experimental web experiences, and loud music.'
+const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-1SHC3B1ZYX'
+const googleAnalyticsEnabled = process.env.VERCEL_ENV === 'production'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -124,6 +127,23 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
+        {googleAnalyticsEnabled ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="planetx-google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = window.gtag || gtag;
+                gtag('js', new Date());
+                gtag('config', '${googleAnalyticsId}');
+              `}
+            </Script>
+          </>
+        ) : null}
         <MonsterXAnnouncement />
         <Suspense fallback={null}>
           <SiteAnalytics />
