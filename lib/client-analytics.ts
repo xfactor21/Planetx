@@ -16,6 +16,10 @@ type AnalyticsEnvelope = {
   properties: Record<string, string | number | boolean | null>
 }
 
+type GoogleAnalyticsWindow = Window & {
+  gtag?: (...args: unknown[]) => void
+}
+
 const SESSION_KEY = 'planetx:analytics-session-id'
 const USER_KEY = 'planetx:analytics-anonymous-user-id'
 
@@ -53,6 +57,14 @@ export function planetXTrack(
   track(event, cleaned)
 
   if (typeof window === 'undefined') return
+
+  // Mirror interaction/conversion events into GA4. SiteAnalytics handles
+  // page_view separately so the first load is not double-counted against
+  // the automatic gtag('config') page view.
+  if (event !== 'page_view') {
+    const googleWindow = window as GoogleAnalyticsWindow
+    googleWindow.gtag?.('event', event, cleaned)
+  }
 
   let sessionId = ''
   let anonymousUserId = ''
