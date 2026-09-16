@@ -1,0 +1,51 @@
+import type { StoreProduct } from '@/lib/store-data'
+
+export const buildSellCourseProduct: StoreProduct = {
+  id: 'build-sell-indie-creators',
+  name: 'Build & Sell Indie Creator Tools',
+  category: 'Creator Resources',
+  productType: 'Interactive course + workbook',
+  description:
+    'A self-paced six-module course for turning something you already build into a packaged, priced, launched product, delivered as a PDF workbook plus a genuinely interactive local companion app.',
+  price: '$14.99',
+  priceNote: 'Current price',
+  status: 'Available now',
+  metrics: [
+    { value: '6', label: 'Modules' },
+    { value: '2', label: 'Formats' },
+    { value: 'Local', label: 'Companion app' },
+  ],
+  includes: [
+    'Six-module self-paced course from product idea through post-launch planning',
+    'Printable and readable PDF workbook',
+    'Single-file HTML companion app that opens locally in any modern browser',
+    'Clickable module sidebar, progress bar, and per-module checklists',
+    'Autosaving worksheet fields and a three-question self-check quiz per module',
+    'Export worksheet answers to a text file at any time',
+  ],
+  bestFor: ['Developers', 'Producers', 'Designers'],
+  format: 'PDF workbook + single-file local HTML companion app',
+  license:
+    'Single-purchaser course access. The workbook and companion app are for the purchaser’s own learning and product-development workflow; redistribution, resale, repackaging, or sharing the course files is not permitted.',
+  gallery: [
+    {
+      src: '/store/brand/Xupply-09.16-v1-build-sell-course.webp',
+      alt: 'Xupply Build and Sell Indie Creators interactive course artwork',
+      label: 'Course identity',
+      fit: 'cover',
+    },
+    {
+      src: '/store/brand/Xupply-09.16-v1-courses-education.webp',
+      alt: 'Xupply courses and education collection artwork',
+      label: 'Courses + education',
+      fit: 'cover',
+    },
+    {
+      src: '/store/brand/Xupply-09.16-v1-universal-tech.webp',
+      alt: 'Xupply by planet.X universal technical product showcase',
+      label: 'Xupply collection',
+      fit: 'cover',
+    },
+  ],
+  checkoutUrl: 'https://payhip.com/b/0ugq1',
+}
