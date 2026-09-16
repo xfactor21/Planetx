@@ -10,6 +10,15 @@ const ALLOWED_ORIGINS = new Set([
   'https://planet-x.co',
   'https://www.planet-x.co',
 ]);
+const SOCIAL_CONNECTIONS = {
+  pinterest: { connected: true, handle: 'planetXfactor' },
+  facebook: { connected: true, handle: 'planet.X' },
+  instagram: { connected: true, handle: 'xfactor_planet_x' },
+  linkedin: { connected: true, handle: 'planet.X' },
+  youtube: { connected: true, handle: 'planet.X' },
+  tiktok: { connected: true, handle: 'planet.x.factor' },
+} as const;
+const SOCIAL_NETWORKS = Object.keys(SOCIAL_CONNECTIONS);
 
 function headersFor(req: Request) {
   const origin = req.headers.get('Origin') || '';
@@ -58,6 +67,60 @@ async function verifyAgainstIngest(key: string) {
   }
 }
 
+function socialRangeStart(value: string) {
+  const key = value.toLowerCase();
+  if (key === 'all') return '1970-01-01';
+  const days = key === '24h' ? 2 : key === '7d' ? 7 : key === '90d' ? 90 : 30;
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() - days + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function numberValue(value: unknown) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function sum(rows: Record<string, unknown>[], key: string) {
+  return rows.reduce((total, row) => total + numberValue(row[key]), 0);
+}
+
+function latest(rows: Record<string, unknown>[], key: string) {
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    const value = rows[i]?.[key];
+    if (value !== null && value !== undefined && numberValue(value) !== 0) return numberValue(value);
+  }
+  return rows.length ? numberValue(rows[rows.length - 1]?.[key]) : 0;
+}
+
+function summarizeSocial(network: string, rows: Record<string, unknown>[]) {
+  const sorted = [...rows].sort((a, b) => String(a.metric_date || '').localeCompare(String(b.metric_date || '')));
+  return {
+    platform: network,
+    impressions: sum(sorted, 'impressions'),
+    views: sum(sorted, 'views'),
+    reach: sum(sorted, 'reach'),
+    interactions: sum(sorted, 'interactions'),
+    clicks: sum(sorted, 'clicks') + sum(sorted, 'outbound_clicks'),
+    likes: sum(sorted, 'likes'),
+    comments: sum(sorted, 'comments'),
+    shares: sum(sorted, 'shares'),
+    saves: sum(sorted, 'saves'),
+    followers: latest(sorted, 'followers'),
+    followersGained: sum(sorted, 'followers_gained') + sum(sorted, 'follower_delta'),
+    followersLost: sum(sorted, 'followers_lost'),
+    posts: sum(sorted, 'posts_published'),
+    profileViews: sum(sorted, 'profile_views'),
+    reelViews: sum(sorted, 'reel_views'),
+    reelInteractions: sum(sorted, 'reel_interactions'),
+    accountsEngaged: sum(sorted, 'accounts_engaged'),
+    watchMinutes: sum(sorted, 'watch_minutes'),
+    pinClicks: sum(sorted, 'pin_clicks'),
+    outboundClicks: sum(sorted, 'outbound_clicks'),
+    engagement: latest(sorted, 'engagement'),
+  };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: headersFor(req) });
   if (req.method !== 'GET') return respond(req, { error: 'Method not allowed' }, 405);
@@ -102,6 +165,69 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 2, authAuthority: 'ingest-validation' });
+  if (mode === 'social-overview') {
+    const client = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const rangeRaw = String(url.searchParams.get('range') || '30d').toLowerCase();
+    const range = ['24h', '7d', '30d', '90d', 'all'].includes(rangeRaw) ? rangeRaw : '30d';
+    const networkRaw = String(url.searchParams.get('network') || 'all').toLowerCase();
+    const selected = networkRaw === 'all' ? SOCIAL_NETWORKS : SOCIAL_NETWORKS.includes(networkRaw) ? [networkRaw] : SOCIAL_NETWORKS;
+    const start = socialRangeStart(range);
+
+    const { data: daily, error } = await client
+      .from('social_analytics_daily')
+      .select('*')
+      .eq('source', 'metricool_mcp')
+      .gte('metric_date', start)
+      .in('platform', selected)
+      .order('metric_date', { ascending: true });
+    if (error) {
+      console.error('Social analytics snapshot read failed.', error);
+      return respond(req, { status: 'error', configured: true, provider: 'Metricool MCP archive', message: 'Social analytics archive is unavailable.' }, 500);
+    }
+
+    const { data: content } = await client
+      .from('social_content_metrics')
+      .select('*')
+      .eq('source', 'metricool_mcp')
+      .in('platform', selected)
+      .order('captured_at', { ascending: false })
+      .limit(120);
+    const { data: signals } = await client
+      .from('social_trend_signals')
+      .select('*')
+      .in('platform', selected)
+      .order('refreshed_at', { ascending: false })
+      .limit(30);
+
+    const networks = selected.map((network) => {
+      const connection = (SOCIAL_CONNECTIONS as Record<string, { connected: boolean; handle: string }>)[network];
+      const rows = (daily || []).filter((row: Record<string, unknown>) => row.platform === network);
+      const items = (content || []).filter((row: Record<string, unknown>) => row.platform === network);
+      return {
+        network,
+        status: 'connected',
+        connected: true,
+        handle: connection?.handle || null,
+        summary: summarizeSocial(network, rows as Record<string, unknown>[]),
+        trend: rows,
+        content: items,
+      };
+    });
+
+    return respond(req, {
+      status: 'connected',
+      configured: true,
+      provider: 'Metricool MCP archive',
+      systemOfRecord: 'Supabase',
+      range,
+      start,
+      fetchedAt: new Date().toISOString(),
+      connections: SOCIAL_CONNECTIONS,
+      networks,
+      signals: signals || [],
+    });
+  }
+
+  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 3, authAuthority: 'ingest-validation', sources: ['first-party', 'google-snapshot', 'social-archive'] });
   return respond(req, { error: 'Not found' }, 404);
 });
