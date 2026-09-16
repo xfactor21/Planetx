@@ -4,9 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>planet.X Command Center</title><meta name='theme-color' content='#05050a'><meta name='description' content='planet.X Command Center — analytics and operations across the planet.X ecosystem.'><link rel='icon' type='image/svg+xml' href='./icon.svg'><link rel='manifest' href='./manifest.webmanifest'>
+    <style>
+      #px-pinterest-launch{position:fixed;right:18px;bottom:18px;z-index:80;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(255,43,166,.95),rgba(139,92,246,.95));color:#fff;border-radius:999px;padding:11px 15px;font:700 12px/1 system-ui,-apple-system,sans-serif;letter-spacing:.04em;box-shadow:0 14px 40px rgba(0,0,0,.35);cursor:pointer}
+      #px-pinterest-overlay{position:fixed;inset:0;z-index:90;background:rgba(3,3,9,.78);backdrop-filter:blur(12px);display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow:auto}
+      #px-pinterest-overlay.open{display:flex}
+      .px-pin-shell{width:min(1050px,100%);background:linear-gradient(180deg,#10101b,#090910);border:1px solid rgba(255,255,255,.11);border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.55);overflow:hidden;color:#f7f7fb;font-family:system-ui,-apple-system,sans-serif}
+      .px-pin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:24px 24px 18px;border-bottom:1px solid rgba(255,255,255,.08);background:radial-gradient(circle at 15% 0%,rgba(255,43,166,.16),transparent 42%),radial-gradient(circle at 85% 0%,rgba(54,209,220,.12),transparent 38%)}
+      .px-pin-head p,.px-pin-card p{margin:0}.px-pin-head small{display:block;color:#9b9bb0;margin-top:7px}.px-pin-close{border:0;background:rgba(255,255,255,.07);color:#fff;width:36px;height:36px;border-radius:12px;font-size:20px;cursor:pointer}
+      .px-pin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:20px 24px 8px}.px-pin-card{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.035)}.px-pin-card span{display:block;color:#9b9bb0;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.px-pin-card b{display:block;font-size:26px;margin-top:5px}.px-pin-card em{font-style:normal;color:#b7f4ff;font-size:11px}
+      .px-pin-section{padding:18px 24px 24px}.px-pin-section h3{margin:0 0 12px;font-size:16px}.px-pin-trends{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.px-pin-trend{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:linear-gradient(145deg,rgba(255,43,166,.05),rgba(54,209,220,.035))}.px-pin-trend b{display:block}.px-pin-trend span{display:block;color:#b6b6c8;font-size:12px;margin-top:3px}.px-pin-trend small{display:block;color:#83839a;font-size:11px;margin-top:7px}.px-pin-trend i{display:block;color:#d9f7ff;font-style:normal;font-size:11px;margin-top:8px}
+      .px-pin-empty{color:#9898aa;font-size:13px;padding:8px 0}.px-pin-foot{padding:0 24px 24px;color:#737389;font-size:11px}
+      @media(max-width:700px){.px-pin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.px-pin-trends{grid-template-columns:1fr}#px-pinterest-launch{right:12px;bottom:12px}.px-pin-shell{border-radius:18px}.px-pin-head,.px-pin-grid,.px-pin-section{padding-left:16px;padding-right:16px}}
+    </style>
 </head>
 <body>
     <div id="root"></div>
+    <button id="px-pinterest-launch" type="button">Pinterest ↗</button>
+    <div id="px-pinterest-overlay" aria-hidden="true">
+      <section class="px-pin-shell" role="dialog" aria-modal="true" aria-label="Pinterest intelligence">
+        <div class="px-pin-head"><div><p style="font-size:11px;letter-spacing:.12em;color:#ff79c8">SOCIAL INTELLIGENCE</p><h2 style="margin:4px 0 0">Pinterest</h2><small id="px-pin-status">Loading Metricool snapshot + trend watch…</small></div><button class="px-pin-close" id="px-pin-close" aria-label="Close Pinterest panel">×</button></div>
+        <div class="px-pin-grid" id="px-pin-metrics"></div>
+        <div class="px-pin-section"><h3>Pinterest trend watch</h3><div class="px-pin-trends" id="px-pin-trends"></div></div>
+        <div class="px-pin-section"><h3>Top Pins</h3><div id="px-pin-top" class="px-pin-empty">No published Pin performance yet.</div></div>
+        <div class="px-pin-foot">Trend signals are informational and source-labeled. Account metrics come from privacy-safe Metricool snapshots stored in the planet.X analytics fabric.</div>
+      </section>
+    </div>
     <script type="module" src="./src/main.tsx"></script>
+    <script>
+      (()=>{
+        const endpoint='https://lufvkrnwqbqdaqcgljxt.supabase.co/functions/v1/planetx-social-insights?platform=pinterest&account_handle=planetXfactor';
+        const launch=document.getElementById('px-pinterest-launch'),overlay=document.getElementById('px-pinterest-overlay'),close=document.getElementById('px-pin-close');
+        const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        const fmt=n=>new Intl.NumberFormat().format(Number(n||0));
+        async function load(){
+          const status=document.getElementById('px-pin-status'),metrics=document.getElementById('px-pin-metrics'),trends=document.getElementById('px-pin-trends'),top=document.getElementById('px-pin-top');
+          try{
+            const r=await fetch(endpoint,{cache:'no-store'}),d=await r.json(); if(!r.ok)throw new Error(d?.error||'Pinterest data unavailable');
+            const t=d.totals||{};
+            const cards=[['Impressions',t.impressions],['Pin clicks',t.pinClicks],['Outbound clicks',t.outboundClicks],['Saves',t.saves],['Followers',t.followers],['Interactions',t.interactions],['Published Pins',t.pins],['Engagement',`${Number(t.engagement||0).toFixed(1)}%`]];
+            metrics.innerHTML=cards.map(([k,v])=>`<article class="px-pin-card"><span>${esc(k)}</span><b>${typeof v==='number'?fmt(v):esc(v)}</b><em>${k==='Outbound clicks'?'Traffic sent off Pinterest':k==='Engagement'?'Interactions ÷ impressions':'Metricool snapshot'}</em></article>`).join('');
+            const stamp=d.lastCapturedAt?new Date(d.lastCapturedAt).toLocaleString():'baseline captured'; status.textContent=`@${d.accountHandle||'planetXfactor'} · ${stamp}`;
+            trends.innerHTML=(d.trends||[]).length?(d.trends||[]).map(x=>`<article class="px-pin-trend"><b>${esc(x.label)}</b><span>${esc(x.descriptor)} · ${esc(x.category)}</span><small>${esc(x.sourceName)}${x.sourceDate?' · '+esc(x.sourceDate):''}</small><i>${esc(x.relevance||'')}</i></article>`).join(''):'<div class="px-pin-empty">No trend signals loaded.</div>';
+            top.innerHTML=(d.topPins||[]).length?(d.topPins||[]).slice(0,8).map(x=>`<div style="display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div><b>${esc(x.title)}</b><small style="display:block;color:#8e8ea2;margin-top:3px">${fmt(x.impressions)} impressions · ${fmt(x.saves)} saves</small></div><span style="color:#b7f4ff">${fmt(x.outboundClicks)} outbound</span></div>`).join(''):'No published Pin performance yet.';
+          }catch(e){status.textContent='Pinterest feed needs attention';metrics.innerHTML='<div class="px-pin-empty">'+esc(e.message||e)+'</div>';}
+        }
+        launch?.addEventListener('click',()=>{overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');load()});
+        close?.addEventListener('click',()=>{overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true')});
+        overlay?.addEventListener('click',e=>{if(e.target===overlay)close.click()});
+        document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('open'))close.click()});
+      })();
+    </script>
 </body>
 </html>
