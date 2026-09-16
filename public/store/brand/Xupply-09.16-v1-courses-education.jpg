@@ -1,0 +1,120 @@
+export type AfterHoursProductImage = {
+  src: string
+  alt: string
+  label?: string
+}
+
+export type AfterHoursMetric = {
+  label: string
+  value: number
+}
+
+export type AfterHoursProduct = {
+  id: string
+  name: string
+  category: string
+  description: string
+  price: string
+  priceNote?: string
+  image?: AfterHoursProductImage
+  gallery?: AfterHoursProductImage[]
+  metrics?: AfterHoursMetric[]
+  href?: string
+  status?: string
+  safeName?: string
+  safeDescription?: string
+  ctaLabel?: string
+}
+
+/**
+ * Adult-only store inventory lives here instead of the public Xupply catalog.
+ * These are real Adult Wholesale Direct catalog examples used to validate the
+ * storefront while authenticated AWD pricing, stock, and licensed media feeds
+ * are still pending. Do not invent wholesale prices or real-time inventory.
+ */
+export const afterHoursProducts: AfterHoursProduct[] = [
+  {
+    id: 'awd-lelo-hex-original-12',
+    name: 'LELO HEX Original Condom 12 Pack',
+    category: 'Condoms',
+    description:
+      'A 12-pack of lightly lubricated natural-latex condoms using LELO’s hexagonal structure. The AWD listing specifies a 0.045 mm wall and 54 mm nominal width.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=411_529&main_page=product_info&products_id=98234',
+    status: 'AWD catalog demo',
+    safeName: 'Protection Pack',
+    safeDescription: 'A discreet personal protection product from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+  {
+    id: 'awd-rocks-off-bullet-80',
+    name: 'Rocks-Off Bullet 80mm Chrome',
+    category: 'Bullets',
+    description:
+      'A compact 80 mm single-speed bullet vibrator with one-touch operation. AWD lists it as waterproof and supplied with its battery.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=310_395&main_page=product_info&products_id=54688',
+    status: 'AWD catalog demo',
+    safeName: 'Pocket Massager',
+    safeDescription: 'A compact personal massage product from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+  {
+    id: 'awd-mood-silicone-lube-4oz',
+    name: 'Mood Silicone Lube 4 Oz.',
+    category: 'Lubricants',
+    description:
+      'A four-ounce silicone personal lubricant listed in Adult Wholesale Direct’s Doc Johnson catalog. Wholesale price and current inventory remain gated behind the AWD account feed.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=389_393&main_page=product_info&products_id=59120',
+    status: 'AWD catalog demo',
+    safeName: 'Personal Lubricant',
+    safeDescription: 'A discreet personal-care product from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+  {
+    id: 'awd-mood-frisky-gspot-pink',
+    name: 'Mood Frisky G-Spot Vibrator — Pink',
+    category: 'Vibrators',
+    description:
+      'A curved G-spot vibrator from Doc Johnson’s Mood line. This entry is sourced from AWD’s public catalog; authenticated wholesale price and live inventory are intentionally not reproduced here.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=21528_318&main_page=product_info&products_id=52199',
+    status: 'AWD catalog demo',
+    safeName: 'Curved Massager',
+    safeDescription: 'A curved personal massage product from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+  {
+    id: 'awd-maxx-men-sleeve-clear',
+    name: 'Maxx Men Erection Sleeve — Clear',
+    category: 'Sleeves',
+    description:
+      'A clear, non-vibrating waterproof TPE sleeve from Nasstoys. AWD’s public listing identifies it as phthalates-free and approximately 4.5 inches long by 1.5 inches in diameter.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=312_322&main_page=product_info&products_id=107141',
+    status: 'AWD catalog demo',
+    safeName: 'Enhancement Sleeve',
+    safeDescription: 'A discreet personal enhancement item from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+  {
+    id: 'awd-happy-fucking-birthday-lotto',
+    name: 'Happy Fucking Birthday Lotto Cards',
+    category: 'Party Games',
+    description:
+      'A set of 36 scratch-off birthday lotto cards from Little Genie built around adult party dares. This demo links back to the AWD source while wholesale account data remains private.',
+    price: 'Wholesale login',
+    priceNote: 'AWD account pricing',
+    href: 'https://adultwholesaledirect.com/tour/index.php?cPath=384_432&main_page=product_info&products_id=110560',
+    status: 'AWD catalog demo',
+    safeName: 'Birthday Party Game',
+    safeDescription: 'A discreet adults-only party-game item from the private collection.',
+    ctaLabel: 'View AWD source',
+  },
+]
