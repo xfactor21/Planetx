@@ -1,8 +1,8 @@
 {
   "name": "my-project",
   "version": "0.13.0",
-  "planetXVersion": "v15.3",
-  "planetXDeployment": "09.15-v15.3-google-analytics",
+  "planetXVersion": "v15.3.2",
+  "planetXDeployment": "09.15-v15.3.2-license-trial-policy",
   "private": true,
   "scripts": {
     "dev": "next dev",
