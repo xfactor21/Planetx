@@ -23,7 +23,7 @@ export default async function handler(req:any,res:any){
       configured:true,
       summaryAccess:'aggregate-only',
       commandCenterKeyAuthority:true,
-      authAuthority:'supabase-edge',
+      authAuthority:'ingest-validation',
       googleInsights:true,
       googleSource:'gsc-wizard-snapshot'
     });
