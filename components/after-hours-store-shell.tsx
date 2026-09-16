@@ -51,7 +51,7 @@ export function AfterHoursStoreShell() {
             <LockKeyhole className="size-4" aria-hidden="true" /> 18+ section
           </div>
           <h1 className="mt-5 text-4xl font-black tracking-[-.045em] sm:text-6xl">After Hours</h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-white/62 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-white/60 sm:text-lg">
             This section contains adult novelty products and is intended for adults only.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -98,7 +98,7 @@ export function AfterHoursStoreShell() {
             {[
               ['Access', 'Adults 18+ only'],
               ['Catalog', 'Separate inventory source'],
-              ['Discovery', 'Excluded from search indexing'],
+              ['Collection', 'After Hours'],
             ].map(([label, value]) => (
               <div key={label} className="rounded-xl border border-white/10 bg-black/35 p-4 backdrop-blur">
                 <p className="font-mono text-[9px] tracking-[.15em] text-white/35 uppercase">{label}</p>
