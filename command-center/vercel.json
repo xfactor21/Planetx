@@ -10,7 +10,8 @@
     { "source": "/api/analytics/website", "destination": "/api/_healthcheck?route=analytics/website" },
     { "source": "/api/products/visualx/analytics", "destination": "/api/_healthcheck?route=products/visualx/analytics" },
     { "source": "/api/apps/analytics", "destination": "/api/_healthcheck?route=apps/analytics" },
-    { "source": "/api/google/overview", "destination": "/api/bridge?route=google/overview" }
+    { "source": "/api/google/overview", "destination": "/api/bridge?route=google/overview" },
+    { "source": "/api/social", "destination": "/api/bridge?route=social/overview" }
   ],
   "headers": [
     {
