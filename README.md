@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v
 
 ## Current production release
 
-`v15.2` — official Xupply licensing, SessionGrid X 7-day Pro trial → permanent Free mode with 1 saved workstation and 3 recovery snapshots, embedded planet.X checkout, expanded store architecture, sitemap, guides, and analytics preserved.
+`v15.3.3` — official Xupply licensing, SessionGrid X 7-day Pro trial → permanent Free mode with 1 saved workstation and 3 recovery snapshots, embedded planet.X checkout, expanded store architecture, sitemap, guides, Google Analytics integration, and existing Supabase/Vercel analytics preserved.
 
 Build note: the Next.js TypeScript project intentionally excludes `supabase/functions` because those files target the Supabase Deno runtime (`jsr:` / `npm:` specifiers). The analytics Edge Function source remains in the repository and is not removed or disabled by that exclusion.
 
