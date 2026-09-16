@@ -22,8 +22,10 @@ jobs:
           cache-dependency-path: command-center/package.json
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: API typecheck
+        run: npx tsc --noEmit --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node --skipLibCheck api/search-console.ts api/social.ts
       - name: Build
         run: npm run build
-      - name: Strict type audit
+      - name: Strict UI type audit
         continue-on-error: true
         run: npx tsc -p tsconfig.json
