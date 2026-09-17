@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v
 
 ## Current production release
 
-`v15.3.3` — official Xupply licensing, SessionGrid X 7-day Pro trial → permanent Free mode with 1 saved workstation and 3 recovery snapshots, embedded planet.X checkout, expanded store architecture, sitemap, guides, Google Analytics integration, and existing Supabase/Vercel analytics preserved.
+`v16.0` — restored Vault Matrix storefront on the real planet.X/Xupply catalog with sticky dynamic product showcase, responsive mobile layout, 4-second showcase image cycling, preserved dedicated product/category pages, embedded checkout and Chrome Web Store install paths, first-party/Pinterest store analytics, current SEO metadata, and Command Center v3.1 analytics integrations preserved.
 
 Build note: the Next.js TypeScript project intentionally excludes `supabase/functions` because those files target the Supabase Deno runtime (`jsr:` / `npm:` specifiers). The analytics Edge Function source remains in the repository and is not removed or disabled by that exclusion.
 
