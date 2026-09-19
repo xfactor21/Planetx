@@ -167,7 +167,7 @@ export default function CommandCenterPro() {
   return <div className='cc-shell'>
     {menu && <button className='cc-scrim' aria-label='Close navigation' onClick={() => setMenu(false)} />}
     <aside className={`cc-rail ${menu ? 'open' : ''}`}>
-      <div className='cc-brand'><div className='cc-x'>X</div><div><b>planet.X</b><span>Command Center / v3.1</span></div><button className='cc-close' onClick={() => setMenu(false)} aria-label='Close navigation'><X /></button></div>
+      <div className='cc-brand'><div className='cc-x'>X</div><div><b>planet.X</b><span>Command Center / v3.2</span></div><button className='cc-close' onClick={() => setMenu(false)} aria-label='Close navigation'><X /></button></div>
       <nav className='cc-nav'>{nav.map(group => <div className='cc-nav-group' key={group.group}><small>{group.group}</small>{group.items.map(([id, label, Icon]) => <button key={id} className={view === id ? 'active' : ''} onClick={() => go(id as View)}><Icon /><span>{label}</span></button>)}</div>)}</nav>
       <div className='cc-rail-foot'><div className='cc-health-line'><i className={site && visual ? 'live' : ''} /><span>{site && visual ? 'Core fabric online' : 'Core fabric degraded'}</span></div><small>aggregate-only · privacy-safe</small></div>
     </aside>
