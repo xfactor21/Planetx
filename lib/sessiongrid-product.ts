@@ -30,6 +30,12 @@ export const sessionGridProduct: StoreProduct = {
     'Install free from the Chrome Web Store. New installs receive a 7-day Pro trial; after the trial, SessionGrid X continues in Free mode with 1 saved workstation and 3 recovery snapshots unless Pro is activated. Browsing data stays local.',
   gallery: [
     {
+      src: '/store/listings/sessiongrid-x-promo-v162.webp',
+      alt: 'SessionGrid X — Tab & Workspace Manager — Organize tabs into powerful grids',
+      label: 'SessionGrid X promo',
+      fit: 'cover',
+    },
+    {
       src: '/store/listings/sessiongrid-x-main.jpg',
       alt: 'SessionGrid X — Tab & Workspace Manager — Organize tabs into powerful grids',
       label: 'Tab & workspace manager',
