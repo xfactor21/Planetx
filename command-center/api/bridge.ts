@@ -44,8 +44,8 @@ export default async function handler(req:any,res:any){
       commandCenterKeyAuthority:true,
       authAuthority:'ingest-validation',
       googleInsights:true,
-      googleSource:'direct-google-cron',
-      googleRefreshSchedule:'0 */6 * * *',
+      googleSource:'direct-google-scheduled',
+      googleRefreshSchedule:'GitHub Actions · every 6 hours',
       socialInsights:true,
       socialSource:'metricool-mcp-archive'
     });
@@ -98,7 +98,7 @@ export default async function handler(req:any,res:any){
       const write=await fetch(`${BRIDGE}?mode=google-snapshot-write`,{
         method:'POST',
         headers:{'Content-Type':'application/json','X-PlanetX-Analytics-Key':key,'User-Agent':'planetx-command-center-google-refresh/3.3'},
-        body:JSON.stringify({source:'direct-google-cron',payload}),
+        body:JSON.stringify({source:'direct-google-scheduled',payload}),
         cache:'no-store'
       });
       const result=await jsonBody(write);
