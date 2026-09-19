@@ -18,7 +18,7 @@ type Website = {
   interest: { productViews: number; productClicks: number; betaCtaClicks: number; externalAppLaunches: number; visualXTraffic: number }
   conversion: { betaStarts: number; betaCompletions: number; waitlistJoins: number; conversionRate: number }
   music: { engagements: number; plays: number; completes: number; downloads: number }
-  store: { views: number; purchaseIntents: number; externalLaunches: number; intentRate: number; purchases?: number; refunds?: number; grossRevenueCents?: number; refundedAmountCents?: number; netRevenueCents?: number; products: StoreProduct[] }
+  store: { storePageViews?: number; views: number; purchaseIntents: number; checkoutStarts?: number; externalLaunches: number; intentRate: number; purchases?: number; refunds?: number; grossRevenueCents?: number; refundedAmountCents?: number; netRevenueCents?: number; products: StoreProduct[] }
   events: Rank[]
 }
 type Visual = {
@@ -239,7 +239,7 @@ function StoreCenter({ site }: { site: Website | null }) {
   return <>
     <PageIntro kicker='COMMERCE SIGNAL' title='Store command' text='Attention, purchase intent, launches and provider-confirmed commerce only. Clicks are never mislabeled as sales.' />
     <section className='cc-kpis'><Kpi icon={Eye} label='Product views' value={store ? fmt(store.views) : '—'} hint='catalog attention' /><Kpi icon={MousePointerClick} label='Purchase intent' value={store ? fmt(store.purchaseIntents) : '—'} hint={store ? `${store.intentRate}% view → click` : '—'} /><Kpi icon={ArrowUpRight} label='External launches' value={store ? fmt(store.externalLaunches) : '—'} hint='checkout / external destinations' /><Kpi icon={ShoppingBag} label='Confirmed purchases' value={store ? fmt(store.purchases) : '—'} hint='provider-confirmed only' /><Kpi icon={BarChart3} label='Net revenue' value={store ? money(store.netRevenueCents) : '—'} hint='confirmed commerce' /></section>
-    <section className='cc-grid'><Panel wide eyebrow='PRODUCT INTENT' title='What people are opening'><ProductTable rows={store?.products || []} /></Panel><Panel eyebrow='STORE EVENTS' title='Behavior mix'><RankList rows={site?.events || []} empty='No store events in this window.' /></Panel><Panel eyebrow='COMMERCE INTEGRITY' title='What the dashboard will count'><div className='cc-copy'><p><b>Views</b> = product exposure.</p><p><b>Intent</b> = a purchase/checkout click.</p><p><b>Purchase</b> = only a provider-confirmed completed transaction.</p><p><b>Revenue</b> = only confirmed transaction totals, minus confirmed refunds.</p></div></Panel></section>
+    <section className='cc-grid'><Panel wide eyebrow='PRODUCT INTENT' title='What people are opening'><ProductTable rows={store?.products || []} /></Panel><Panel eyebrow='STORE EVENTS' title='Behavior mix'><RankList rows={site?.events || []} empty='No store events in this window.' /></Panel><Panel eyebrow='COMMERCE INTEGRITY' title='What the dashboard will count'><div className='cc-copy'><p><b>Store visits</b> = entries to the Store front door.</p><p><b>Views</b> = product exposure.</p><p><b>Intent</b> = a purchase/install CTA click.</p><p><b>Checkout starts</b> = an embedded Payhip checkout opened.</p><p><b>Purchase</b> = only a provider-confirmed completed transaction.</p><p><b>Revenue</b> = only confirmed transaction totals, minus confirmed refunds.</p></div></Panel></section>
   </>
 }
 
