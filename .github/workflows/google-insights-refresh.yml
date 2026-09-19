@@ -1,0 +1,20 @@
+name: Google Insights Refresh
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Refresh Command Center Google snapshot
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --retry 3 --retry-delay 10 \
+            https://command-center-eta-one.vercel.app/api/google/refresh
