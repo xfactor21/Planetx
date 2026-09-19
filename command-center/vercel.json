@@ -4,22 +4,62 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/events", "destination": "/api/bridge?route=events" },
-    { "source": "/api/events/config", "destination": "/api/bridge?route=events/config" },
-    { "source": "/api/events/authorize", "destination": "/api/bridge?route=events/authorize" },
-    { "source": "/api/analytics/website", "destination": "/api/_healthcheck?route=analytics/website" },
-    { "source": "/api/products/visualx/analytics", "destination": "/api/_healthcheck?route=products/visualx/analytics" },
-    { "source": "/api/apps/analytics", "destination": "/api/_healthcheck?route=apps/analytics" },
-    { "source": "/api/google/overview", "destination": "/api/bridge?route=google/overview" },
-    { "source": "/api/social", "destination": "/api/bridge?route=social/overview" }
+    {
+      "source": "/api/events",
+      "destination": "/api/bridge?route=events"
+    },
+    {
+      "source": "/api/events/config",
+      "destination": "/api/bridge?route=events/config"
+    },
+    {
+      "source": "/api/events/authorize",
+      "destination": "/api/bridge?route=events/authorize"
+    },
+    {
+      "source": "/api/analytics/website",
+      "destination": "/api/_healthcheck?route=analytics/website"
+    },
+    {
+      "source": "/api/products/visualx/analytics",
+      "destination": "/api/_healthcheck?route=products/visualx/analytics"
+    },
+    {
+      "source": "/api/apps/analytics",
+      "destination": "/api/_healthcheck?route=apps/analytics"
+    },
+    {
+      "source": "/api/google/overview",
+      "destination": "/api/bridge?route=google/overview"
+    },
+    {
+      "source": "/api/google/refresh",
+      "destination": "/api/bridge?route=google/refresh"
+    },
+    {
+      "source": "/api/social",
+      "destination": "/api/bridge?route=social/overview"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/google/refresh",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
