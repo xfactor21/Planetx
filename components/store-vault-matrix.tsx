@@ -1,31 +1,27 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
-import { ArrowRight, Check, MoonStar } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ArrowRight, Check } from 'lucide-react'
 import { StorePurchaseCta } from '@/components/store-purchase-cta'
 import { planetXTrack } from '@/lib/client-analytics'
 import { pinterestTrackCustom } from '@/lib/pinterest-events'
 import {
   storeCategories,
-  storeProducts,
   type ProductGalleryImage,
   type StoreCategory,
   type StoreProduct,
 } from '@/lib/store-data'
-import { sessionGridProduct } from '@/lib/sessiongrid-product'
+import {
+  allStoreProducts,
+  FEATURED_PRODUCT_IDS,
+  productPath,
+  publicCheckoutUrl,
+} from '@/lib/store-catalog'
 
-type StoreView = 'Trending' | StoreCategory
+type StoreView = 'Featured' | StoreCategory
 
-const CONTEXT_CHROME_URL =
-  'https://chromewebstore.google.com/detail/context-encrypted-credent/ikedbigbancjamohakblaclcoljlhdbn'
-
-const TRENDING_IDS = new Set([
-  'sessiongrid-x',
-  'context-pro',
-  'essential-ui-sounds',
-  'interface-hud-kit',
-])
+const FEATURED_IDS = new Set(FEATURED_PRODUCT_IDS)
 
 const CATEGORY_ROUTES: Record<StoreCategory, string> = {
   Software: '/store/software',
@@ -33,36 +29,9 @@ const CATEGORY_ROUTES: Record<StoreCategory, string> = {
   'Creator Resources': '/store/creator-resources',
 }
 
-function normalizeProduct(product: StoreProduct): StoreProduct {
-  if (product.id === 'context-pro') {
-    return {
-      ...product,
-      name: 'conteXt',
-      productType: 'Encrypted developer workspace',
-      price: 'Free',
-      priceNote: 'Chrome extension',
-      status: 'Available now',
-      platforms: ['Chrome extension'],
-      format: 'Chrome extension / Manifest V3',
-      checkoutUrl: CONTEXT_CHROME_URL,
-    }
-  }
-
-  if (product.id === 'project-x') {
-    return {
-      ...product,
-      checkoutUrl: undefined,
-      status: 'Coming soon',
-      priceNote: 'Planned release',
-    }
-  }
-
-  return product
-}
-
-const products = [sessionGridProduct, ...storeProducts].map(normalizeProduct)
+const products = allStoreProducts
 const views: StoreView[] = [
-  'Trending',
+  'Featured',
   ...storeCategories.filter((category): category is StoreCategory => category !== 'All'),
 ]
 
@@ -77,8 +46,9 @@ function toneFor(category: StoreCategory) {
 }
 
 function checkoutMode(product: StoreProduct): 'chrome' | 'payhip' | 'coming-soon' {
-  if (product.id === 'project-x') return 'coming-soon'
-  if (product.checkoutUrl?.includes('chromewebstore.google.com')) return 'chrome'
+  const checkoutUrl = publicCheckoutUrl(product)
+  if (!checkoutUrl) return 'coming-soon'
+  if (checkoutUrl.includes('chromewebstore.google.com')) return 'chrome'
   return 'payhip'
 }
 
@@ -131,6 +101,7 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
   const [imageIndex, setImageIndex] = useState(0)
   const [cycleKey, setCycleKey] = useState(0)
   const [reduceMotion, setReduceMotion] = useState(false)
+  const showcaseRef = useRef<HTMLDivElement>(null)
   const image = gallery[imageIndex] ?? gallery[0]
   const tone = toneFor(product.category)
 
@@ -218,12 +189,20 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
             <p className="font-mono text-[9px] tracking-[.14em] text-white/35 uppercase">{product.priceNote}</p>
             <p className="mt-1 font-mono text-xl font-bold text-[#ff007f]">{product.price}</p>
           </div>
-          <StorePurchaseCta
-            productId={product.id}
-            productName={product.name}
-            mode={checkoutMode(product)}
-            checkoutUrl={product.checkoutUrl}
-          />
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <Link
+              href={productPath(product)}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-white/15 px-5 py-3 font-mono text-[11px] font-bold tracking-[.12em] text-white/70 uppercase transition hover:border-[#00f0ff]/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f0ff]"
+            >
+              Full details <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+            <StorePurchaseCta
+              productId={product.id}
+              productName={product.name}
+              mode={checkoutMode(product)}
+              checkoutUrl={publicCheckoutUrl(product)}
+            />
+          </div>
         </div>
       </div>
     </aside>
@@ -231,7 +210,7 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
 }
 
 export function StoreVaultMatrix() {
-  const [view, setView] = useState<StoreView>('Trending')
+  const [view, setView] = useState<StoreView>('Featured')
   const initial = products.find((product) => product.id === 'sessiongrid-x') ?? products[0]
   const [selectedId, setSelectedId] = useState(initial?.id ?? '')
   const [reduceMotion, setReduceMotion] = useState(false)
@@ -245,7 +224,7 @@ export function StoreVaultMatrix() {
   }, [])
 
   const visibleProducts = useMemo(() => {
-    if (view === 'Trending') return products.filter((product) => TRENDING_IDS.has(product.id))
+    if (view === 'Featured') return products.filter((product) => FEATURED_IDS.has(product.id))
     return products.filter((product) => product.category === view)
   }, [view])
 
@@ -253,6 +232,12 @@ export function StoreVaultMatrix() {
 
   const selectProduct = (product: StoreProduct) => {
     setSelectedId(product.id)
+
+    if (window.matchMedia('(max-width: 1023px)').matches) {
+      window.requestAnimationFrame(() => {
+        showcaseRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+      })
+    }
     try {
       planetXTrack('product_view', {
         product_id: product.id,
@@ -272,8 +257,8 @@ export function StoreVaultMatrix() {
 
   const selectView = (next: StoreView) => {
     setView(next)
-    const nextProducts = next === 'Trending'
-      ? products.filter((product) => TRENDING_IDS.has(product.id))
+    const nextProducts = next === 'Featured'
+      ? products.filter((product) => FEATURED_IDS.has(product.id))
       : products.filter((product) => product.category === next)
     if (nextProducts[0]) selectProduct(nextProducts[0])
   }
@@ -314,7 +299,9 @@ export function StoreVaultMatrix() {
             <ProductCard key={product.id} product={product} selected={selected?.id === product.id} onSelect={() => selectProduct(product)} />
           ))}
         </div>
-        {selected ? <ProductShowcase key={selected.id} product={selected} /> : null}
+        <div ref={showcaseRef} className="scroll-mt-24">
+          {selected ? <ProductShowcase key={selected.id} product={selected} /> : null}
+        </div>
       </div>
 
       <div className="mt-10 grid gap-3 border-t border-white/[.06] pt-6 sm:grid-cols-3">
@@ -325,11 +312,8 @@ export function StoreVaultMatrix() {
         ))}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.06] pt-5 text-xs text-white/35">
+      <div className="mt-5 border-t border-white/[.06] pt-5 text-xs text-white/35">
         <p>Dedicated product pages, guides, bundles and free resources remain available for search and deep browsing.</p>
-        <Link href="/store/after-hours" className="inline-flex items-center gap-2 font-mono text-[10px] font-bold tracking-[.12em] text-[#8e8882] uppercase transition hover:text-[#b6131d]">
-          <MoonStar className="size-3.5" aria-hidden="true" /> After Hours · 18+
-        </Link>
       </div>
     </section>
   )
