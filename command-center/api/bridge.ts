@@ -44,7 +44,8 @@ export default async function handler(req:any,res:any){
       commandCenterKeyAuthority:true,
       authAuthority:'ingest-validation',
       googleInsights:true,
-      googleSource:'gsc-wizard-snapshot',
+      googleSource:'direct-google-cron',
+      googleRefreshSchedule:'0 */6 * * *',
       socialInsights:true,
       socialSource:'metricool-mcp-archive'
     });
