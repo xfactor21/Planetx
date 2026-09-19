@@ -16,6 +16,7 @@ const PRODUCT_IDS: Record<string, string> = {
   'NGUKi': 'creator-editing-overlays',
   '6x4EO': 'digital-worlds-wallpapers',
   'PcOWp': 'producer-transitions-impacts',
+  '0ugq1': 'build-sell-indie-creator-tools',
 }
 
 type PayhipItem = {

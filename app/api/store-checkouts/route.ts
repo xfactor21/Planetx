@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { PAYHIP_CHECKOUTS } from '@/lib/store-catalog'
 
 const configuredCheckouts: Record<string, string | undefined> = {
   'essential-ui-sounds': process.env.XUPPLY_CHECKOUT_ESSENTIAL_UI_SOUNDS,
@@ -11,6 +12,7 @@ const configuredCheckouts: Record<string, string | undefined> = {
   'creator-editing-overlays': process.env.XUPPLY_CHECKOUT_CREATOR_EDITING_OVERLAYS,
   'digital-worlds-wallpapers': process.env.XUPPLY_CHECKOUT_DIGITAL_WORLDS_WALLPAPERS,
   'producer-transitions-impacts': process.env.XUPPLY_CHECKOUT_PRODUCER_TRANSITIONS_IMPACTS,
+  'build-sell-indie-creator-tools': process.env.XUPPLY_CHECKOUT_BUILD_SELL_INDIE_CREATOR_TOOLS,
 }
 
 function normalizeCheckout(value: string | undefined) {
@@ -21,9 +23,13 @@ function normalizeCheckout(value: string | undefined) {
 }
 
 export async function GET() {
+  const productIds = new Set([
+    ...Object.keys(PAYHIP_CHECKOUTS),
+    ...Object.keys(configuredCheckouts),
+  ])
   const checkouts = Object.fromEntries(
-    Object.entries(configuredCheckouts)
-      .map(([id, value]) => [id, normalizeCheckout(value)] as const)
+    [...productIds]
+      .map((id) => [id, normalizeCheckout(configuredCheckouts[id]) ?? PAYHIP_CHECKOUTS[id]] as const)
       .filter((entry): entry is readonly [string, string] => Boolean(entry[1])),
   )
 
