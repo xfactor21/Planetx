@@ -57,7 +57,7 @@ export default function Page() {
             </div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-black shadow-[0_0_55px_-28px_rgba(0,245,255,.7)]">
               <ResilientImage
-                src="/visual-x/VisualX-09.15-v14.9-home-approved.jpg"
+                src="/visual-x/VisualX-09.19-v16.2-home.webp"
                 alt="Visual.X — What will your song make? 360° Music Engine"
                 fill
                 sizes="(max-width: 768px) 100vw, 40vw"

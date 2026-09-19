@@ -19,7 +19,7 @@ import {
   publicCheckoutUrl,
 } from '@/lib/store-catalog'
 
-type StoreView = 'Featured' | StoreCategory
+type StoreView = 'Featured' | 'All' | StoreCategory
 
 const FEATURED_IDS = new Set(FEATURED_PRODUCT_IDS)
 
@@ -32,6 +32,7 @@ const CATEGORY_ROUTES: Record<StoreCategory, string> = {
 const products = allStoreProducts
 const views: StoreView[] = [
   'Featured',
+  'All',
   ...storeCategories.filter((category): category is StoreCategory => category !== 'All'),
 ]
 
@@ -131,8 +132,8 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
   }
 
   return (
-    <aside className="h-fit overflow-hidden rounded border border-[#ff007f]/30 bg-[#090c15] shadow-[0_24px_70px_-40px_rgba(255,0,127,.55)] lg:sticky lg:top-24">
-      <div className="relative flex min-h-[260px] flex-col justify-end overflow-hidden bg-[#080b13] p-5 sm:min-h-[310px]">
+    <aside className="h-fit overflow-hidden rounded-xl border border-[#ff007f]/30 bg-[#090c15] shadow-[0_24px_80px_-38px_rgba(255,0,127,.6)] lg:sticky lg:top-24">
+      <div className="relative flex min-h-[320px] flex-col justify-end overflow-hidden bg-[#080b13] p-4 sm:min-h-[390px] sm:p-6 xl:min-h-[450px]">
         {image ? (
           <img
             key={`${product.id}-${imageIndex}`}
@@ -142,11 +143,11 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
             className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${image.fit === 'contain' ? 'object-contain' : 'object-cover'}`}
           />
         ) : null}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#030305]/20 via-[#030305]/35 to-[#090c15]/95" />
-        <div className="relative z-10">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/[.03] via-black/[.08] to-black/45" />
+        <div className="relative z-10 max-w-xl rounded-xl border border-white/10 bg-[#050711]/75 p-4 shadow-2xl backdrop-blur-[6px] sm:p-5">
           <p className="font-mono text-[10px] font-bold tracking-[.16em] uppercase" style={{ color: tone }}>{product.category} / {product.productType}</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-[-.025em] text-white">{product.name}</h2>
-          <p className="mt-2 max-w-xl text-sm leading-6 text-[#8b92a5]">{product.description}</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-.025em] text-white sm:text-3xl">{product.name}</h2>
+          <p className="mt-2 text-sm leading-6 text-white/72">{product.description}</p>
         </div>
       </div>
 
@@ -159,7 +160,7 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
               onClick={() => selectImage(index)}
               aria-label={`Show ${item.label}`}
               aria-pressed={index === imageIndex}
-              className="h-11 w-16 shrink-0 overflow-hidden rounded-sm border bg-black/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f0ff]"
+              className="h-16 w-24 shrink-0 overflow-hidden rounded-md border bg-black/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00f0ff] sm:h-[72px] sm:w-28"
               style={{
                 borderColor: index === imageIndex ? '#ff007f' : 'rgba(255,255,255,.2)',
                 opacity: index === imageIndex ? 1 : 0.6,
@@ -208,8 +209,8 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
   )
 }
 
-export function StoreVaultMatrix() {
-  const [view, setView] = useState<StoreView>('Featured')
+export function StoreVaultMatrix({ initialView = 'Featured' }: { initialView?: StoreView }) {
+  const [view, setView] = useState<StoreView>(initialView)
   const initial = products.find((product) => product.id === 'sessiongrid-x') ?? products[0]
   const [selectedId, setSelectedId] = useState(initial?.id ?? '')
   const [reduceMotion, setReduceMotion] = useState(false)
@@ -225,6 +226,7 @@ export function StoreVaultMatrix() {
 
   const visibleProducts = useMemo(() => {
     if (view === 'Featured') return products.filter((product) => FEATURED_IDS.has(product.id))
+    if (view === 'All') return products
     return products.filter((product) => product.category === view)
   }, [view])
 
@@ -259,12 +261,14 @@ export function StoreVaultMatrix() {
     setView(next)
     const nextProducts = next === 'Featured'
       ? products.filter((product) => FEATURED_IDS.has(product.id))
-      : products.filter((product) => product.category === next)
+      : next === 'All'
+        ? products
+        : products.filter((product) => product.category === next)
     if (nextProducts[0]) selectProduct(nextProducts[0])
   }
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8">
+    <section className="mx-auto w-full max-w-[1380px] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#ff007f]/20 pb-4">
         <div>
           <p className="font-mono text-[11px] font-bold tracking-[.2em] text-[#00f0ff] uppercase">planet.X // Vault Matrix</p>
@@ -293,7 +297,7 @@ export function StoreVaultMatrix() {
         ))}
       </div>
 
-      <div className="grid gap-7 lg:grid-cols-[1.2fr_1fr]">
+      <div className="grid gap-7 lg:grid-cols-[1fr_1.18fr]">
         <div className="grid content-start gap-4 sm:grid-cols-2">
           {visibleProducts.map((product) => (
             <ProductCard key={product.id} product={product} selected={selected?.id === product.id} onSelect={() => selectProduct(product)} />

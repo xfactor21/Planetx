@@ -105,9 +105,9 @@ export const CATEGORY_CONTENT: Record<StoreCategorySlug, { category: StoreCatego
 }
 
 const approvedContextHero = {
-  src: '/store/listings/context-pro-hero-v1410.svg',
-  alt: 'conteXt encrypted developer workspace product banner',
-  label: 'Product banner',
+  src: '/store/listings/context-promo-v162.webp',
+  alt: 'conteXt encrypted credentials manager promo artwork',
+  label: 'conteXt promo',
   fit: 'cover' as const,
 }
 
