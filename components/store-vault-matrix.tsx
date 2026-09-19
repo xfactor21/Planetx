@@ -101,7 +101,6 @@ function ProductShowcase({ product }: { product: StoreProduct }) {
   const [imageIndex, setImageIndex] = useState(0)
   const [cycleKey, setCycleKey] = useState(0)
   const [reduceMotion, setReduceMotion] = useState(false)
-  const showcaseRef = useRef<HTMLDivElement>(null)
   const image = gallery[imageIndex] ?? gallery[0]
   const tone = toneFor(product.category)
 
@@ -214,6 +213,7 @@ export function StoreVaultMatrix() {
   const initial = products.find((product) => product.id === 'sessiongrid-x') ?? products[0]
   const [selectedId, setSelectedId] = useState(initial?.id ?? '')
   const [reduceMotion, setReduceMotion] = useState(false)
+  const showcaseRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const query = window.matchMedia('(prefers-reduced-motion: reduce)')
