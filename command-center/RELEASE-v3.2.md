@@ -10,3 +10,5 @@ Release candidate built from current `main` after PR #71.
 - Existing Google, first-party, app, Store, Visual.X, Social archive, privacy, and bridge contracts are preserved.
 
 This file exists as the explicit v3.2 release marker for deployment verification.
+
+Verification retriggered September 18, 2026 after the previous Vercel Hobby build-rate-limit window.
