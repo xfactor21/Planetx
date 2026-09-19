@@ -26,7 +26,7 @@ function headersFor(req: Request) {
   return {
     'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Headers': `Content-Type, ${HEADER}`,
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Cache-Control': 'no-store, max-age=0',
     'Content-Type': 'application/json',
     'Vary': 'Origin',
@@ -123,10 +123,40 @@ function summarizeSocial(network: string, rows: Record<string, unknown>[]) {
 
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: headersFor(req) });
-  if (req.method !== 'GET') return respond(req, { error: 'Method not allowed' }, 405);
 
   const url = new URL(req.url);
   const mode = url.searchParams.get('mode') || '';
+
+  if (mode === 'google-snapshot-write') {
+    if (req.method !== 'POST') return respond(req, { error: 'Method not allowed' }, 405);
+    const incoming = req.headers.get(HEADER) || '';
+    const check = await verifyAgainstIngest(incoming);
+    if (!check.ok) return respond(req, { error: check.status === 401 ? 'Unauthorized' : 'Analytics key authority unavailable.', authority: 'ingest-validation', reason: check.reason }, check.status);
+
+    const body = await req.json().catch(() => null) as { source?: string; payload?: Record<string, unknown> } | null;
+    if (!body?.payload || typeof body.payload !== 'object') return respond(req, { error: 'Valid snapshot payload required.' }, 400);
+
+    const now = new Date().toISOString();
+    const client = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const source = String(body.source || 'direct-google-cron').slice(0, 80);
+    const { error } = await client
+      .from('google_insights_snapshots')
+      .upsert({
+        id: 'planet-x.co',
+        source,
+        captured_at: now,
+        payload: body.payload,
+        updated_at: now,
+      }, { onConflict: 'id' });
+
+    if (error) {
+      console.error('Google insights snapshot write failed.', error);
+      return respond(req, { error: 'Google insights snapshot write failed.' }, 500);
+    }
+    return respond(req, { ok: true, source, capturedAt: now, authority: check.reason });
+  }
+
+  if (req.method !== 'GET') return respond(req, { error: 'Method not allowed' }, 405);
 
   if (mode === 'authorize') {
     const incoming = req.headers.get(HEADER) || '';
@@ -228,6 +258,6 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 3, authAuthority: 'ingest-validation', sources: ['first-party', 'google-snapshot', 'social-archive'] });
+  if (mode === 'health') return respond(req, { ok: true, bridge: 'planetx-command-center-bridge', version: 4, authAuthority: 'ingest-validation', sources: ['first-party', 'google-snapshot', 'social-archive'] });
   return respond(req, { error: 'Not found' }, 404);
 });
